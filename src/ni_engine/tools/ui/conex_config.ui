@@ -1,0 +1,1045 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>840</width>
+    <height>664</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>CONEX-CC Configuration Tool</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetMaximumSize</enum>
+      </property>
+      <item>
+       <widget class="QLabel" name="label_74">
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Devices</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QListWidget" name="device_list">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item alignment="Qt::AlignLeft">
+         <widget class="QToolButton" name="add_device">
+          <property name="text">
+           <string>+</string>
+          </property>
+         </widget>
+        </item>
+        <item alignment="Qt::AlignLeft">
+         <widget class="QToolButton" name="rm_device">
+          <property name="text">
+           <string>—</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::MinimumExpanding</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <widget class="QLabel" name="label_9">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Configuration Parameters</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QScrollArea" name="config_area">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>600</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
+        </property>
+        <property name="lineWidth">
+         <number>0</number>
+        </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="widgetResizable">
+         <bool>true</bool>
+        </property>
+        <widget class="QWidget" name="scrollAreaWidgetContents_2">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>582</width>
+           <height>927</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="3" column="3">
+           <widget class="QDoubleSpinBox" name="sb_DV">
+            <property name="decimals">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+          <item row="22" column="3">
+           <widget class="QDoubleSpinBox" name="sb_SR">
+            <property name="decimals">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+          <item row="15" column="4">
+           <widget class="QLabel" name="label_38">
+            <property name="text">
+             <string>s</string>
+            </property>
+           </widget>
+          </item>
+          <item row="14" column="3">
+           <widget class="QDoubleSpinBox" name="sb_OH">
+            <property name="decimals">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+          <item row="11" column="4">
+           <widget class="QLabel" name="label_34">
+            <property name="text">
+             <string>V eu/s</string>
+            </property>
+           </widget>
+          </item>
+          <item row="17" column="3">
+           <widget class="QDoubleSpinBox" name="sb_QIR">
+            <property name="decimals">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+          <item row="12" column="3">
+           <widget class="QDoubleSpinBox" name="sb_KP">
+            <property name="decimals">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+          <item row="12" column="2">
+           <widget class="QLabel" name="label_14">
+            <property name="text">
+             <string>Proportional gain</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2">
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Low-pass filter for Kd</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="2">
+           <widget class="QLabel" name="label_10">
+            <property name="text">
+             <string>Stage identifier</string>
+            </property>
+           </widget>
+          </item>
+          <item row="10" column="3">
+           <widget class="QDoubleSpinBox" name="sb_KD">
+            <property name="decimals">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+          <item row="24" column="4">
+           <widget class="QLabel" name="label_48">
+            <property name="text">
+             <string>eu/s</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Driver Voltage</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="3">
+           <widget class="QComboBox" name="cb_HT">
+            <item>
+             <property name="text">
+              <string extracomment="0">Use MZ switch and encoder index.</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string extracomment="1">Use current position as HOME.</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string extracomment="2">Use MZ switch only.</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string extracomment="3">Use EoR- switch and encoder index.</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string extracomment="4">Use EoR- switch only.</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="17" column="2">
+           <widget class="QLabel" name="label_39">
+            <property name="text">
+             <string>Motor current limit (RMS)</string>
+            </property>
+           </widget>
+          </item>
+          <item row="20" column="2">
+           <widget class="QLabel" name="label_20">
+            <property name="text">
+             <string>Control loop state</string>
+            </property>
+           </widget>
+          </item>
+          <item row="19" column="2">
+           <widget class="QLabel" name="label_19">
+            <property name="text">
+             <string>RS-485 address</string>
+            </property>
+           </widget>
+          </item>
+          <item row="16" column="3">
+           <widget class="QDoubleSpinBox" name="sb_QIL">
+            <property name="decimals">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QLabel" name="label_3">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Hysteresis Compensation</string>
+            </property>
+           </widget>
+          </item>
+          <item row="18" column="3">
+           <widget class="QDoubleSpinBox" name="sb_QIT">
+            <property name="decimals">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QDoubleSpinBox" name="sb_BA">
+            <property name="decimals">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+          <item row="24" column="2">
+           <widget class="QLabel" name="label_24">
+            <property name="text">
+             <string>Velocity</string>
+            </property>
+           </widget>
+          </item>
+          <item row="18" column="4">
+           <widget class="QLabel" name="label_43">
+            <property name="text">
+             <string>s</string>
+            </property>
+           </widget>
+          </item>
+          <item row="22" column="2">
+           <widget class="QLabel" name="label_22">
+            <property name="text">
+             <string>Positive software limit</string>
+            </property>
+           </widget>
+          </item>
+          <item row="21" column="4">
+           <widget class="QLabel" name="label_45">
+            <property name="text">
+             <string>eu</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QDoubleSpinBox" name="sb_AC">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="decimals">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+          <item row="13" column="2">
+           <widget class="QLabel" name="label_15">
+            <property name="text">
+             <string>Velocity feed forward</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLabel" name="label_2">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Backlash Compensation</string>
+            </property>
+           </widget>
+          </item>
+          <item row="16" column="2">
+           <widget class="QLabel" name="label_18">
+            <property name="text">
+             <string>Motor current limit (peak)</string>
+            </property>
+           </widget>
+          </item>
+          <item row="19" column="3">
+           <widget class="QLabel" name="label_44">
+            <property name="text">
+             <string>(not supported)</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="3">
+           <widget class="QDoubleSpinBox" name="sb_BH">
+            <property name="decimals">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+          <item row="18" column="2">
+           <widget class="QLabel" name="label_40">
+            <property name="text">
+             <string>Motor current limit (avg time)</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="2">
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>HOME search type</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="4">
+           <widget class="QLabel" name="label_30">
+            <property name="text">
+             <string>Hz</string>
+            </property>
+           </widget>
+          </item>
+          <item row="23" column="4">
+           <widget class="QLabel" name="label_47">
+            <property name="text">
+             <string>?</string>
+            </property>
+           </widget>
+          </item>
+          <item row="23" column="2">
+           <widget class="QLabel" name="label_23">
+            <property name="text">
+             <string>Encoder increment value</string>
+            </property>
+           </widget>
+          </item>
+          <item row="24" column="3">
+           <widget class="QDoubleSpinBox" name="sb_VA">
+            <property name="decimals">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="4">
+           <widget class="QLabel" name="label_25">
+            <property name="text">
+             <string>s</string>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="3">
+           <widget class="QDoubleSpinBox" name="sb_JR">
+            <property name="decimals">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+          <item row="22" column="4">
+           <widget class="QLabel" name="label_46">
+            <property name="text">
+             <string>eu</string>
+            </property>
+           </widget>
+          </item>
+          <item row="10" column="2">
+           <widget class="QLabel" name="label_12">
+            <property name="text">
+             <string>Derivative gain</string>
+            </property>
+           </widget>
+          </item>
+          <item row="13" column="3">
+           <widget class="QDoubleSpinBox" name="sb_KV">
+            <property name="decimals">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="3">
+           <widget class="QDoubleSpinBox" name="sb_FE">
+            <property name="decimals">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+          <item row="12" column="4">
+           <widget class="QLabel" name="label_35">
+            <property name="text">
+             <string>V/eu</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="4">
+           <widget class="QLabel" name="label_27">
+            <property name="text">
+             <string>eu</string>
+            </property>
+           </widget>
+          </item>
+          <item row="14" column="4">
+           <widget class="QLabel" name="label_37">
+            <property name="text">
+             <string>eu/s</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="4">
+           <widget class="QLabel" name="label_31">
+            <property name="text">
+             <string>eu</string>
+            </property>
+           </widget>
+          </item>
+          <item row="11" column="2">
+           <widget class="QLabel" name="label_13">
+            <property name="text">
+             <string>Integral gain</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="2">
+           <widget class="QLabel" name="label_7">
+            <property name="text">
+             <string>Friction compensation</string>
+            </property>
+           </widget>
+          </item>
+          <item row="10" column="4">
+           <widget class="QLabel" name="label_33">
+            <property name="text">
+             <string>V s/eu</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="3">
+           <widget class="QDoubleSpinBox" name="sb_FD">
+            <property name="decimals">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+          <item row="21" column="3">
+           <widget class="QDoubleSpinBox" name="sb_SL">
+            <property name="decimals">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+          <item row="16" column="4">
+           <widget class="QLabel" name="label_41">
+            <property name="text">
+             <string>A</string>
+            </property>
+           </widget>
+          </item>
+          <item row="13" column="4">
+           <widget class="QLabel" name="label_36">
+            <property name="text">
+             <string>V s/eu</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="4">
+           <widget class="QLabel" name="label_28">
+            <property name="text">
+             <string>eu</string>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="2">
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string>Jerk time</string>
+            </property>
+           </widget>
+          </item>
+          <item row="11" column="3">
+           <widget class="QDoubleSpinBox" name="sb_KI">
+            <property name="decimals">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+          <item row="21" column="2">
+           <widget class="QLabel" name="label_21">
+            <property name="text">
+             <string>Negative software limit</string>
+            </property>
+           </widget>
+          </item>
+          <item row="15" column="2">
+           <widget class="QLabel" name="label_17">
+            <property name="text">
+             <string>HOME search time-out</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="3">
+           <widget class="QLineEdit" name="le_ID"/>
+          </item>
+          <item row="6" column="3">
+           <widget class="QDoubleSpinBox" name="sb_FF">
+            <property name="decimals">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+          <item row="14" column="2">
+           <widget class="QLabel" name="label_16">
+            <property name="text">
+             <string>HOME search velocity</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="4">
+           <widget class="QLabel" name="label_26">
+            <property name="text">
+             <string>eu/s²</string>
+            </property>
+           </widget>
+          </item>
+          <item row="15" column="3">
+           <widget class="QDoubleSpinBox" name="sb_OT">
+            <property name="decimals">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_49">
+            <property name="text">
+             <string>AC</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="4">
+           <widget class="QLabel" name="label_29">
+            <property name="text">
+             <string>V</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="4">
+           <widget class="QLabel" name="label_32">
+            <property name="text">
+             <string>V s/eu</string>
+            </property>
+           </widget>
+          </item>
+          <item row="17" column="4">
+           <widget class="QLabel" name="label_42">
+            <property name="text">
+             <string>A</string>
+            </property>
+           </widget>
+          </item>
+          <item row="20" column="3">
+           <widget class="QComboBox" name="cb_SC">
+            <item>
+             <property name="text">
+              <string extracomment="0">Open</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string extracomment="1">Closed</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="5" column="2">
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string>Following error limit</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Acceleration</string>
+            </property>
+           </widget>
+          </item>
+          <item row="23" column="3">
+           <widget class="QDoubleSpinBox" name="sb_SU">
+            <property name="decimals">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>5</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_50">
+            <property name="text">
+             <string>BA</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_51">
+            <property name="text">
+             <string>BH</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_52">
+            <property name="text">
+             <string>DV</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_53">
+            <property name="text">
+             <string>FD</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_54">
+            <property name="text">
+             <string>FE</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QLabel" name="label_55">
+            <property name="text">
+             <string>FF</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="0">
+           <widget class="QLabel" name="label_56">
+            <property name="text">
+             <string>HT</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="0">
+           <widget class="QLabel" name="label_57">
+            <property name="text">
+             <string>ID</string>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="0">
+           <widget class="QLabel" name="label_58">
+            <property name="text">
+             <string>JR</string>
+            </property>
+           </widget>
+          </item>
+          <item row="10" column="0">
+           <widget class="QLabel" name="label_59">
+            <property name="text">
+             <string>KD</string>
+            </property>
+           </widget>
+          </item>
+          <item row="11" column="0">
+           <widget class="QLabel" name="label_60">
+            <property name="text">
+             <string>KI</string>
+            </property>
+           </widget>
+          </item>
+          <item row="12" column="0">
+           <widget class="QLabel" name="label_61">
+            <property name="text">
+             <string>KP</string>
+            </property>
+           </widget>
+          </item>
+          <item row="13" column="0">
+           <widget class="QLabel" name="label_62">
+            <property name="text">
+             <string>KV</string>
+            </property>
+           </widget>
+          </item>
+          <item row="14" column="0">
+           <widget class="QLabel" name="label_63">
+            <property name="text">
+             <string>OH</string>
+            </property>
+           </widget>
+          </item>
+          <item row="15" column="0">
+           <widget class="QLabel" name="label_64">
+            <property name="text">
+             <string>OT</string>
+            </property>
+           </widget>
+          </item>
+          <item row="16" column="0">
+           <widget class="QLabel" name="label_65">
+            <property name="text">
+             <string>QIL</string>
+            </property>
+           </widget>
+          </item>
+          <item row="17" column="0">
+           <widget class="QLabel" name="label_66">
+            <property name="text">
+             <string>QIR</string>
+            </property>
+           </widget>
+          </item>
+          <item row="18" column="0">
+           <widget class="QLabel" name="label_67">
+            <property name="text">
+             <string>QIT</string>
+            </property>
+           </widget>
+          </item>
+          <item row="19" column="0">
+           <widget class="QLabel" name="label_68">
+            <property name="text">
+             <string>SA</string>
+            </property>
+           </widget>
+          </item>
+          <item row="20" column="0">
+           <widget class="QLabel" name="label_69">
+            <property name="text">
+             <string>SC</string>
+            </property>
+           </widget>
+          </item>
+          <item row="21" column="0">
+           <widget class="QLabel" name="label_70">
+            <property name="text">
+             <string>SL</string>
+            </property>
+           </widget>
+          </item>
+          <item row="22" column="0">
+           <widget class="QLabel" name="label_71">
+            <property name="text">
+             <string>SR</string>
+            </property>
+           </widget>
+          </item>
+          <item row="23" column="0">
+           <widget class="QLabel" name="label_72">
+            <property name="text">
+             <string>SU</string>
+            </property>
+           </widget>
+          </item>
+          <item row="24" column="0">
+           <widget class="QLabel" name="label_73">
+            <property name="text">
+             <string>VA</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+         <zorder>label_8</zorder>
+         <zorder>label_7</zorder>
+         <zorder>sb_AC</zorder>
+         <zorder>label</zorder>
+         <zorder>sb_BH</zorder>
+         <zorder>label_3</zorder>
+         <zorder>label_2</zorder>
+         <zorder>label_5</zorder>
+         <zorder>label_6</zorder>
+         <zorder>sb_DV</zorder>
+         <zorder>sb_BA</zorder>
+         <zorder>label_4</zorder>
+         <zorder>sb_FD</zorder>
+         <zorder>sb_FE</zorder>
+         <zorder>sb_FF</zorder>
+         <zorder>cb_HT</zorder>
+         <zorder>label_10</zorder>
+         <zorder>label_11</zorder>
+         <zorder>label_12</zorder>
+         <zorder>label_13</zorder>
+         <zorder>label_14</zorder>
+         <zorder>label_15</zorder>
+         <zorder>label_16</zorder>
+         <zorder>label_17</zorder>
+         <zorder>label_18</zorder>
+         <zorder>label_19</zorder>
+         <zorder>label_20</zorder>
+         <zorder>label_21</zorder>
+         <zorder>label_22</zorder>
+         <zorder>label_23</zorder>
+         <zorder>label_24</zorder>
+         <zorder>le_ID</zorder>
+         <zorder>sb_JR</zorder>
+         <zorder>label_25</zorder>
+         <zorder>label_26</zorder>
+         <zorder>label_27</zorder>
+         <zorder>label_28</zorder>
+         <zorder>label_29</zorder>
+         <zorder>label_30</zorder>
+         <zorder>label_31</zorder>
+         <zorder>label_32</zorder>
+         <zorder>sb_KD</zorder>
+         <zorder>label_33</zorder>
+         <zorder>sb_KI</zorder>
+         <zorder>label_34</zorder>
+         <zorder>sb_KP</zorder>
+         <zorder>label_35</zorder>
+         <zorder>sb_KV</zorder>
+         <zorder>label_36</zorder>
+         <zorder>sb_OH</zorder>
+         <zorder>label_37</zorder>
+         <zorder>sb_OT</zorder>
+         <zorder>label_38</zorder>
+         <zorder>label_39</zorder>
+         <zorder>label_40</zorder>
+         <zorder>label_41</zorder>
+         <zorder>label_42</zorder>
+         <zorder>label_43</zorder>
+         <zorder>sb_QIL</zorder>
+         <zorder>sb_QIR</zorder>
+         <zorder>sb_QIT</zorder>
+         <zorder>label_44</zorder>
+         <zorder>cb_SC</zorder>
+         <zorder>sb_SL</zorder>
+         <zorder>sb_SR</zorder>
+         <zorder>sb_SU</zorder>
+         <zorder>sb_VA</zorder>
+         <zorder>label_45</zorder>
+         <zorder>label_46</zorder>
+         <zorder>label_47</zorder>
+         <zorder>label_48</zorder>
+         <zorder>label_49</zorder>
+         <zorder>horizontalSpacer_3</zorder>
+         <zorder>label_50</zorder>
+         <zorder>label_51</zorder>
+         <zorder>label_52</zorder>
+         <zorder>label_53</zorder>
+         <zorder>label_54</zorder>
+         <zorder>label_55</zorder>
+         <zorder>label_56</zorder>
+         <zorder>label_57</zorder>
+         <zorder>label_58</zorder>
+         <zorder>label_59</zorder>
+         <zorder>label_60</zorder>
+         <zorder>label_61</zorder>
+         <zorder>label_62</zorder>
+         <zorder>label_63</zorder>
+         <zorder>label_64</zorder>
+         <zorder>label_65</zorder>
+         <zorder>label_66</zorder>
+         <zorder>label_67</zorder>
+         <zorder>label_68</zorder>
+         <zorder>label_69</zorder>
+         <zorder>label_70</zorder>
+         <zorder>label_71</zorder>
+         <zorder>label_72</zorder>
+         <zorder>label_73</zorder>
+        </widget>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btn_reset_params">
+          <property name="text">
+           <string>Reset</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btn_save_params">
+          <property name="text">
+           <string>Save to Device</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <includes>
+  <include location="local">Qt::Window</include>
+ </includes>
+ <resources/>
+ <connections/>
+</ui>
