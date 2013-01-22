@@ -260,8 +260,8 @@ class ConexCC(object):
         """
         if addr is None:
             addr = self._addr
-        self.__raw("{addr}{cmd}{arg}\r\n".format(addr, cmd, arg))
-        resp = self._serial.readlines(eol="\r\n")
+        self.__raw("{addr}{cmd}{arg}\r\n".format(addr=addr, cmd=cmd, arg=arg))
+        resp = self._serial.readlines()
     
         if _chkerr:
             self.__checkerror()
