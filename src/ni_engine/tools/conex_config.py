@@ -67,8 +67,22 @@ class MainWindow(QMainWindow):
         # TODO: check that the mode is set correctly and everything.
         # TODO: catch exceptions.
         if self.current_device is None: return
-        for config_sym, (getter, setter) in self.bindings:
-            self.current_device[config_sym] = getter()
+        
+        # Ensure that the user actually wants to do this!
+        dialog = QMessageBox()
+        dialog.setText("Are you sure you want to save parameters?")
+        dialog.setInformativeText("Newport recommends that each controller be reconfigured no more than 100 times, so please be sure before you continue.")
+        dialog.setStandardButtons(QMessageBox.Save | QMessageBox.Cancel)
+        dialog.setDefaultButton(QMessageBox.Cancel)
+        ret = dialog.exec_()
+        if ret == QMessageBox.Cancel:
+            return
+            
+        # Transition the state, then write.
+        dev = self.current_device
+        with dev.configure(): # <- this will block for 10 seconds.
+            for config_sym, (getter, setter) in self.bindings:
+                self.current_device[config_sym] = getter()
         
     def reset_params(self):
         # TODO: check that the mode is set correctly and everything.
@@ -99,15 +113,20 @@ class MainWindow(QMainWindow):
                 self.ui.device_list.currentIndex())[0]
         print("Opening port: {}".format(port_name))
         try:
+            # Open the device.
             self.current_device = conex.ConexCC(port_name)
+            
+            # Transition to NOT_REFERENCED.
+            self.current_device.reset()
+        
+            # Read out the current configuration.
+            self.reset_params()
+            
         except serial.serialutil.SerialException as se:
             error_dialog = QErrorMessage()
             error_dialog.showMessage(se.message)
-            error_dialog.exec_()
+            error_dialog.exec_() 
             return
-        
-        # TODO: place device into CONFIGURATION state.
-        # TODO: populate configuration parameters.
         
         # Finally, enable the scroll view if not already done.
         self.ui.config_area.setEnabled(True)

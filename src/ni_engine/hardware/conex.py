@@ -1,4 +1,6 @@
 
+from contextlib import contextmanager
+
 import serial
 import time
 
@@ -232,6 +234,8 @@ class ConexCC(object):
     def is_ready(self): return self.state in (ConexCCStates.READY, ConexCCStates.READY_T)
     @property
     def is_tracking(self): return self.state == ConexCCStates.TRACKING
+    @property
+    def is_configurable(self): return self.state == ConexCCStates.CONFIGURATION
         
     ## UTILITY METHODS ##
     
@@ -326,15 +330,33 @@ class ConexCC(object):
     def stop(self):
         self.__command("ST")
         
+    def __wait(self, t, cond, msg):
+        tic = time.clock()
+        while (time.clock() - tic < t) and not cond():
+            time.sleep(0.1)
+            
+        # FIXME: make a more specific exception.
+        if self.is_moving:
+            raise IOError(msg)
+        
     def move_absolute(self, new_pos, wait=False):
         resp = self.__command("PA", str(float(new_pos)))
         if not wait:
             return resp
+        else:        
+            self.__wait(wait, lambda: not self.is_moving, "Timed out waiting for an absolute move.")
             
-        tic = time.clock()
-        while (time.clock() - tic < wait) and self.is_moving:
-            time.sleep(0.1)
-        # FIXME: make a more specific exception.
-        if self.is_moving:
-            raise IOError("Timed out waiting for an absolute move.")
+    ## STATE TRANSITIONS ##
+    
+    @contextmanager
+    def configure(self):
+        """
+        Context manager that resets the controller, transitions to the CONFIGURATION state and then writes configuration parameters upon exiting.
+        """
+        self.reset()
+        self.__command("PW", str(1))
+        self.__wait(15, lambda: self.is_configurable, "Timed out waiting for the device to become configurable.")
+        yield
+        self.__command("PW", str(0))
+        self.__wait(15, lambda: self.is_configurable, "Timed out waiting for the device to write its configuration.")
 
