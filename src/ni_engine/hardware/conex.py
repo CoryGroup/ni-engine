@@ -124,7 +124,7 @@ class ConexCC(object):
         "47": ConexCCStates.TRACKING
     }
 
-    def __init__(self, port_url, addr=1, timeout=0.02):
+    def __init__(self, port_url, addr=1, timeout=0.1, log=False):
         self._port_url = port_url
         self._timeout = timeout
         self._addr = addr
@@ -136,6 +136,7 @@ class ConexCC(object):
                 stopbits=self.STOP_BITS,
                 parity=self.PARITY
             ) # <- This opens the port!
+        self._log = log
        
     def close(self):
         # TODO: make all other methods become invalid after this.
@@ -246,6 +247,8 @@ class ConexCC(object):
     ## LOW-LEVEL COMMAND HANDLING ##
         
     def __raw(self, data):
+        if self._log:
+            print(">\t" + data)
         n = self._serial.write(bytearray(data, 'ascii'))
         assert n == len(data)
         return n
@@ -262,6 +265,9 @@ class ConexCC(object):
             addr = self._addr
         self.__raw("{addr}{cmd}{arg}\r\n".format(addr=addr, cmd=cmd, arg=arg))
         resp = self._serial.readlines()
+        if self._log:
+            for line in resp:
+                print("<\t" + line)
     
         if _chkerr:
             self.__checkerror()

@@ -13,7 +13,7 @@ from ui.conex_config import Ui_MainWindow
 import common_dialogs
 
 def spinbox_binding(control):
-    return control.value, control.setValue
+    return control.value, lambda val: control.setValue(float(val))
 
 class MainWindow(QMainWindow):
     SB_NAMES = (
@@ -55,9 +55,9 @@ class MainWindow(QMainWindow):
         for sb_name in self.SB_NAMES:
             self.bindings[sb_name] = spinbox_binding(getattr(self.ui, "sb_" + sb_name))
             
-        self.bindings["HT"] = (self.ui.cb_HT.currentIndex, self.ui.cb_HT.setCurrentIndex)
+        self.bindings["HT"] = (self.ui.cb_HT.currentIndex, lambda val: self.ui.cb_HT.setCurrentIndex(int(val)))
         self.bindings["ID"] = (self.ui.le_ID.text, self.ui.le_ID.setText)
-        self.bindings["SC"] = (self.ui.cb_SC.currentIndex, self.ui.cb_SC.setCurrentIndex)
+        self.bindings["SC"] = (self.ui.cb_SC.currentIndex, lambda val: self.ui.cb_SC.setCurrentIndex(int(val)))
         
     def populate_devices(self):
         # TODO!
@@ -81,14 +81,15 @@ class MainWindow(QMainWindow):
         # Transition the state, then write.
         dev = self.current_device
         with dev.configure(): # <- this will block for 10 seconds.
-            for config_sym, (getter, setter) in self.bindings:
+            for config_sym, (getter, setter) in self.bindings.iteritems():
                 self.current_device[config_sym] = getter()
         
     def reset_params(self):
         # TODO: check that the mode is set correctly and everything.
         # TODO: catch exceptions.
         if self.current_device is None: return
-        for config_sym, (getter, setter) in self.bindings:
+        for config_sym, (getter, setter) in self.bindings.iteritems():
+            print("[DEBUG] Reading parameter {}.".format(config_sym))
             setter(self.current_device[config_sym])
         
     def on_add_device(self):
@@ -114,7 +115,7 @@ class MainWindow(QMainWindow):
         print("Opening port: {}".format(port_name))
         try:
             # Open the device.
-            self.current_device = conex.ConexCC(port_name)
+            self.current_device = conex.ConexCC(port_name, log=True)
             
             # Transition to NOT_REFERENCED.
             self.current_device.reset()
