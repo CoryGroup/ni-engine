@@ -70,6 +70,7 @@ else:
     class Configuration(object):
         def __init__(self):
             # TODO: find the right INI-file.
+            pass
             
         def get_devices_by_class(self, device_class):
             # TODO!
