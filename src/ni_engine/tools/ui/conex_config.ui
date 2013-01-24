@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>CONEX-CC Configuration Tool</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
@@ -154,7 +157,7 @@
          <property name="geometry">
           <rect>
            <x>0</x>
-           <y>0</y>
+           <y>-363</y>
            <width>582</width>
            <height>927</height>
           </rect>
@@ -163,14 +166,14 @@
           <item row="3" column="3">
            <widget class="QDoubleSpinBox" name="sb_DV">
             <property name="decimals">
-             <number>5</number>
+             <number>8</number>
             </property>
            </widget>
           </item>
           <item row="22" column="3">
            <widget class="QDoubleSpinBox" name="sb_SR">
             <property name="decimals">
-             <number>5</number>
+             <number>8</number>
             </property>
            </widget>
           </item>
@@ -184,7 +187,7 @@
           <item row="14" column="3">
            <widget class="QDoubleSpinBox" name="sb_OH">
             <property name="decimals">
-             <number>5</number>
+             <number>8</number>
             </property>
            </widget>
           </item>
@@ -198,14 +201,14 @@
           <item row="17" column="3">
            <widget class="QDoubleSpinBox" name="sb_QIR">
             <property name="decimals">
-             <number>5</number>
+             <number>8</number>
             </property>
            </widget>
           </item>
           <item row="12" column="3">
            <widget class="QDoubleSpinBox" name="sb_KP">
             <property name="decimals">
-             <number>5</number>
+             <number>8</number>
             </property>
            </widget>
           </item>
@@ -233,7 +236,7 @@
           <item row="10" column="3">
            <widget class="QDoubleSpinBox" name="sb_KD">
             <property name="decimals">
-             <number>5</number>
+             <number>8</number>
             </property>
            </widget>
           </item>
@@ -304,7 +307,7 @@
           <item row="16" column="3">
            <widget class="QDoubleSpinBox" name="sb_QIL">
             <property name="decimals">
-             <number>5</number>
+             <number>8</number>
             </property>
            </widget>
           </item>
@@ -324,14 +327,14 @@
           <item row="18" column="3">
            <widget class="QDoubleSpinBox" name="sb_QIT">
             <property name="decimals">
-             <number>5</number>
+             <number>8</number>
             </property>
            </widget>
           </item>
           <item row="1" column="3">
            <widget class="QDoubleSpinBox" name="sb_BA">
             <property name="decimals">
-             <number>5</number>
+             <number>8</number>
             </property>
            </widget>
           </item>
@@ -372,7 +375,7 @@
              </sizepolicy>
             </property>
             <property name="decimals">
-             <number>5</number>
+             <number>8</number>
             </property>
            </widget>
           </item>
@@ -413,7 +416,7 @@
           <item row="2" column="3">
            <widget class="QDoubleSpinBox" name="sb_BH">
             <property name="decimals">
-             <number>5</number>
+             <number>8</number>
             </property>
            </widget>
           </item>
@@ -455,7 +458,7 @@
           <item row="24" column="3">
            <widget class="QDoubleSpinBox" name="sb_VA">
             <property name="decimals">
-             <number>5</number>
+             <number>8</number>
             </property>
            </widget>
           </item>
@@ -469,7 +472,7 @@
           <item row="9" column="3">
            <widget class="QDoubleSpinBox" name="sb_JR">
             <property name="decimals">
-             <number>5</number>
+             <number>8</number>
             </property>
            </widget>
           </item>
@@ -490,14 +493,14 @@
           <item row="13" column="3">
            <widget class="QDoubleSpinBox" name="sb_KV">
             <property name="decimals">
-             <number>5</number>
+             <number>8</number>
             </property>
            </widget>
           </item>
           <item row="5" column="3">
            <widget class="QDoubleSpinBox" name="sb_FE">
             <property name="decimals">
-             <number>5</number>
+             <number>8</number>
             </property>
            </widget>
           </item>
@@ -553,14 +556,14 @@
           <item row="4" column="3">
            <widget class="QDoubleSpinBox" name="sb_FD">
             <property name="decimals">
-             <number>5</number>
+             <number>8</number>
             </property>
            </widget>
           </item>
           <item row="21" column="3">
            <widget class="QDoubleSpinBox" name="sb_SL">
             <property name="decimals">
-             <number>5</number>
+             <number>8</number>
             </property>
            </widget>
           </item>
@@ -595,7 +598,7 @@
           <item row="11" column="3">
            <widget class="QDoubleSpinBox" name="sb_KI">
             <property name="decimals">
-             <number>5</number>
+             <number>8</number>
             </property>
            </widget>
           </item>
@@ -619,7 +622,7 @@
           <item row="6" column="3">
            <widget class="QDoubleSpinBox" name="sb_FF">
             <property name="decimals">
-             <number>5</number>
+             <number>8</number>
             </property>
            </widget>
           </item>
@@ -640,7 +643,7 @@
           <item row="15" column="3">
            <widget class="QDoubleSpinBox" name="sb_OT">
             <property name="decimals">
-             <number>5</number>
+             <number>8</number>
             </property>
            </widget>
           </item>
@@ -709,7 +712,7 @@
           <item row="23" column="3">
            <widget class="QDoubleSpinBox" name="sb_SU">
             <property name="decimals">
-             <number>5</number>
+             <number>8</number>
             </property>
            </widget>
           </item>

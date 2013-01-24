@@ -1,6 +1,7 @@
 
 from __future__ import print_function
 from ..hardware import conex
+from .. import configuration
 
 import serial
 
@@ -11,6 +12,8 @@ from PySide.QtGui import *
 from ui.conex_config import Ui_MainWindow
 
 import common_dialogs
+
+config = configuration.Configuration()
 
 def spinbox_binding(control):
     return control.value, lambda val: control.setValue(float(val))
@@ -60,8 +63,9 @@ class MainWindow(QMainWindow):
         self.bindings["SC"] = (self.ui.cb_SC.currentIndex, lambda val: self.ui.cb_SC.setCurrentIndex(int(val)))
         
     def populate_devices(self):
-        # TODO!
-        pass
+        for port_descript, port_name in config.get_devices_by_class(conex.ConexCC):
+            # FIXME: use descriptions!
+            self.ui.device_list.addItem(port_name)
         
     def save_params(self):
         # TODO: check that the mode is set correctly and everything.
@@ -93,9 +97,11 @@ class MainWindow(QMainWindow):
             setter(self.current_device[config_sym])
         
     def on_add_device(self):
+        # TODO: add descriptions somehow.
         def callback(port_name):
             if port_name is not None:
                 self.ui.device_list.addItem(port_name)
+                config.add_device(conex.ConexCC, port_name, port_name)
             
         serial_dialog = common_dialogs.OpenSerialDialog(callback=callback)
         serial_dialog.exec_() # FIXME: make non-blocking somehow?

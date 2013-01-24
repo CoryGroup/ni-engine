@@ -7,6 +7,7 @@
 ## IMPORTS #####################################################################
 
 import os
+import sys
 from itertools import count
 
 from . import hardware
@@ -15,6 +16,24 @@ from . import hardware
 
 def type_name(typ):
     return typ.__module__ + "." + typ.__name__
+    
+def ensuredir(filename):
+    dir = os.path.dirname(filename)
+    if not os.path.exists(dir):
+        os.makedirs(dir)
+
+def preffilename():
+    if sys.platform.startswith('linux') or sys.platform.startswith('darwin') or sys.platform.startswith('cygwin'):	    
+        # Unix-y
+        configfile = os.path.expanduser('~/.config/ni-engine.conf')
+    elif sys.platform.startswith('win'):
+        # Windows-y
+        configfile = os.path.join(os.path.expandvars('%APPDATA%'), 'ni-engine.conf')
+    else:
+        return NotImplemented
+
+    ensuredir(configfile)
+    return configfile
 
 ## CLASSES #####################################################################
 
@@ -49,7 +68,7 @@ if os.name == "nt":
     
     class Configuration(object):
         def __init__(self):
-            self.key = open_or_create(_winreg.HKEY_LOCAL_MACHINE, BASE_KEY_NAME)
+            self.key = open_or_create(_winreg.HKEY_CURRENT_USER, BASE_KEY_NAME)
                 
         def _subkey_for_class(self, cls):
             return open_or_create(self.key, type_name(cls))
@@ -66,17 +85,34 @@ if os.name == "nt":
 else:
     
     import ConfigParser
-
+    
+    PREF_FILE_NAME = preffilename()
+    
     class Configuration(object):
         def __init__(self):
             # TODO: find the right INI-file.
-            pass
+            self.parser = ConfigParser.SafeConfigParser()
+            self.parser.read(PREF_FILE_NAME)
+            
+        def __del__(self):
+            self.flush()
+            
+        def flush(self):
+            with open(PREF_FILE_NAME, 'w') as f:
+                self.parser.write(f)
             
         def get_devices_by_class(self, device_class):
-            # TODO!
-            pass
+            section = "{}/known_devices".format(type_name(device_class))
+            if self.parser.has_section(section):
+                return iter(self.parser.items(section))
+            else:
+                return iter([])
             
         def add_device(self, device_class, device_description, device_location):
-            # TODO!
-            pass
-
+            section = "{}/known_devices".format(type_name(device_class))
+            if not self.parser.has_section(section):
+                self.parser.add_section(section)
+            self.parser.set(section, device_description, device_location)
+            self.flush()
+            
+            
