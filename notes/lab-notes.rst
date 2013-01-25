@@ -21,3 +21,11 @@
 - Connected Hallbach array via USB.
 - Tested with ``python -m ni_engine.tools.conex_config`` that
   configuration could be read correctly using ``ConexCC``.
+
+25-Jan-2013
+===========
+
+- Tested that ``ConexCC`` correctly controls linear and rotational motor movement.
+  When used with the prototype NV Halbach array, all linear movement corresponds to the correct distance.
+  Did not test software limits, as ``SR`` for each linear stage is set to ``25``, beyond the Halbach array's
+  safe movement range.
