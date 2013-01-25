@@ -80,7 +80,7 @@ if os.name == "nt":
                 
         def add_device(self, device_class, device_description, device_location):
             subkey = open_or_create(self._subkey_for_class(device_class), r"known_devices")
-            _winreg.SetValueEx(subkey, device_description, None, device_location)
+            _winreg.SetValueEx(subkey, device_description, None, _winreg.REG_SZ, device_location)
         
 else:
     

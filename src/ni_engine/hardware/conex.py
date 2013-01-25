@@ -297,7 +297,7 @@ class ConexCC(object):
         err = self.__command("TE", addr=addr, _chkerr=False, _procresp=True)        
         
         if err != "@":
-            raise self.__exception_for(result)
+            raise self.__exception_for(err)
             
     def __poserr_state(self):
         # Wraps the TS command to get the positioner error and the current
