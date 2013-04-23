@@ -33,3 +33,54 @@
 
 .. _DAQmx: http://joule.ni.com/nidu/cds/view/p/id/3423/lang/en
 .. _PyDAQmx: http://pypi.python.org/pypi/PyDAQmx
+
+12-April-2013
+=============
+
+- Installed packages for use with ``gpibusb-comm_code``::
+
+    > easy_install flufl.enum==4.0
+	> easy_install pyvisa
+	> easy_install quantities
+	
+23-April-2013
+=============
+
+- Installed unofficial binary for PyOpenCL found at http://www.lfd.uci.edu/~gohlke/pythonlibs/#pyopencl.
+- Installed pytools, as required by PyOpenCL::
+
+    > easy_install pytools
+    
+- Tested that the demonstration program shipped with PyOpenCL works::
+
+    In [1]: import pyopencl as cl
+       ...: import numpy
+       ...: import numpy.linalg as la
+       ...: 
+       ...: a = numpy.random.rand(50000).astype(numpy.float32)
+       ...: b = numpy.random.rand(50000).astype(numpy.float32)
+       ...: 
+       ...: ctx = cl.create_some_context()
+       ...: queue = cl.CommandQueue(ctx)
+       ...: 
+       ...: mf = cl.mem_flags
+       ...: a_buf = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=a)
+       ...: b_buf = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=b)
+       ...: dest_buf = cl.Buffer(ctx, mf.WRITE_ONLY, b.nbytes)
+       ...: 
+       ...: prg = cl.Program(ctx, """
+       ...:     __kernel void sum(__global const float *a,
+       ...:     __global const float *b, __global float *c)
+       ...:     {
+       ...:       int gid = get_global_id(0);
+       ...:       c[gid] = a[gid] + b[gid];
+       ...:     }
+       ...:     """).build()
+       ...: 
+       ...: prg.sum(queue, a.shape, None, a_buf, b_buf, dest_buf)
+       ...: 
+       ...: a_plus_b = numpy.empty_like(a)
+       ...: cl.enqueue_copy(queue, a_plus_b, dest_buf)
+       ...: 
+       ...: print la.norm(a_plus_b - (a+b))
+    0.0
