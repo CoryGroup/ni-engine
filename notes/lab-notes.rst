@@ -84,3 +84,13 @@
        ...: 
        ...: print la.norm(a_plus_b - (a+b))
     0.0
+
+ 21-May-2013
+ ===========
+ 
+ - Installed LabJack UD and LabJackPython from http://labjack.com/support/labjackpython.
+ - Installed stand-alone LJTickDAC example from http://labjack.com/support/accessories/ljtickdac.
+ - Installed Evince reader from https://live.gnome.org/Evince/Downloads.
+ - Tested that LJTickDAC connected to FIO4/5 block produced correct output, up to small calibration errors.
+ - Installed example for temp/humidity probe http://labjack.com/support/ei-1050/sample-windows.
+ - Tested that temp/humidity probe works when connected as instructed in the example application.
