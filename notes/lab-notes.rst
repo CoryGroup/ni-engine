@@ -94,3 +94,13 @@
  - Tested that LJTickDAC connected to FIO4/5 block produced correct output, up to small calibration errors.
  - Installed example for temp/humidity probe http://labjack.com/support/ei-1050/sample-windows.
  - Tested that temp/humidity probe works when connected as instructed in the example application.
+ 10-June-2013
+ ===========
+ 
+ - Installed Xerox Workstation 5335 drivers, to enable printing. Can be found at http://www.support.xerox.com/support/workcentre-5300-series/file-download/enus.html?operatingSystem=win7x64&fileLanguage=en&contentId=117759&from=downloads&viewArchived=false
+ - Updated LabJack Firmware
+ 
+ 13-June-2013 
+ - Installed pip via http://www.lfd.uci.edu/~gohlke/pythonlibs/#distribute to allow easy installation of libraries 
+ - Installed text editor sublime-text-2 
+ 
