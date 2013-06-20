@@ -4,19 +4,19 @@ import sensorFactory
 
 class SensorManager(object):
 	
-	def __init__(self,niEngine,configuration):
+	def __init__(self,niEngine,configuration,hardwareManager):
 		self.niEngine = niEngine		
 		self.configuration = configuration
 		self.sensors = dict()
-		self.sensorFactory = sensorFactory(parseFactoryYaml(self.configYaml))
+		self.factory = sensorFactory.SensorFactory(self.parseFactoryYaml(self.configuration),hardwareManager)
 	
 	def addSensor(self,sensorConfig):
 		sensor = self.sensorFactory.createSensor(sensorConfig)
-		self.sensors[sensor.name] = sensor
+		self.sensors[sensor.id] = sensor
 
 	def removeSensor(self,sensor):
 		if sensor: 
-			del self.sensors[sensor.name]
+			del self.sensors[sensor.id]
 			sensor.disconnect()
 
 		else: raise ValueError("Must give valid object")
@@ -28,11 +28,11 @@ class SensorManager(object):
 
 		else: raise ValueError("Must give valid name")
 
-	def removeAll():
+	def removeAll(self):
 		for k,v in self.sensors.iteritems():
 			v.disconnect()
 		self.sensors = dict()
 
 
-	def parseFactoryYaml(self,configYaml=self.configYaml):
-		return self.configYaml
+	def parseFactoryYaml(self,configYaml):
+		return configYaml

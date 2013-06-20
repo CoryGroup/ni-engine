@@ -1,36 +1,29 @@
 import ei1050Sensor
-
+import config
 class SensorFactory(object):
-	def __init__(self,**kwargs):
-		if 'config' in kwargs:
-			self.config = kwargs['config']
-			
+	
+	def __init__(self,sensorBuilders,hardwareManager):
+		self.sensorBuilders = dict()
+		self.sensorBuilders = sensorBuilders
+
 	def createSensor(self,config):
-		sensorType = getType(config)		
+		sensorCode = getCode(config)
+		hardware = getHardware(config)		
+		if sensorCode in sensorBuilders:
+			return sensorBuilders[sensorCode].create(config,hardware)		
 
-		if sensorType == "EI1050":
-			sensor = createEI1050(self,config)
-
-
-		if  not sensor:
+		else:
 			raise Exception("Sensor Type not recognised") 
 
-		return sensor
+		
 
-	def getInterface(self,config):
+	def getInterface(self,configuration):
 		pass
 
-	def getType(self,config):
-		pass
+	def getCode(self,configuration):
+		return configuration[config.idString]
 
-	def createEI1050(self,config):
-		#extract config info
+	def getHardware(self,configuration):
+		return configuration[config.hardwareIdString]
 
-
-		if threaded:
-			if pollingTime:
-				return ei1050Sensor(device,dataPin,clockPin,enablePin,threaded=True,pollingTime=pollingTime)
-			else: 
-				return ei1050Sensor(device,dataPin,clockPin,enablePin,threaded=True)
-		else:
-			return ei1050Sensor(device,dataPin,clockPin,enablePin)
+	

@@ -1,15 +1,10 @@
 import yaml 
 import os 
 import sys
+import config
 class Configuration(object):
-	availableSensors= None
-	availableHardware = None
-	hardware = None
-	sensors = None
-	codeString = 'code'
-	hardwareIdString = 'hardwareID'
-	sensorsForPlatformString = 'sensors'
-	isOnString = 'enabled'
+	
+
 	
 	def __init__(self,availableInterfaces,**kwargs):
 		
@@ -54,8 +49,8 @@ class Configuration(object):
 	def requiredSensors(self): 
 		hard =[]
 		for x in self.sensors:
-			if self.codeString in x:
-				hard.append(x[self.codeString])
+			if config.codeString in x:
+				hard.append(x[config.codeString])
 			else:  
 				raise ValueError("All sensors and hardware must have sensor code in configuration")
 		return hard
@@ -64,8 +59,8 @@ class Configuration(object):
 	def requiredHardware(self): 
 		hard =[]
 		for x in self.hardware:
-			if self.codeString in x:
-				hard.append(x[self.codeString])
+			if config.codeString in x:
+				hard.append(x[config.codeString])
 			else:  
 				raise ValueError("All sensors and hardware must have sensor code in configuration")
 		return hard
@@ -78,7 +73,7 @@ class Configuration(object):
 			if x not in self.availableSensors:
 				raise ValueError("Not all sensors references are valid")
 				return False
-			elif not self.availableSensors[x][self.isOnString]:
+			elif not self.availableSensors[x][config.isOnString]:
 				raise ValueError("Sensor not enabled")
 				return False
 		return True
@@ -89,7 +84,7 @@ class Configuration(object):
 			if  x not in self.availableHardware:
 				raise ValueError("Not all hardware references are valid")
 				return False
-			elif not self.availableHardware[x][self.isOnString]:
+			elif not self.availableHardware[x][config.isOnString]:
 				raise ValueError("Sensor not enabled")
 				return False
 		return True
@@ -100,13 +95,13 @@ class Configuration(object):
 		for x in self.hardware:			
 			idDict[x['id']] = x
 		for y in self.sensors:			
-			if y[self.hardwareIdString] not in idDict:
+			if y[config.hardwareIdString] not in idDict:
 				raise ValueError("Sensor reference id does not have hardware match")
 				return False
-			elif y[self.codeString] not in self.availableHardware[idDict[y[self.hardwareIdString]][self.codeString]][self.sensorsForPlatformString]:
+			elif y[config.codeString] not in self.availableHardware[idDict[y[config.hardwareIdString]][config.codeString]][config.sensorsForPlatformString]:
 				raise ValueError("Sensor not available for platform")
 				return False
-			elif  not self.availableHardware[idDict[y[self.hardwareIdString]][self.codeString]][self.sensorsForPlatformString][y[self.codeString]][self.isOnString]:
+			elif  not self.availableHardware[idDict[y[config.hardwareIdString]][config.codeString]][config.sensorsForPlatformString][y[config.codeString]][config.isOnString]:
 				raise ValueError("Sensor not enabled for platform")
 				return False
 

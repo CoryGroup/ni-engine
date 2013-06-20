@@ -1,0 +1,5 @@
+codeString = 'code'
+hardwareIdString = 'hardwareID'
+sensorsForPlatformString = 'sensors'
+isOnString = 'enabled'
+idString = 'id'

@@ -1,7 +1,7 @@
 
 class AbstractSensor(object):
 
-	self.metaInfo = ""
+	metaInfo = ""
 
 	def connect(self):
 		raise NotImplementedError
@@ -13,4 +13,9 @@ class AbstractSensor(object):
 	def measure(self):
 		raise NotImplementedError
 
+
+	# abstract method to handle sensor creation based on configuration
+	@staticmethod
+	def create(config):
+		raise NotImplementedError
 		
