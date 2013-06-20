@@ -1,7 +1,10 @@
 import ei1050Sensor
 
-class SensorFactory:
-
+class SensorFactory(object):
+	def __init__(self,**kwargs):
+		if 'config' in kwargs:
+			self.config = kwargs['config']
+			
 	def createSensor(self,config):
 		sensorType = getType(config)		
 

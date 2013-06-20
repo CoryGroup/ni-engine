@@ -104,3 +104,7 @@
  - Installed pip via http://www.lfd.uci.edu/~gohlke/pythonlibs/#distribute to allow easy installation of libraries 
  - Installed text editor sublime-text-2 
  
+ 17-June-2013
+ -Installed Microsoft powerpoint viewer
+ -Installed ComSolve
+ 

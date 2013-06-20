@@ -9,7 +9,7 @@ import u3
 import u6
 import ue9
 
-class EI1050:
+class EI1050(object):
     """
     EI1050 class to simplify communication with an EI1050 probe
     """

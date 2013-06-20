@@ -1,5 +1,5 @@
 
-class AbstractSensor:
+class AbstractSensor(object):
 
 	self.metaInfo = ""
 
