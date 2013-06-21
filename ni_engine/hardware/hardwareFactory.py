@@ -1,8 +1,8 @@
 import config
 class HardwareFactory(object):
-	
+	hardwareBuilders = dict()
 	def __init__(self,hardwareBuilders):
-		self.hardwareBuilders = dict()
+		
 		self.hardwareBuilders = hardwareBuilders
 
 	def createhardware(self,config):
@@ -19,3 +19,7 @@ class HardwareFactory(object):
 		return configuration[config.idString]
 
 	
+	@classmethod
+	def registerHardware(hardware):
+		code = hardware.code
+		HardwareFactory.sensorBuilders[code]= sensor

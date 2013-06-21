@@ -1,5 +1,5 @@
 import yaml
-import sensorFactory
+from sensorFactory import SensorFactory
 
 
 class SensorManager(object):
@@ -8,7 +8,7 @@ class SensorManager(object):
 		self.niEngine = niEngine		
 		self.configuration = configuration
 		self.sensors = dict()
-		self.factory = sensorFactory.SensorFactory(self.parseFactoryYaml(self.configuration),hardwareManager)
+		self.factory = SensorFactory(self.parseFactoryYaml(self.configuration),hardwareManager)
 	
 	def addSensor(self,sensorConfig):
 		sensor = self.sensorFactory.createSensor(sensorConfig)
@@ -36,3 +36,11 @@ class SensorManager(object):
 
 	def parseFactoryYaml(self,configYaml):
 		return configYaml
+
+	def addAllSensors(self):
+		for x in configuration.sensors:
+			self.addSensor(x)
+
+	@classmethod
+	def registerSensor(cls,sensor):
+		SensorFactory.registerSensor(sensor)

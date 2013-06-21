@@ -1,6 +1,6 @@
 import config 
 import u3
-import hardwareFactory
+from hardwareFactory import HardwareFactory
 class HardwareManager(object):
 
 	def __init__(self,configuration):		
@@ -35,3 +35,11 @@ class HardwareManager(object):
 
 	def parseFactoryYaml(self,configYaml):
 		return configYaml
+
+	def addAllHardware(self):
+		for x in configuration.hardware:
+			self.addHardware(x)
+
+	@classmethod
+	def registerSensor(cls,hardware):
+		HardwareFactory.registerHardware(hardware)

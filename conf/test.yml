@@ -1,12 +1,14 @@
 
 hardware:
- - hardware: labjack U3-LV
+ - name: labjack U3-LV
+   description: Labjack for temperature sensor
    code: u3lv 
    id: lab1
 
 
 sensors:
- - sensor: EI-1050
+ - name: EI-1050
+   description: Temperature and humidity probe
    code: 1050
    hardwareID: lab1
    id: temp1

@@ -2,23 +2,23 @@ import ei1050Sensor
 import config
 class SensorFactory(object):
 	
-	def __init__(self,sensorBuilders,hardwareManager):
-		self.sensorBuilders = dict()
-		self.sensorBuilders = sensorBuilders
+	sensorBuilders = dict()
+
+	def __init__(self,hardwareManager):
+		self.hardwareManager = hardwareManager
+		
 
 	def createSensor(self,config):
 		sensorCode = getCode(config)
 		hardware = getHardware(config)		
-		if sensorCode in sensorBuilders:
-			return sensorBuilders[sensorCode].create(config,hardware)		
+		if sensorCode in SensorFactory.sensorBuilders:
+			return SensorFactory.sensorBuilders[sensorCode].create(config,hardware)		
 
 		else:
 			raise Exception("Sensor Type not recognised") 
 
-		
-
-	def getInterface(self,configuration):
-		pass
+	
+	
 
 	def getCode(self,configuration):
 		return configuration[config.idString]
@@ -26,4 +26,7 @@ class SensorFactory(object):
 	def getHardware(self,configuration):
 		return configuration[config.hardwareIdString]
 
-	
+	@classmethod
+	def registerSensor(cls,sensor):
+		code = sensor.code
+		cls.sensorBuilders[code]= sensor
