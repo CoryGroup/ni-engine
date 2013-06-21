@@ -71,7 +71,7 @@ class Configuration(object):
 
 		for x in self.requiredSensors:
 			if x not in self.availableSensors:
-				raise ValueError("Not all sensors references are valid")
+				raise ValueError("Not all sensor references are valid")
 				return False
 			elif not self.availableSensors[x][config.isOnString]:
 				raise ValueError("Sensor not enabled")

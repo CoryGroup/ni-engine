@@ -14,8 +14,8 @@ class NiEngine(object):
 	def __init__(self,sensorConfig,availableConfig):
 		self.configuration = config.Configuration(availableConfig)
 		self.configuration.readConfig(sensorConfig)
-		self.hardwareManager = hardware.HardwareManager(self,self.configuration)
+		self.hardwareManager = hardware.HardwareManager(self.configuration)
 		self.hardwareManager.addAllHardware()
-		self.sensorManager = sensors.SensorManager(self,self.configuration,hardwareManager)
+		self.sensorManager = sensors.SensorManager(self.configuration,self.hardwareManager)
 		self.sensorManager.addAllSensors()
 		

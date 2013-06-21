@@ -4,11 +4,11 @@ from sensorFactory import SensorFactory
 
 class SensorManager(object):
 	
-	def __init__(self,niEngine,configuration,hardwareManager):
-		self.niEngine = niEngine		
+	def __init__(self,configuration,hardwareManager):
+				
 		self.configuration = configuration
 		self.sensors = dict()
-		self.factory = SensorFactory(self.parseFactoryYaml(self.configuration),hardwareManager)
+		self.sensorFactory = SensorFactory(hardwareManager)
 	
 	def addSensor(self,sensorConfig):
 		sensor = self.sensorFactory.createSensor(sensorConfig)
@@ -38,7 +38,7 @@ class SensorManager(object):
 		return configYaml
 
 	def addAllSensors(self):
-		for x in configuration.sensors:
+		for x in self.configuration.sensors:
 			self.addSensor(x)
 
 	@classmethod

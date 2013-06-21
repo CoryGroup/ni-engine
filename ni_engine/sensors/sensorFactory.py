@@ -9,8 +9,12 @@ class SensorFactory(object):
 		
 
 	def createSensor(self,config):
-		sensorCode = getCode(config)
-		hardware = getHardware(config)		
+		print len(SensorFactory.sensorBuilders)
+		for k in SensorFactory.sensorBuilders:
+			print k
+		sensorCode = self.getCode(config)
+		print sensorCode
+		hardware = self.getHardware(config)		
 		if sensorCode in SensorFactory.sensorBuilders:
 			return SensorFactory.sensorBuilders[sensorCode].create(config,hardware)		
 
@@ -21,10 +25,11 @@ class SensorFactory(object):
 	
 
 	def getCode(self,configuration):
-		return configuration[config.idString]
+		return configuration[config.codeString]
 
 	def getHardware(self,configuration):
-		return configuration[config.hardwareIdString]
+		hardwareId = configuration[config.hardwareIdString]
+		return self.hardwareManager.getHardware(hardwareId)
 
 	@classmethod
 	def registerSensor(cls,sensor):

@@ -2,10 +2,10 @@ hardware:
  u3lv:
   enabled: True
   sensors:
-   1050:
+   EI1050:
      enabled: True
 
 
 sensors: 
- 1050:
+ EI1050:
   enabled: True

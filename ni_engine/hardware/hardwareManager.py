@@ -3,15 +3,15 @@ import u3
 from hardwareFactory import HardwareFactory
 class HardwareManager(object):
 
-	def __init__(self,configuration):		
-		self.niEngine = niEngine		
+	def __init__(self,configuration):
+				
 		self.configuration = configuration
 		self.hardware = dict()
-		self.factory = hardwareFactory.HardwareFactory(self.parseFactoryYaml(self.configuration))
+		self.hardwareFactory = HardwareFactory()
 	
 	def addHardware(self,hardwareConfig):
 		hardware = self.hardwareFactory.createHardware(hardwareConfig)
-		self.hardware[hardware.id] = wardware
+		self.hardware[hardware.id] = hardware
 
 	def removeHardware(self,hardware):
 		if hardware: 
@@ -37,9 +37,15 @@ class HardwareManager(object):
 		return configYaml
 
 	def addAllHardware(self):
-		for x in configuration.hardware:
+		for x in self.configuration.hardware:
 			self.addHardware(x)
 
+	def getHardware(self,hardwareId):
+		if hardwareId in self.hardware:
+			return self.hardware[hardwareId]
+		else: raise ValueError("{0} is not a valid hardware id".format(hardwareId))
+
+
 	@classmethod
-	def registerSensor(cls,hardware):
+	def registerHardware(cls,hardware):
 		HardwareFactory.registerHardware(hardware)

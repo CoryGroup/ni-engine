@@ -9,9 +9,10 @@ hardware:
 sensors:
  - name: EI-1050
    description: Temperature and humidity probe
-   code: 1050
+   code: EI1050
    hardwareID: lab1
    id: temp1
+   threaded: False
    pins:
     data: 4
     clock: 5

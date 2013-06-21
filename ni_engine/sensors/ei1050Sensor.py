@@ -2,7 +2,7 @@ import abstractSensor, ei1050, Queue
 import config
 
 class Ei1050Sensor(abstractSensor.AbstractSensor):
-	code = "u3lv"
+	code = "EI1050"
 	name = "EI1050Sensor"
 	description = " "
 	def __init__(self,ID,device,dataPin,clockPin,enablePin,threaded=False,pollingTime=0.5,name=name,description=description):
@@ -45,7 +45,7 @@ class Ei1050Sensor(abstractSensor.AbstractSensor):
 
 
 	@classmethod
-	def create(cls,configuration):
+	def create(cls,configuration,device):
 		#extract config info
 		ID = configuration[config.idString]
 		n = Ei1050Sensor.name
@@ -53,13 +53,19 @@ class Ei1050Sensor(abstractSensor.AbstractSensor):
 		if config.nameString in configuration:
 			n= configuration[config.nameString]
 		if config.descriptionString in configuration:
-			n= configuration[config.decriptionString]
-		
+			n= configuration[config.descriptionString]
+		threaded = configuration["threaded"]
+		dataPin = configuration["pins"]["data"]
+		clockPin = configuration["pins"]["clock"]
+		enablePin = configuration["pins"]["enable"]
+		dataPin = configuration["pins"]["data"]
+		if "pollingTime" in configuration:
+			pollingTime = configuration["pollingTime"]
 
 		if threaded:
 			if pollingTime:
-				return ei1050Sensor(ID,device,dataPin,clockPin,enablePin,threaded=True,pollingTime=pollingTime,name = n,description = d)
+				return Ei1050Sensor(ID,device,dataPin,clockPin,enablePin,threaded=True,pollingTime=pollingTime,name = n,description = d)
 			else: 
-				return ei1050Sensor(ID,device,dataPin,clockPin,enablePin,threaded=True,name = n,description = d)
+				return Ei1050Sensor(ID,device,dataPin,clockPin,enablePin,threaded=True,name = n,description = d)
 		else:
-			return ei1050Sensor(device,dataPin,clockPin,enablePin)
+			return Ei1050Sensor(ID,device,dataPin,clockPin,enablePin)
