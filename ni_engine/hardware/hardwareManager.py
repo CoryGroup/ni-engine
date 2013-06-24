@@ -41,7 +41,7 @@ class HardwareManager(object):
 			self.addHardware(x)
 
 	def getHardware(self,hardwareId):
-		if hardwareId in self.hardware:
+		if hardwareId in self.hardware:			
 			return self.hardware[hardwareId]
 		else: raise ValueError("{0} is not a valid hardware id".format(hardwareId))
 

@@ -18,6 +18,9 @@ sensors:
     clock: 5
     enable: 7
     power: 7
-   
+
+configuration:
+ storeMeasurement: True
+    
 
 

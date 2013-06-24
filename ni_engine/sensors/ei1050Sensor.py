@@ -1,13 +1,13 @@
 import abstractSensor, ei1050, Queue
 import config
-
+from measurement import Measurement
 class Ei1050Sensor(abstractSensor.AbstractSensor):
 	code = "EI1050"
 	name = "EI1050Sensor"
 	description = " "
 	def __init__(self,ID,device,dataPin,clockPin,enablePin,threaded=False,pollingTime=0.5,name=name,description=description):
 
-		self.device = device, 
+		self.device = device
 		self.dataPin = dataPin
 		self.clockPin = clockPin
 		self.enablePin = enablePin
@@ -21,19 +21,24 @@ class Ei1050Sensor(abstractSensor.AbstractSensor):
 	def connect(self):
 		if self.threaded:
 			self.queue = Queue.LifoQueue()
-			self.probe = ei1050.EI1050Reader(device,self.queue,self.enablePin,self.dataPin,self.clockPin)
+			self.probe = ei1050.EI1050Reader(self.device,self.queue,enablePinNum=self.enablePin,dataPinNum=self.dataPin,clockPinNum=self.clockPin)
 			self.probe.run()
 		else:
-			self.probe = ei1050.EI1050(device,self.enablePin,self.dataPin,self.clockPin)
+			self.probe = ei1050.EI1050(self.device,enablePinNum=self.enablePin,dataPinNum=self.dataPin,clockPinNum=self.clockPin)
 
 	def measure(self):
 
 		if self.threaded: 
-			measurement = self.queue.get(block=True,timeout=None)
+			reading= self.queue.get(block=True,timeout=None)			
 		else:
-			measurement = self.probe.getReading()
+			reading = self.probe.getReading()
 
-		return measurement
+		temperature = Measurement(self.id,Ei1050Sensor.code,"Temperature",reading.getTemperature(),time=reading.getTime(),)
+		humidity = Measurement(self.id,Ei1050Sensor.code,"Humidity",reading.getHumidity(),time=reading.getTime(),)
+		measurementDict = dict()
+		measurementDict['temperature'] = temperature
+		measurementDict['humidity'] = humidity
+		return measurementDict
 
 
 	def disconnect(self):
@@ -47,6 +52,7 @@ class Ei1050Sensor(abstractSensor.AbstractSensor):
 	@classmethod
 	def create(cls,configuration,device):
 		#extract config info
+		
 		ID = configuration[config.idString]
 		n = Ei1050Sensor.name
 		d = Ei1050Sensor.description
@@ -63,7 +69,7 @@ class Ei1050Sensor(abstractSensor.AbstractSensor):
 			pollingTime = configuration["pollingTime"]
 
 		if threaded:
-			if pollingTime:
+			if pollingTime:				
 				return Ei1050Sensor(ID,device,dataPin,clockPin,enablePin,threaded=True,pollingTime=pollingTime,name = n,description = d)
 			else: 
 				return Ei1050Sensor(ID,device,dataPin,clockPin,enablePin,threaded=True,name = n,description = d)

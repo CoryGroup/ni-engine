@@ -1,7 +1,7 @@
 import yaml 
 import os 
 import sys
-import config
+import configVariables as config
 class Configuration(object):
 	
 
@@ -12,10 +12,10 @@ class Configuration(object):
 		if 'configFile' in kwargs:
 			self.configFile = kwargs['configFile']
 		inter = open(self.availableInterfaces,'r')
-		interfaces = yaml.load(inter)
-
-		self.availableSensors = interfaces['sensors']
-		self.availableHardware = interfaces['hardware'] 
+		interfaces = yaml.load(inter)		
+		self.availableSensors = interfaces[config.sensorString]
+		self.availableHardware = interfaces[config.hardwareString] 
+		
 
 	def readConfig(self,configFile=None):
 		if configFile:
@@ -27,9 +27,11 @@ class Configuration(object):
 
 		self.yamlConfig = yaml.load(file)
 
-		self.sensors = self.yamlConfig['sensors']
+		self.sensors = self.yamlConfig[config.sensorString]
 
-		self.hardware = self.yamlConfig['hardware']
+		self.hardware = self.yamlConfig[config.hardwareString]
+
+		self.configuration = self.yamlConfig[config.configurationString]
 
 		if self.validateConfig():
 			return True
@@ -93,7 +95,7 @@ class Configuration(object):
 	def areSensortoHardwareValid(self):
 		idDict = dict()
 		for x in self.hardware:			
-			idDict[x['id']] = x
+			idDict[x[config.idString]] = x
 		for y in self.sensors:			
 			if y[config.hardwareIdString] not in idDict:
 				raise ValueError("Sensor reference id does not have hardware match")
@@ -116,6 +118,14 @@ class Configuration(object):
 			return True
 		
 		return False
+
+
+	@property
+	def storeMeasurements(self):
+		if config.storeMeasurementString in self.configuration:
+			return self.configuration[config.storeMeasurementString]
+		else: 
+			return False
 
 	
 

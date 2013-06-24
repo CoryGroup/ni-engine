@@ -1,7 +1,7 @@
-from abstractSensor import *
-from ei1050Sensor import *
-from sensorFactory import *
-from sensorManager import *
+from abstractSensor import AbstractSensor
+from ei1050Sensor import Ei1050Sensor
+from sensorFactory import SensorFactory
+from sensorManager import SensorManager
 
 
 # Register all predefined Sensors here

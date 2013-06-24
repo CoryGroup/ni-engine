@@ -8,3 +8,7 @@ class Measurement(object):
 		self.measurementName = measurementName
 		self.value = value 
 		self.time = time
+
+
+	def __lt__(self,other):
+		return self.time < other.time

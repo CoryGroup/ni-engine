@@ -8,7 +8,7 @@ import sys
 import u3
 import u6
 import ue9
-
+from datetime import datetime
 class EI1050(object):
     """
     EI1050 class to simplify communication with an EI1050 probe
@@ -31,20 +31,17 @@ class EI1050(object):
     UE9_DEFAULT_ENABLE_PIN_NUM = 3
     FIO_PIN_STATE = 0
     
-    def __init__(self, device, autoUpdate=True, enablePinNum=-1, dataPinNum = -1, clockPinNum = -1, shtOptions = 0xc0):
+    def __init__(self, device, autoUpdate=True, enablePinNum=-1, dataPinNum = -1, clockPinNum = -1, shtOptions = 0xc0,deviceType=3):
         self.device = device
         self.autoUpdate = autoUpdate
         self.dataPinNum = dataPinNum
         self.clockPinNum = clockPinNum
         self.shtOptions = shtOptions
         self.enablePinNum = enablePinNum
-        self.curState = { 'StatusReg' : None, 'StatusCRC' : None, 'Temperature' : None, 'TemperatureCRC' : None, 'Humidity' : None, 'HumidityCRC' : None }
-
+        self.curState = { 'StatusReg' : None, 'StatusCRC' : None, 'Temperature' : None, 'TemperatureCRC' : None, 'Humidity' : None, 'HumidityCRC' : None,'Time':None }
+        self.deviceType = deviceType
         # Determine device type
-        if self.device.__class__.__name__ == EI1050.U3_STRING: self.deviceType = EI1050.U3
-        elif self.device.__class__.__name__ == EI1050.U6_STRING: self.deviceType = EI1050.U6
-        elif self.device.__class__.__name__ == EI1050.UE9_STRING: self.deviceType = EI1050.UE9
-        else:
+        if not (self.deviceType == EI1050.U3 or self.deviceType == EI1050.U6 or EI1050.deviceType == self.UE9): 
             raise TypeError('Invalid device passed. Can not get default values.')
 
         # If not specified otherwise, use class default for the data pin number
@@ -179,7 +176,7 @@ class Reading:
         self.__temperatureCRC = temperatureCRC
         self.__humidity = humidity
         self.__humidityCRC = humidityCRC
-   
+        self.__time = datetime.now()
     def getStatus(self):
         """
         Name: Reading.getStatus()
@@ -221,6 +218,13 @@ class Reading:
         Desc: Get cyclic redundancy check for humidity reading
         """
         return self.__humidityCRC
+
+    def getTime(self):
+        """
+        Name: Reading.getTime()
+        Desc: Get time of measurement
+        """
+        return self.__time
 
 class EI1050Reader(threading.Thread):
     """

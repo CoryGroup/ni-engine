@@ -1,2 +1,2 @@
-from configuration import *
-from configVariables import *
+from .configVariables import codeString,hardwareIdString,isOnString,idString,nameString,descriptionString,sensorString,hardwareString,configurationString,storeMeasurementString
+from .configuration import Configuration
