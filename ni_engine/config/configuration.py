@@ -15,7 +15,7 @@ class Configuration(object):
 		interfaces = yaml.load(inter)		
 		self.availableSensors = interfaces[config.sensorString]
 		self.availableHardware = interfaces[config.hardwareString] 
-		
+		self.availableControllers = interfaces[config.controllersString]
 
 	def readConfig(self,configFile=None):
 		if configFile:
@@ -54,7 +54,7 @@ class Configuration(object):
 			if config.codeString in x:
 				hard.append(x[config.codeString])
 			else:  
-				raise ValueError("All sensors and hardware must have sensor code in configuration")
+				raise ValueError("All sensors must have sensor code in configuration")
 		return hard
 
 	@property 
@@ -64,14 +64,24 @@ class Configuration(object):
 			if config.codeString in x:
 				hard.append(x[config.codeString])
 			else:  
-				raise ValueError("All sensors and hardware must have sensor code in configuration")
+				raise ValueError("All hardware must have sensor code in configuration")
+		return hard
+
+	@property
+	def requiredControllers(self): 
+		hard =[]
+		for x in self.controllers:
+			if config.codeString in x:
+				hard.append(x[config.codeString])
+			else:  
+				raise ValueError("All controllers must have sensor code in configuration")
 		return hard
 	
 
 
-	def areValidSensorReferenced(self):		
+	def areValidSensorReferenced(self,requiredSensors):		
 
-		for x in self.requiredSensors:
+		for x in requiredSensors:
 			if x not in self.availableSensors:
 				raise ValueError("Not all sensor references are valid")
 				return False
@@ -80,23 +90,34 @@ class Configuration(object):
 				return False
 		return True
 
-	def isValidHardwareReferenced(self):		
+	def areValidControllersReferenced(self,requiredControllers):		
 
-		for x in self.requiredHardware:
+		for x in requiredControllers:
+			if x not in self.availableControllers:
+				raise ValueError("Not all controller references are valid")
+				return False
+			elif not self.availableControllers[x][config.isOnString]:
+				raise ValueError("Controller not enabled")
+				return False
+		return True
+
+	def isValidHardwareReferenced(self,requiredHardware):		
+
+		for x in requiredHardware:
 			if  x not in self.availableHardware:
 				raise ValueError("Not all hardware references are valid")
 				return False
 			elif not self.availableHardware[x][config.isOnString]:
-				raise ValueError("Sensor not enabled")
+				raise ValueError("Hardware not enabled")
 				return False
 		return True
 
-
-	def areSensortoHardwareValid(self):
+	# Takes a configuration to reference hardware by token: hardwareID
+	def areReferencetoHardwareValid(self,referenceConfig):
 		idDict = dict()
 		for x in self.hardware:			
 			idDict[x[config.idString]] = x
-		for y in self.sensors:			
+		for y in referenceConfig:			
 			if y[config.hardwareIdString] not in idDict:
 				raise ValueError("Sensor reference id does not have hardware match")
 				return False
@@ -109,12 +130,28 @@ class Configuration(object):
 
 		return True
 
-	def validateConfig(self):
-		sensorVal = self.areValidSensorReferenced()
-		hardwareVal = self.isValidHardwareReferenced()
-		crossRefVal = self.areSensortoHardwareValid()
+	def areReferencetoSensorValid(self,referenceConfig):
+		idDict = dict()
+		for x in self.sensors:			
+			idDict[x[config.idString]] = x
+		for y in referenceConfig:			
+			if y[config.sensorIdString] not in idDict:
+				raise ValueError("Sensor reference id does not have hardware match")
+				return False
+			
 
-		if sensorVal and hardwareVal and crossRefVal:
+		return True
+
+	def validateConfig(self):
+		sensorVal = self.areValidSensorReferenced(self.requiredSensors)
+		hardwareVal = self.isValidHardwareReferenced(self.requiredHardware)
+		controllerVal = self.areValidControllersReferenced(self.requiredControllers)
+		crossRefSensorHardwareVal = self.areReferencetoHardwareValid(self.sensors)
+		crossRefControllerHardwareVal = self.areReferencetoHardwareValid(self.controllers)
+		refToSensors = self.areReferencetoSensorValid(self.controllers)
+		
+		if sensorVal and hardwareVal and controllerVal and crossRefSensorHardwareVal and \
+		crossRefControllerHardwareVal and refToSensors:
 			return True
 		
 		return False

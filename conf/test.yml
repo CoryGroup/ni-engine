@@ -28,8 +28,9 @@ controllers:
    pins: 
     voltage: 8
     crowbar: 9
-   temperature:
-    tempID: temp1
+   sensors:   
+    - sensorID: temp1
+      type: temperature
     # If sensor isn't setup you must set a default temperature with 
     # Currently in Kelvin
    #default: 300
