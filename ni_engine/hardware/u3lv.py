@@ -1,7 +1,7 @@
 import u3 
 import config
 class U3LV(u3.U3):
-	code = "u3lv"
+	code = "U3LV"
 	name = "Labjack U3-LV low volatage"
 	description = ""
 	def __init__(self,ID,name=name,description=description):

@@ -2,7 +2,7 @@
 hardware:
  - name: labjack U3-LV
    description: Labjack for temperature sensor
-   code: u3lv 
+   code: U3LV 
    id: lab1
 
 
@@ -18,6 +18,21 @@ sensors:
     clock: 5
     enable: 7
     power: 7
+
+controllers:
+ - name: KEPCO Power Supply
+   description: Voltage controlled power Supply
+   code: KEPCO
+   hardwareID: lab1 
+   id: kepco1
+   pins: 
+    voltage: 8
+    crowbar: 9
+   temperature:
+    tempID: temp1
+    # If sensor isn't setup you must set a default temperature with 
+    # Currently in Kelvin
+   #default: 300
 
 configuration:
  storeMeasurement: True

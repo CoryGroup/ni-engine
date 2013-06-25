@@ -1,11 +1,19 @@
 hardware:
- u3lv:
+ U3LV:
   enabled: True
   sensors:
    EI1050:
      enabled: True
+  controllers:
+   KEPCO:
+    enabled: True
 
 
 sensors: 
  EI1050:
   enabled: True
+
+controllers: 
+ KEPCO:
+  enabled: True
+
