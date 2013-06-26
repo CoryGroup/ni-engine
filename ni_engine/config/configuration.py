@@ -31,6 +31,8 @@ class Configuration(object):
 
 		self.hardware = self.yamlConfig[config.hardwareString]
 
+		self.controllers = self.yamlConfig[config.controllersString]
+
 		self.configuration = self.yamlConfig[config.configurationString]
 
 		if self.validateConfig():
@@ -113,19 +115,36 @@ class Configuration(object):
 		return True
 
 	# Takes a configuration to reference hardware by token: hardwareID
-	def areReferencetoHardwareValid(self,referenceConfig):
+	def areSensorReferencetoHardwareValid(self,referenceConfig):
 		idDict = dict()
 		for x in self.hardware:			
 			idDict[x[config.idString]] = x
 		for y in referenceConfig:			
 			if y[config.hardwareIdString] not in idDict:
-				raise ValueError("Sensor reference id does not have hardware match")
+				raise ValueError("Sensor: {0} reference id does not have hardware match".format(y[config.hardwareIdString] ))
 				return False
 			elif y[config.codeString] not in self.availableHardware[idDict[y[config.hardwareIdString]][config.codeString]][config.sensorsForPlatformString]:
-				raise ValueError("Sensor not available for platform")
+				raise ValueError("Sensor: {0} not available for platform".format(y[config.hardwareIdString] ))
 				return False
 			elif  not self.availableHardware[idDict[y[config.hardwareIdString]][config.codeString]][config.sensorsForPlatformString][y[config.codeString]][config.isOnString]:
-				raise ValueError("Sensor not enabled for platform")
+				raise ValueError("Sensor: {0} not enabled for platform".format(y[config.hardwareIdString] ))
+				return False
+
+		return True
+
+	def areControllerReferencetoHardwareValid(self,referenceConfig):
+		idDict = dict()
+		for x in self.hardware:			
+			idDict[x[config.idString]] = x
+		for y in referenceConfig:			
+			if y[config.hardwareIdString] not in idDict:
+				raise ValueError("Controller: {0} reference id does not have hardware match".format(y[config.hardwareIdString] ))
+				return False
+			elif y[config.codeString] not in self.availableHardware[idDict[y[config.hardwareIdString]][config.codeString]][config.controllersForPlatformString]:
+				raise ValueError("Controller: {0} not available for platform".format(y[config.hardwareIdString] ))
+				return False
+			elif  not self.availableHardware[idDict[y[config.hardwareIdString]][config.codeString]][config.controllersForPlatformString][y[config.codeString]][config.isOnString]:
+				raise ValueError("Controller: {0} not enabled for platform".format(y[config.hardwareIdString] ))
 				return False
 
 		return True
@@ -134,10 +153,12 @@ class Configuration(object):
 		idDict = dict()
 		for x in self.sensors:			
 			idDict[x[config.idString]] = x
-		for y in referenceConfig:			
-			if y[config.sensorIdString] not in idDict:
-				raise ValueError("Sensor reference id does not have hardware match")
-				return False
+
+		for x in referenceConfig:
+			for y in x[config.sensorsForPlatformString]:		
+				if y[config.sensorIdString] not in idDict:
+					raise ValueError("Sensor reference id does not have hardware match")
+					return False
 			
 
 		return True
@@ -146,8 +167,8 @@ class Configuration(object):
 		sensorVal = self.areValidSensorReferenced(self.requiredSensors)
 		hardwareVal = self.isValidHardwareReferenced(self.requiredHardware)
 		controllerVal = self.areValidControllersReferenced(self.requiredControllers)
-		crossRefSensorHardwareVal = self.areReferencetoHardwareValid(self.sensors)
-		crossRefControllerHardwareVal = self.areReferencetoHardwareValid(self.controllers)
+		crossRefSensorHardwareVal = self.areSensorReferencetoHardwareValid(self.sensors)
+		crossRefControllerHardwareVal = self.areControllerReferencetoHardwareValid(self.controllers)
 		refToSensors = self.areReferencetoSensorValid(self.controllers)
 		
 		if sensorVal and hardwareVal and controllerVal and crossRefSensorHardwareVal and \
