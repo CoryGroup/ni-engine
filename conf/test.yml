@@ -19,6 +19,13 @@ sensors:
     clock: 5
     enable: 7
     power: 7
+ 
+ - name: Labjack Internal Temperature
+   description: Internal temperature of Labjack (k)
+   code: LABINT
+   hardwareID: lab1 
+   id: temp2
+
 
 controllers:
  - name: KEPCO Power Supply
@@ -34,7 +41,7 @@ controllers:
    defaultVoltage: 0
    maxVoltage: 10
    sensors:   
-    - sensorID: temp1
+    - sensorID: temp2
       type: temperature
     # If sensor isn't setup you must set a default temperature with 
     # Currently in Kelvin

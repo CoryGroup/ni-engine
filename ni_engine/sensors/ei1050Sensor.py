@@ -5,7 +5,7 @@ class Ei1050Sensor(abstractSensor.AbstractSensor):
 	code = "EI1050"
 	name = "EI1050Sensor"
 	description = " "
-
+	KELVINCONVERSION = 293.15
 	def __init__(self,ID,device,dataPin,clockPin,enablePin,threaded=False,pollingTime=0.5,name=name,description=description,retryLim=20):
 
 		self.device = device
@@ -18,7 +18,7 @@ class Ei1050Sensor(abstractSensor.AbstractSensor):
 		self.name = name
 		self.description = description
 		self.retryLim = retryLim
-
+		self.retries = 0
 
 	def connect(self):
 		if self.threaded:
@@ -41,10 +41,11 @@ class Ei1050Sensor(abstractSensor.AbstractSensor):
 
 			else:
 				reading = self.probe.getReading()
-
-			temperature = Measurement(self.id,Ei1050Sensor.code,"Temperature",reading.getTemperature(),time=reading.getTime(),)
-			humidity = Measurement(self.id,Ei1050Sensor.code,"Humidity",reading.getHumidity(),time=reading.getTime(),)
+			temp = reading.getTemperature()  + Ei1050Sensor.KELVINCONVERSION # convert from celsius to kelvin
+			temperature = Measurement(self.id,Ei1050Sensor.code,"Temperature",temp,time=reading.getTime())
+			humidity = Measurement(self.id,Ei1050Sensor.code,"Humidity",reading.getHumidity(),time=reading.getTime())
 			measurementDict = dict()
+
 			measurementDict['temperature'] = temperature
 			measurementDict['humidity'] = humidity
 			self.retries =0

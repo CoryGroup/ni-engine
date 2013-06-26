@@ -3,7 +3,9 @@ hardware:
   enabled: True
   sensors:
    EI1050:
-     enabled: True
+    enabled: True
+   LABINT:
+    enabled: True
   controllers:
    KEPCO:
     enabled: True
@@ -11,6 +13,8 @@ hardware:
 
 sensors: 
  EI1050:
+  enabled: True
+ LABINT:
   enabled: True
 
 controllers: 
