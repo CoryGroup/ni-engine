@@ -1,4 +1,3 @@
-import yaml
 from sensorFactory import SensorFactory
 
 
@@ -25,6 +24,7 @@ class SensorManager(object):
 	
 	def removeSensorByName(self,sensorName):
 		if sensorName: 
+			sensor = self.sensors[sensorName]
 			del self.sensors[sensorName]
 			sensor.disconnect()
 
@@ -101,6 +101,13 @@ class SensorManager(object):
 		for k,v in self.sensors.items():
 			self.measure(v)
 		return self.getAllData()
+
+
+	def getSensor(self,sensorId):
+		if sensorId in self.sensors:			
+			return self.sensors[sensorId]
+		else: raise ValueError("{0} is not a valid sensor id".format(sensorId))
+
 
 	@classmethod
 	def registerSensor(cls,sensor):

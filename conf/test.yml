@@ -30,6 +30,9 @@ controllers:
    pins: 
     voltage: 8
     crowbar: 9
+  # maxVoltage in volts
+   defaultVoltage: 0
+   maxVoltage: 10
    sensors:   
     - sensorID: temp1
       type: temperature
