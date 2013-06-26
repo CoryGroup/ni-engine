@@ -230,10 +230,10 @@ class EI1050Reader(threading.Thread):
     """
     A simple threading class to read EI1050 values
     """
-    def __init__(self, device, targetQueue, readingDelay=1, autoUpdate=True, enablePinNum=-1, dataPinNum = -1, clockPinNum = -1, shtOptions = 0xc0):
+    def __init__(self, device, targetQueue, pollingTime=1, autoUpdate=True, enablePinNum=-1, dataPinNum = -1, clockPinNum = -1, shtOptions = 0xc0):
 
         try:
-            self.readingDelay = readingDelay # How long to wait between reads (in sec)
+            self.pollingTime = pollingTime # How long to wait between reads (in sec)
             self.targetQueue = targetQueue # The queue in which readings will be placed
             self.probe = EI1050(device, autoUpdate, enablePinNum, dataPinNum, clockPinNum, shtOptions)
             self.running = False
@@ -253,7 +253,7 @@ class EI1050Reader(threading.Thread):
         while self.running:
             try:
                 self.targetQueue.put(self.probe.getReading())
-                time.sleep(self.readingDelay)
+                time.sleep(self.pollingTime)
             except:
                 self.exception = sys.exc_info()
                 self.stop()

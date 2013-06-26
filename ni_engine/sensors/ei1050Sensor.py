@@ -5,7 +5,8 @@ class Ei1050Sensor(abstractSensor.AbstractSensor):
 	code = "EI1050"
 	name = "EI1050Sensor"
 	description = " "
-	def __init__(self,ID,device,dataPin,clockPin,enablePin,threaded=False,pollingTime=0.5,name=name,description=description):
+
+	def __init__(self,ID,device,dataPin,clockPin,enablePin,threaded=False,pollingTime=0.5,name=name,description=description,retryLim=20):
 
 		self.device = device
 		self.dataPin = dataPin
@@ -16,30 +17,45 @@ class Ei1050Sensor(abstractSensor.AbstractSensor):
 		self.id = ID
 		self.name = name
 		self.description = description
+		self.retryLim = retryLim
 
 
 	def connect(self):
 		if self.threaded:
 			self.queue = Queue.LifoQueue()
 			self.probe = ei1050.EI1050Reader(self.device,self.queue,enablePinNum=self.enablePin,dataPinNum=self.dataPin,clockPinNum=self.clockPin)
-			self.probe.run()
+			
+			self.probe.start()
+			
 		else:
 			self.probe = ei1050.EI1050(self.device,enablePinNum=self.enablePin,dataPinNum=self.dataPin,clockPinNum=self.clockPin)
 
 	def measure(self):
+		try:
+			if self.threaded: 
+							
+				reading= self.queue.get(block=True,timeout=None)
+				if self.queue.qsize() >=100:
+					self.queue.clear()
+				self.queue.put(reading)
 
-		if self.threaded: 
-			reading= self.queue.get(block=True,timeout=None)			
-		else:
-			reading = self.probe.getReading()
+			else:
+				reading = self.probe.getReading()
 
-		temperature = Measurement(self.id,Ei1050Sensor.code,"Temperature",reading.getTemperature(),time=reading.getTime(),)
-		humidity = Measurement(self.id,Ei1050Sensor.code,"Humidity",reading.getHumidity(),time=reading.getTime(),)
-		measurementDict = dict()
-		measurementDict['temperature'] = temperature
-		measurementDict['humidity'] = humidity
-		return measurementDict
-
+			temperature = Measurement(self.id,Ei1050Sensor.code,"Temperature",reading.getTemperature(),time=reading.getTime(),)
+			humidity = Measurement(self.id,Ei1050Sensor.code,"Humidity",reading.getHumidity(),time=reading.getTime(),)
+			measurementDict = dict()
+			measurementDict['temperature'] = temperature
+			measurementDict['humidity'] = humidity
+			self.retries =0
+			return measurementDict
+		except Exception as e:
+			self.retries += 1
+			print "Measurement not successful retrying"
+			print e
+			if self.retries < self.retryLim:
+				return self.measure()
+			else: raise Exception("Measurement could not be completed: Retry limit exceeded")
 
 	def disconnect(self):
 		if self.threaded:
@@ -65,9 +81,11 @@ class Ei1050Sensor(abstractSensor.AbstractSensor):
 		clockPin = configuration["pins"]["clock"]
 		enablePin = configuration["pins"]["enable"]
 		dataPin = configuration["pins"]["data"]
+
 		if "pollingTime" in configuration:
 			pollingTime = configuration["pollingTime"]
-
+		else: 
+			pollingTime = None
 		if threaded:
 			if pollingTime:				
 				return Ei1050Sensor(ID,device,dataPin,clockPin,enablePin,threaded=True,pollingTime=pollingTime,name = n,description = d)

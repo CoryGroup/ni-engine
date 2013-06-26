@@ -12,7 +12,8 @@ sensors:
    code: EI1050
    hardwareID: lab1
    id: temp1
-   threaded: False
+   threaded: True
+   pollingTime: 5
    pins:
     data: 4
     clock: 5
