@@ -15,7 +15,7 @@ class AbstractSensor(object):
 
 
 	# abstract method to handle sensor creation based on configuration
-	@staticmethod
-	def create(config):
+	@classmethod
+	def create(cls,config):
 		raise NotImplementedError
 		

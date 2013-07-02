@@ -1,6 +1,8 @@
 import u3 
 import config
-class U3LV(u3.U3):
+from urlvBitSetter import U3LVBitSetter
+from abstractHardware import AbstractHardware
+class U3LV(AbstractHardware,u3.U3,U3LVBitSetter):
 	code = "U3LV"
 	name = "Labjack U3-LV low volatage"
 	description = ""
@@ -11,6 +13,9 @@ class U3LV(u3.U3):
 
 	def delete(self):
 		del self
+
+	def setAnalog(listOfPins):
+
 
 	@classmethod
 	def create(cls,configuration):

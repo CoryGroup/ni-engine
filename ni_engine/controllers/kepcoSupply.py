@@ -1,6 +1,6 @@
 import config 
-
-class KepcoSupply(abstractController):
+from LJTDAC import LJTDAC
+class KepcoSupply(LJTDAC):
 	code = 'kepco'
 	name = 'Kepco Power Supply'
 	description = 'Voltage controlled Kepco Power Supply 0-10V'
