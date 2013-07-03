@@ -1,8 +1,8 @@
-import ei1050Sensor
 import config
-class SensorFactory(object):
+
+class ControllerFactory(object):
 	
-	sensorBuilders = dict()
+	controllerBuilders = dict()
 
 	def __init__(self,hardwareManager,sensorManager):
 		self.hardwareManager = hardwareManager
@@ -33,11 +33,15 @@ class SensorFactory(object):
 		return self.hardwareManager.getHardware(hardwareId)
 
 	def getSensors(self,configuration):
-		sensorIDs = map(lambda x: x[config.sensorIdString],configuration)
-		return dict(zip(sensorIDs,map(lambda x : self.sensorManager.getSensor(x),sensorIDs)))
+		if config.sensorsForPlatformString in configuration:
+			sensorIDs = map(lambda x: x[config.sensorIdString],configuration[config.sensorsForPlatformString])
+			return dict(zip(sensorIDs,map(lambda x : self.sensorManager.getSensor(x),sensorIDs)))
+		
+		return dict()
+
 
 
 	@classmethod
-	def registerSensor(cls,sensor):
-		code = sensor.code
-		cls.sensorBuilders[code]= sensor
+	def registerController(cls,controller):
+		code = controller.code
+		cls.controllerBuilders[code]= controller

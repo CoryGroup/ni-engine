@@ -1,5 +1,5 @@
 
-class AbstractSensor(object):
+class AbstractHardware(object):
 
 	metaInfo = ""
 

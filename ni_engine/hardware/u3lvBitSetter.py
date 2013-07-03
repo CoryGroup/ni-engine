@@ -1,6 +1,6 @@
-import abstractBitSetter
+from abstractBitSetter import AbstractBitSetter
 import u3
-class U3LVBitSetter(abstractBitSetter):
+class U3LVBitSetter(AbstractBitSetter):
 
 	def setPinsToAnalog(self,*pinNums):
 		eioNum = 0

@@ -1,2 +1,4 @@
-from .configVariables import codeString,hardwareIdString,isOnString,idString,nameString,descriptionString,sensorString,hardwareString,configurationString,storeMeasurementString
+from .configVariables import codeString,hardwareIdString,isOnString,idString,nameString,descriptionString,sensorString,hardwareString,configurationString,storeMeasurementString,sensorsForPlatformString, \
+sensorIdString
+
 from .configuration import Configuration

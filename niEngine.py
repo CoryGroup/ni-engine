@@ -9,7 +9,7 @@ except Exception:
 import config
 import sensors
 import hardware
-import config
+import controllers
 class NiEngine(object):
 	def __init__(self,sensorConfig,availableConfig):
 		self.configuration = config.Configuration(availableConfig)
@@ -18,7 +18,8 @@ class NiEngine(object):
 		self.hardwareManager.addAllHardware()
 		self.sensorManager = sensors.SensorManager(self.configuration,self.hardwareManager)
 		self.sensorManager.addAllSensors()
-
+		self.controllerManager =  controllers.ControllerManager(self.configuration,self.hardwareManager,self.sensorManager)
+		self.controllerManager.addAllControllers()
 
 	
 		

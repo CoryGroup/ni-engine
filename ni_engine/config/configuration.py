@@ -155,11 +155,12 @@ class Configuration(object):
 			idDict[x[config.idString]] = x
 
 		for x in referenceConfig:
-			for y in x[config.sensorsForPlatformString]:		
-				if y[config.sensorIdString] not in idDict:
-					raise ValueError("Sensor reference id does not have hardware match")
-					return False
-			
+			if config.sensorsForPlatformString in x:		
+				for y in x[config.sensorsForPlatformString]:		
+					if y[config.sensorIdString] not in idDict:
+						raise ValueError("Sensor reference id does not have hardware match")
+						return False
+				
 
 		return True
 

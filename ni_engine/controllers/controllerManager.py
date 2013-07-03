@@ -8,9 +8,9 @@ class ControllerManager(object):
 				
 		self.configuration = configuration
 		self.controllers= dict()
-		self.controllerFactory = SensorFactory(hardwareManager,sensorManager)
+		self.controllerFactory = ControllerFactory(hardwareManager,sensorManager)
 		
-	def addSensor(self,sensorConfig):
+	def addController(self,controllerConfig):
 		controller = self.controllerFactory.createController(controllerConfig)
 		self.controllers[controller.id] = controller
 		controller.connect()
@@ -50,4 +50,4 @@ class ControllerManager(object):
 
 	@classmethod
 	def registerController(cls,controller):
-		SensorFactory.registerSensor(sensor)
+		ControllerFactory.registerController(controller)

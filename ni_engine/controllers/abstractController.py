@@ -1,4 +1,4 @@
-class AbstractSensor(object):
+class AbstractController(object):
 
 	metaInfo = ""
 

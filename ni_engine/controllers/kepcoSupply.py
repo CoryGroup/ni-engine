@@ -1,5 +1,6 @@
 import config 
-from LJTDAC import LJTDAC
+from ljtdac import LJTDAC
+
 class KepcoSupply(LJTDAC):
 	code = 'kepco'
 	name = 'Kepco Power Supply'
@@ -18,13 +19,9 @@ class KepcoSupply(LJTDAC):
 		self.description = description
 
 	def connect(self):
-		self.initialiseDefault()
+		self.initializeDefault()
 
-
-
-
-
-	@staticmethod 
+	@classmethod 
 	def create(cls,configuration,hardware,sensors):
 		ID = configuration[config.idString]
 		n = cls.name

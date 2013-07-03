@@ -9,11 +9,8 @@ class SensorFactory(object):
 		
 
 	def createSensor(self,config):
-		print len(SensorFactory.sensorBuilders)
-		for k in SensorFactory.sensorBuilders:
-			print k
-		sensorCode = self.getCode(config)
-		print sensorCode
+		
+		sensorCode = self.getCode(config)		
 		hardware = self.getHardware(config)		
 		if sensorCode in SensorFactory.sensorBuilders:
 			return SensorFactory.sensorBuilders[sensorCode].create(config,hardware)		
