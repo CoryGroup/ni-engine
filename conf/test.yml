@@ -29,23 +29,24 @@ sensors:
 
 controllers:
  #- name: KEPCO Power Supply
- #  description: Voltage controlled power Supply
- # code: KEPCO
- #  hardwareID: lab1 
- #  threaded: False
- #  id: kepco1
- #  pins: 
- #   voltage: 8
- #   crowbar: 9
- # # maxVoltage in volts
- #  defaultVoltage: 0
- #  maxVoltage: 10
- #  sensors:   
- #   - sensorID: temp2
- #     type: temperature
-    # If sensor isn't setup you must set a default temperature with 
-    # Currently in Kelvin
-   #temperature: 300
+  # description: Voltage controlled power Supply
+ #  code: KEPCO
+  # hardwareID: lab1 
+  # threaded: False
+  # id: kepco1
+  # pins: 
+  #  voltage: 8
+  #  crowbar: 9
+ ### maxVoltage in volts
+  # defaultVoltage: 0
+  # maxVoltage: 10
+  # sensors:   
+  #  - sensorID: temp2
+  #    type: temperature
+  #  # If sensor isn't setup you must set a default temperature with 
+  #   #Currently in Kelvin
+  # temperature: 300
+ 
  - name: LJTDAC Test
    description: Testing the LJTDAC
    code: LJTDAC
@@ -53,7 +54,7 @@ controllers:
    id: testDAC
    defaultVoltage: 0 
    maxVoltage: 10
-   #Fio/Eio dac pin
+  #Fio/Eio dac pin
    pins:
     dac: 8
 

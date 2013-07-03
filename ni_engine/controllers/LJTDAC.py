@@ -11,6 +11,7 @@ class LJTDAC(AbstractController):
 	U3_DAC_PIN_OFFSET = 0
 	EEPROM_ADDRESS = 0x50
 	DAC_ADDRESS = 0x12
+	CALIBRATION_OFFSET = 0.03
  	def __init__(self,ID,device,dacPin,defaultVoltage=0,maxVoltage=10,name=name,description=description):
 		self.id = ID 
 		self.device = device
@@ -41,17 +42,28 @@ class LJTDAC(AbstractController):
 		pass
 
 	def setVoltage(self,voltageA=None,voltageB=None,retries=5):
+		self.getCalConstants()		
 		if voltageA is not None:
 			self.voltageA = voltageA
 		if voltageB is not None:  
 			self.voltageB = voltageB
+		print self.voltageB
+		#apply calibration function
+		self.voltageA = self.calibrationFunction(self.voltageA)
+		self.voltageB = self.calibrationFunction(self.voltageB)
+		print self.voltageB
 		if self.voltageA > self.maxVoltage:
-			self.voltageA %= self.maxVoltage
+			self.voltageA = self.maxVoltage
+		elif self.voltageA < -self.maxVoltage:
+			self.voltageA = -self.maxVoltage
+
 		if self.voltageB > self.maxVoltage:
-			self.voltageA %= self.maxVoltage
+			self.voltageB = self.maxVoltage
+		elif self.voltageB < -self.maxVoltage:
+			self.voltageB = -self.maxVoltage
 
 		try:
-			self.device.i2c(LJTDAC.DAC_ADDRESS, [48, int(((self.voltageA*self.aSlope)+self.aOffset)/256), int(((self.voltageA*self.aSlope)+self.aOffset)%256)], SDAPinNum = self.sdaPin, SCLPinNum = self.sclPin)
+			self.device.i2c(LJTDAC.DAC_ADDRESS, [48, int(self.calibrationFunction(((self.voltageA*self.aSlope)+self.aOffset))/256), int(self.calibrationFunction(((self.voltageA*self.aSlope)+self.aOffset))%256)], SDAPinNum = self.sdaPin, SCLPinNum = self.sclPin)
 			self.device.i2c(LJTDAC.DAC_ADDRESS, [49, int(((self.voltageB*self.bSlope)+self.bOffset)/256), int(((self.voltageB*self.bSlope)+self.bOffset)%256)], SDAPinNum = self.sdaPin, SCLPinNum = self.sclPin)
 		except Exception as a:
 			print e
@@ -60,7 +72,7 @@ class LJTDAC(AbstractController):
             
 		
 	def getCalConstants(self):		 
-              
+             
         # Make request
 		data = self.device.i2c(LJTDAC.EEPROM_ADDRESS, [64], NumI2CBytesToReceive=36, SDAPinNum = self.sdaPin, SCLPinNum = self.sclPin)
 		response = data['I2CBytes']
@@ -71,6 +83,13 @@ class LJTDAC(AbstractController):
 
 		if 255 in response: raise IOError("The calibration constants for controller: {0} seem a little off. Please go into settings and make sure the pin numbers are correct and that the LJTickDAC is properly attached.".format(self.id))
 	
+	#calibrates function to be more accurate
+	#testing has shown than an adjusted voltage follows equation
+	#As far as I can tell builtin calibration function for dac is optimal
+	#just return the required voltage than until a better calibration function is found
+	def calibrationFunction(self,voltage):
+		return voltage
+		
 	def toDouble(self,buffer):
 		"""
 		Name: toDouble(buffer)

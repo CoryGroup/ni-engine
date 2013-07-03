@@ -20,7 +20,7 @@ class ControllerFactory(object):
 			return ControllerFactory.controllerBuilders[controllerCode].create(config,hardware,sensors)		
 
 		else:
-			raise Exception("Sensor Type not recognised") 
+			raise Exception("Sensor Type: {0} not recognised".format(controllerCode)) 
 
 	
 	
