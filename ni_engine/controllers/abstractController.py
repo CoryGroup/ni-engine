@@ -9,7 +9,6 @@ class AbstractController(object):
 	def disconnect(self):
 		raise NotImplementedError	
 
-
 	# abstract method to handle sensor creation based on configuration
 	@classmethod
 	def create(cls,config):

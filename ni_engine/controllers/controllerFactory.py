@@ -8,9 +8,7 @@ class ControllerFactory(object):
 		self.hardwareManager = hardwareManager
 		self.sensorManager = sensorManager
 
-	def createController(self,config):
-		
-		
+	def createController(self,config):		
 		controllerCode = self.getCode(config)		
 		hardware = self.getHardware(config)
 		sensors = self.getSensors(config)		
@@ -18,10 +16,7 @@ class ControllerFactory(object):
 			return ControllerFactory.controllerBuilders[controllerCode].create(config,hardware,sensors)		
 
 		else:
-			raise Exception("Controller Type: {0} not recognised".format(controllerCode)) 
-
-	
-	
+			raise Exception("Controller Type: {0} not recognised".format(controllerCode))	
 
 	def getCode(self,configuration):
 		return configuration[config.codeString]
@@ -36,8 +31,6 @@ class ControllerFactory(object):
 			return dict(zip(sensorIDs,map(lambda x : self.sensorManager.getSensor(x),sensorIDs)))
 		
 		return dict()
-
-
 
 	@classmethod
 	def registerController(cls,controller):

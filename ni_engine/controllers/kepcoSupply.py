@@ -31,9 +31,7 @@ class KepcoSupply(AbstractController):
 			self.voltageB = self.dacVoltage(self.defaultCrowbar)
 		else:
 			self.voltageA = self.dacVoltage(self.defaultCrowbar)
-			self.voltageB = self.dacVoltage(self.defaultVoltage)
-
-		
+			self.voltageB = self.dacVoltage(self.defaultVoltage)		
 
 	def connect(self):
 		self.initializeDefaults()
@@ -41,7 +39,6 @@ class KepcoSupply(AbstractController):
 	def initializeDefaults(self):
 		self.ljtdac = LJTDAC('kepco supply dac',self.hardware,min(self.voltagePin,self.crowbarPin),defaultVoltage=0,maxVoltage=10,name="LJTDAC Kepco",description="Controller managed by Kepco Supply to control it")
 		self.setVoltage()
-
 	
 	def setVoltage(self,voltage=None,crowbar=None):
 		if voltage is not None:
@@ -60,7 +57,6 @@ class KepcoSupply(AbstractController):
 
 	def dacVoltage(self,voltage):
 		return 10.0*voltage/self.maxVoltage
-
 
 	@classmethod 
 	def create(cls,configuration,hardware,sensors):

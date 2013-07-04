@@ -25,7 +25,6 @@ class LabJackInternalSensor(AbstractSensor):
 	def disconnect(self):
 		del self
 
-
 	@classmethod
 	def create(cls,configuration,device):
 		ID = configuration[config.idString]

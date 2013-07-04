@@ -5,21 +5,16 @@ class SensorFactory(object):
 	sensorBuilders = dict()
 
 	def __init__(self,hardwareManager):
-		self.hardwareManager = hardwareManager
-		
+		self.hardwareManager = hardwareManager		
 
-	def createSensor(self,config):
-		
+	def createSensor(self,config):		
 		sensorCode = self.getCode(config)		
 		hardware = self.getHardware(config)		
 		if sensorCode in SensorFactory.sensorBuilders:
 			return SensorFactory.sensorBuilders[sensorCode].create(config,hardware)		
 
 		else:
-			raise Exception("Sensor Type not recognised") 
-
-	
-	
+			raise Exception("Sensor Type not recognised")	
 
 	def getCode(self,configuration):
 		return configuration[config.codeString]

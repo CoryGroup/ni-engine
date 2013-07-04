@@ -3,8 +3,7 @@ import u3
 from hardwareFactory import HardwareFactory
 class HardwareManager(object):
 
-	def __init__(self,configuration):
-				
+	def __init__(self,configuration):				
 		self.configuration = configuration
 		self.hardware = dict()
 		self.hardwareFactory = HardwareFactory()
@@ -44,7 +43,6 @@ class HardwareManager(object):
 		if hardwareId in self.hardware:			
 			return self.hardware[hardwareId]
 		else: raise ValueError("{0} is not a valid hardware id".format(hardwareId))
-
 
 	@classmethod
 	def registerHardware(cls,hardware):

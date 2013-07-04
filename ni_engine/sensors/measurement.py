@@ -9,6 +9,5 @@ class Measurement(object):
 		self.value = value 
 		self.time = time
 
-
 	def __lt__(self,other):
 		return self.time < other.time

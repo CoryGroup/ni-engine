@@ -3,13 +3,13 @@ from sensorFactory import SensorFactory
 
 class SensorManager(object):
 	
-	def __init__(self,configuration,hardwareManager):
-				
+	def __init__(self,configuration,hardwareManager):				
 		self.configuration = configuration
 		self.sensors = dict()
 		self.sensorFactory = SensorFactory(hardwareManager)
 		self.measurements = dict()
 		self.storeMeasurements = self.configuration.storeMeasurements
+		
 	def addSensor(self,sensorConfig):
 		sensor = self.sensorFactory.createSensor(sensorConfig)
 		self.sensors[sensor.id] = sensor
@@ -34,7 +34,6 @@ class SensorManager(object):
 		for k,v in self.sensors.iteritems():
 			v.disconnect()
 		self.sensors = dict()
-
 
 	def parseFactoryYaml(self,configYaml):
 		return configYaml

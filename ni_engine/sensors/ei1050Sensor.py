@@ -7,7 +7,6 @@ class Ei1050Sensor(abstractSensor.AbstractSensor):
 	description = " "
 	KELVINCONVERSION = 293.15
 	def __init__(self,ID,device,dataPin,clockPin,enablePin,threaded=False,pollingTime=0.5,name=name,description=description,retryLim=20):
-
 		self.device = device
 		self.dataPin = dataPin
 		self.clockPin = clockPin
@@ -68,8 +67,7 @@ class Ei1050Sensor(abstractSensor.AbstractSensor):
 
 	@classmethod
 	def create(cls,configuration,device):
-		#extract config info
-		
+		#extract config info		
 		ID = configuration[config.idString]
 		n = Ei1050Sensor.name
 		d = Ei1050Sensor.description

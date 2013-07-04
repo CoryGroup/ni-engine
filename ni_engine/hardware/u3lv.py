@@ -13,7 +13,6 @@ class U3LV(u3.U3,AbstractHardware,U3LVBitSetter):
 
 	def delete(self):
 		del self
-
 	
 	@classmethod
 	def create(cls,configuration):

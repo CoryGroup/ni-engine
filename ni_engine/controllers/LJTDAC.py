@@ -12,6 +12,7 @@ class LJTDAC(AbstractController):
 	EEPROM_ADDRESS = 0x50
 	DAC_ADDRESS = 0x12
 	CALIBRATION_OFFSET = 0.03
+	
  	def __init__(self,ID,device,dacPin,defaultVoltage=0,maxVoltage=10,name=name,description=description):
 		self.id = ID 
 		self.device = device
@@ -68,11 +69,9 @@ class LJTDAC(AbstractController):
 		except Exception as a:
 			print e
 			print("retrying")
-			self.setVoltage(retries=retries-1)
-            
+			self.setVoltage(retries=retries-1)            
 		
-	def getCalConstants(self):		 
-             
+	def getCalConstants(self):             
         # Make request
 		data = self.device.i2c(LJTDAC.EEPROM_ADDRESS, [64], NumI2CBytesToReceive=36, SDAPinNum = self.sdaPin, SCLPinNum = self.sclPin)
 		response = data['I2CBytes']
