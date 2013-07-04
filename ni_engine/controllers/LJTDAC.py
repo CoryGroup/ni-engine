@@ -47,11 +47,11 @@ class LJTDAC(AbstractController):
 			self.voltageA = voltageA
 		if voltageB is not None:  
 			self.voltageB = voltageB
-		print self.voltageB
+		
 		#apply calibration function
 		self.voltageA = self.calibrationFunction(self.voltageA)
 		self.voltageB = self.calibrationFunction(self.voltageB)
-		print self.voltageB
+		
 		if self.voltageA > self.maxVoltage:
 			self.voltageA = self.maxVoltage
 		elif self.voltageA < -self.maxVoltage:

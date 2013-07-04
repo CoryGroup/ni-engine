@@ -10,17 +10,15 @@ class ControllerFactory(object):
 
 	def createController(self,config):
 		
-		for k in ControllerFactory.controllerBuilders:
-			print k
-		controllerCode = self.getCode(config)
-		print controllerCode
+		
+		controllerCode = self.getCode(config)		
 		hardware = self.getHardware(config)
 		sensors = self.getSensors(config)		
 		if controllerCode in ControllerFactory.controllerBuilders:
 			return ControllerFactory.controllerBuilders[controllerCode].create(config,hardware,sensors)		
 
 		else:
-			raise Exception("Sensor Type: {0} not recognised".format(controllerCode)) 
+			raise Exception("Controller Type: {0} not recognised".format(controllerCode)) 
 
 	
 	

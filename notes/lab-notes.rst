@@ -108,3 +108,6 @@
  -Installed Microsoft powerpoint viewer
  -Installed ComSolve
  
+ 04-July-2013
+ - Installed Microsoft office for excel
+ - Installed R and R studio
