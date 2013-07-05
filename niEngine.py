@@ -1,25 +1,25 @@
 import sys
 
 try:
-	sys.path.append("ni_engine/configuration")
-	sys.path.append("ni_engine/")	
+    sys.path.append("ni_engine/configuration")
+    sys.path.append("ni_engine/")    
 except Exception:
-	print "Couldn't import paths"
+    print "Couldn't import paths"
 
 import config
 import sensors
 import hardware
 import controllers
 class NiEngine(object):
-	def __init__(self,sensorConfig,availableConfig):
-		self.configuration = config.Configuration(availableConfig)
-		self.configuration.readConfig(sensorConfig)
-		self.hardwareManager = hardware.HardwareManager(self.configuration)
-		self.hardwareManager.addAllHardware()
-		self.sensorManager = sensors.SensorManager(self.configuration,self.hardwareManager)
-		self.sensorManager.addAllSensors()
-		self.controllerManager =  controllers.ControllerManager(self.configuration,self.hardwareManager,self.sensorManager)
-		self.controllerManager.addAllControllers()
+    def __init__(self,sensor_config,available_config):
+        self.configuration = config.Configuration(available_config)
+        self.configuration.readConfig(sensor_config)
+        self.hardware_manager = hardware.HardwareManager(self.configuration)
+        self.hardware_manager.addAllHardware()
+        self.sensor_manager = sensors.SensorManager(self.configuration,self.hardware_manager)
+        self.sensor_manager.addAllSensors()
+        self.controllerManager =  controllers.ControllerManager(self.configuration,self.hardware_manager,self.sensor_manager)
+        self.controllerManager.addAllControllers()
 
-	
-		
+    
+        

@@ -6,5 +6,5 @@ from ljtdac import LJTDAC
 
 
 # Register all predefined Sensors here
-ControllerManager.registerController(KepcoSupply)
-ControllerManager.registerController(LJTDAC)
+ControllerManager.register_controller(KepcoSupply)
+ControllerManager.register_controller(LJTDAC)

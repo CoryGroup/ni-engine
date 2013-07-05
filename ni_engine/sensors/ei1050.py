@@ -31,13 +31,13 @@ class EI1050(object):
     UE9_DEFAULT_ENABLE_PIN_NUM = 3
     FIO_PIN_STATE = 0
     
-    def __init__(self, device, autoUpdate=True, enablePinNum=-1, dataPinNum = -1, clockPinNum = -1, shtOptions = 0xc0,deviceType=3):
+    def __init__(self, device, autoUpdate=True, enable_pinNum=-1, data_pinNum = -1, clock_pinNum = -1, shtOptions = 0xc0,deviceType=3):
         self.device = device
         self.autoUpdate = autoUpdate
-        self.dataPinNum = dataPinNum
-        self.clockPinNum = clockPinNum
+        self.data_pinNum = data_pinNum
+        self.clock_pinNum = clock_pinNum
         self.shtOptions = shtOptions
-        self.enablePinNum = enablePinNum
+        self.enable_pinNum = enable_pinNum
         self.curState = { 'StatusReg' : None, 'StatusCRC' : None, 'Temperature' : None, 'TemperatureCRC' : None, 'Humidity' : None, 'HumidityCRC' : None,'Time':None }
         self.deviceType = deviceType
         # Determine device type
@@ -45,36 +45,36 @@ class EI1050(object):
             raise TypeError('Invalid device passed. Can not get default values.')
 
         # If not specified otherwise, use class default for the data pin number
-        if self.enablePinNum == -1:
-            if self.deviceType == EI1050.U3: self.enablePinNum = EI1050.U3_DEFAULT_ENABLE_PIN_NUM
-            elif self.deviceType == EI1050.U6: self.enablePinNum = EI1050.U6_DEFAULT_ENABLE_PIN_NUM
-            elif self.deviceType == EI1050.UE9: self.enablePinNum = EI1050.UE9_DEFAULT_ENABLE_PIN_NUM
+        if self.enable_pinNum == -1:
+            if self.deviceType == EI1050.U3: self.enable_pinNum = EI1050.U3_DEFAULT_ENABLE_PIN_NUM
+            elif self.deviceType == EI1050.U6: self.enable_pinNum = EI1050.U6_DEFAULT_ENABLE_PIN_NUM
+            elif self.deviceType == EI1050.UE9: self.enable_pinNum = EI1050.UE9_DEFAULT_ENABLE_PIN_NUM
             else:
                 raise TypeError('Invalid device passed. Can not get default values.')
 
         # If not specified otherwise, use class default for the data pin number
-        if self.dataPinNum == -1:
-            if self.deviceType == EI1050.U3: self.dataPinNum = EI1050.U3_DEFAULT_DATA_PIN_NUM
-            elif self.deviceType == EI1050.U6: self.dataPinNum = EI1050.U6_DEFAULT_DATA_PIN_NUM
-            elif self.deviceType == EI1050.UE9: self.dataPinNum = EI1050.UE9_DEFAULT_DATA_PIN_NUM
+        if self.data_pinNum == -1:
+            if self.deviceType == EI1050.U3: self.data_pinNum = EI1050.U3_DEFAULT_DATA_PIN_NUM
+            elif self.deviceType == EI1050.U6: self.data_pinNum = EI1050.U6_DEFAULT_DATA_PIN_NUM
+            elif self.deviceType == EI1050.UE9: self.data_pinNum = EI1050.UE9_DEFAULT_DATA_PIN_NUM
             else:
                 raise TypeError('Invalid device passed. Can not get default values.')
 
         # If not specified otherwise, use class default for the clock pin number
-        if self.clockPinNum == -1:
-            if self.deviceType == EI1050.U3: self.clockPinNum = EI1050.U3_DEFAULT_CLOCK_PIN_NUM
-            elif self.deviceType == EI1050.U6: self.clockPinNum = EI1050.U6_DEFAULT_CLOCK_PIN_NUM
-            elif self.deviceType == EI1050.UE9: self.clockPinNum = EI1050.UE9_DEFAULT_CLOCK_PIN_NUM
+        if self.clock_pinNum == -1:
+            if self.deviceType == EI1050.U3: self.clock_pinNum = EI1050.U3_DEFAULT_CLOCK_PIN_NUM
+            elif self.deviceType == EI1050.U6: self.clock_pinNum = EI1050.U6_DEFAULT_CLOCK_PIN_NUM
+            elif self.deviceType == EI1050.UE9: self.clock_pinNum = EI1050.UE9_DEFAULT_CLOCK_PIN_NUM
             else:
                 raise TypeError('Invalid device passed. Can not get default values.')
 
         # Set U3 pins
         if self.deviceType == EI1050.U3:
-            self.device.configIO(FIOAnalog = EI1050.FIO_PIN_STATE)
+            self.device.configIO(fio_analog = EI1050.FIO_PIN_STATE)
         
         # Set to write out
-        if self.deviceType == EI1050.U3: self.device.getFeedback(u3.BitDirWrite(self.enablePinNum,1))
-        elif self.deviceType == EI1050.U6: self.device.getFeedback(u6.BitDirWrite(self.enablePinNum,1))
+        if self.deviceType == EI1050.U3: self.device.getFeedback(u3.BitDirWrite(self.enable_pinNum,1))
+        elif self.deviceType == EI1050.U6: self.device.getFeedback(u6.BitDirWrite(self.enable_pinNum,1))
 
     def enableAutoUpdate(self):
         """
@@ -151,9 +151,9 @@ class EI1050(object):
         Name: EI1050.update()
         Desc: Gets a fresh set of readings from this probe
         """
-        self.writeBitState(self.enablePinNum,1) # Enable the probe
-        self.curState = self.device.sht1x(self.dataPinNum, self.clockPinNum, self.shtOptions)
-        self.writeBitState(self.enablePinNum,0) # Disable the probe
+        self.writeBitState(self.enable_pinNum,1) # Enable the probe
+        self.curState = self.device.sht1x(self.data_pinNum, self.clock_pinNum, self.shtOptions)
+        self.writeBitState(self.enable_pinNum,0) # Disable the probe
          
     def writeBitState(self, pinNum, state):
         """
@@ -230,12 +230,12 @@ class EI1050Reader(threading.Thread):
     """
     A simple threading class to read EI1050 values
     """
-    def __init__(self, device, targetQueue, pollingTime=1, autoUpdate=True, enablePinNum=-1, dataPinNum = -1, clockPinNum = -1, shtOptions = 0xc0):
+    def __init__(self, device, targetQueue, polling_time=1, autoUpdate=True, enable_pinNum=-1, data_pinNum = -1, clock_pinNum = -1, shtOptions = 0xc0):
 
         try:
-            self.pollingTime = pollingTime # How long to wait between reads (in sec)
+            self.polling_time = polling_time # How long to wait between reads (in sec)
             self.targetQueue = targetQueue # The queue in which readings will be placed
-            self.probe = EI1050(device, autoUpdate, enablePinNum, dataPinNum, clockPinNum, shtOptions)
+            self.probe = EI1050(device, autoUpdate, enable_pinNum, data_pinNum, clock_pinNum, shtOptions)
             self.running = False
             self.exception = None
             threading.Thread.__init__(self, group=None)
@@ -253,7 +253,7 @@ class EI1050Reader(threading.Thread):
         while self.running:
             try:
                 self.targetQueue.put(self.probe.getReading())
-                time.sleep(self.pollingTime)
+                time.sleep(self.polling_time)
             except:
                 self.exception = sys.exc_info()
                 self.stop()

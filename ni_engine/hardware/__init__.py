@@ -1,6 +1,6 @@
 from hardwareFactory import HardwareFactory
-from hardwareManager import HardwareManager
+from hardware_manager import HardwareManager
 from u3lv import U3LV
 #Register all predefined hardware here
 
-HardwareManager.registerHardware(U3LV)
+HardwareManager.register_hardware(U3LV)

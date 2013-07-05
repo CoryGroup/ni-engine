@@ -54,7 +54,7 @@ controllers:
 
 
 configuration:
- storeMeasurement: True
+ storeMeasurements: True
     
 
 
