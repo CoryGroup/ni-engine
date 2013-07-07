@@ -18,8 +18,8 @@ class NiEngine(object):
         self.hardware_manager.addAllHardware()
         self.sensor_manager = sensors.SensorManager(self.configuration,self.hardware_manager)
         self.sensor_manager.addAllSensors()
-        self.controllerManager =  controllers.ControllerManager(self.configuration,self.hardware_manager,self.sensor_manager)
-        self.controllerManager.addAllControllers()
+        self.controller_manager =  controllers.ControllerManager(self.configuration,self.hardware_manager,self.sensor_manager)
+        self.controller_manager.addAllControllers()
 
     
         

@@ -1,4 +1,4 @@
-from abstractSensor import AbstractSensor
+from abstract_sensor import AbstractSensor
 import ei1050
 import Queue
 import config

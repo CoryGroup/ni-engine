@@ -1,6 +1,6 @@
-from abstractSensor import AbstractSensor
-from ei1050Sensor import Ei1050Sensor
-from labJackInternalSensor import LabJackInternalSensor
+from abstract_sensor import AbstractSensor
+from ei1050_sensor import Ei1050Sensor
+from lab_jack_internal_sensor import LabJackInternalSensor
 from sensor_factory import SensorFactory
 from sensor_manager import SensorManager
 
