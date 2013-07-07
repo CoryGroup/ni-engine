@@ -94,6 +94,7 @@
  - Tested that LJTickDAC connected to FIO4/5 block produced correct output, up to small calibration errors.
  - Installed example for temp/humidity probe http://labjack.com/support/ei-1050/sample-windows.
  - Tested that temp/humidity probe works when connected as instructed in the example application.
+ 
  10-June-2013
  ===========
  
@@ -101,13 +102,16 @@
  - Updated LabJack Firmware
  
  13-June-2013 
+ ============
+
  - Installed pip via http://www.lfd.uci.edu/~gohlke/pythonlibs/#distribute to allow easy installation of libraries 
- - Installed text editor sublime-text-2 
- 
+ - Installed text editor sublime-text-2  
  17-June-2013
  -Installed Microsoft powerpoint viewer
  -Installed ComSolve
  
  04-July-2013
+ ============
+
  - Installed Microsoft office for excel
  - Installed R and R studio

@@ -1,7 +1,7 @@
 import yaml 
 import os 
 import sys
-import configVariables as config
+import config_variables as config
 class Configuration(object):
     
 
