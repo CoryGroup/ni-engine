@@ -8,3 +8,4 @@ from ljtdac import LJTDAC
 # Register all predefined Sensors here
 ControllerManager.register_controller(KepcoSupply)
 ControllerManager.register_controller(LJTDAC)
+ControllerManager.register_controller(Newport301Axis)

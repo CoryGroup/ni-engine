@@ -23,11 +23,9 @@ class Newport301(NewportESP301):
         ID = configuration[config.ID]
         n = U3LV.name
         d = U3LV.description
-        if config.NAME in configuration:
-            n= configuration[config.NAME]
-        if config.DESCRIPTION in configuration:
-            n= configuration[config.DESCRIPTION]
-        
+        d = configuration.get(config.DESCRIPTION,cls.description)
+        n = configuration.get(config.NAME,cls.name)
+        uri = configuration['uri']
 
 
         hardware = Newport301.open_from_uri(uri)

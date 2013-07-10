@@ -11,6 +11,11 @@ hardware:
     enabled: True
    LJTDAC:
     enabled: True
+ NEW301:
+  enabled: True
+  controllers:
+   NEWPORTAXIS:
+    enabled: True
 
 
 sensors: 
@@ -23,5 +28,7 @@ controllers:
  KEPCO:
   enabled: True
  LJTDAC: 
+  enabled: True
+ NEWPORTAXIS:
   enabled: True
 

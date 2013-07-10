@@ -115,3 +115,9 @@
 
  - Installed Microsoft office for excel
  - Installed R and R studio
+
+  21-July-2013
+ ===========
+ - installed pyusb via pip
+ - Installed libUsb-32 http://sourceforge.net/projects/libusb-win32/files/libusb-win32-releases/1.2.6.0/libusb-win32-bin-1.2.6.0.zip/download
+ - Installed serial port testing software. http://www.microridge.com/comtestserial.htm
