@@ -1,5 +1,10 @@
+"""
+Abstract controller module
+"""
 class AbstractController(object):
-
+    """
+    An abstractController class
+    """
     metaInfo = ""
 
     def connect(self):

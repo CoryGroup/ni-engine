@@ -1,4 +1,4 @@
-sfrom controllerFactory import ControllerFactory
+from controllerFactory import ControllerFactory
 
 
 class ControllerManager(object):
