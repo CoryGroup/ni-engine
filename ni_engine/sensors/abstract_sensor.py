@@ -1,12 +1,15 @@
 
 class AbstractSensor(object):
 
-    metaInfo = ""
+    
 
     def connect(self):
         raise NotImplementedError
 
     def disconnect(self):
+        raise NotImplementedError
+
+    def delete(self):
         raise NotImplementedError
 
     def measure(self):

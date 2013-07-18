@@ -3,7 +3,27 @@ import ei1050
 import Queue
 import config
 from measurement import Measurement
+from measurement_container import AbstractMeasurementContainer
 
+class Ei1050MeasurementContainer(AbstractMeasurementContainer):
+    def __init__(self,temperature,humidity):
+
+        super(ei1050MeasurementContainer,self).__init__(temperature=temperature ,humidity=humidity)
+
+    @property
+    def temperature(self):
+        return self['temperature']
+    
+    @property
+    def humidity(self):
+        return self['humidity']
+    
+    
+    
+    def _join(self,container):        
+
+        return Ei1050MeasurementContainer(self.temperature+container.temperature,
+                self.humidity+container.humidity)
 
 class Ei1050Sensor(AbstractSensor):
     code = "EI1050"
@@ -47,12 +67,9 @@ class Ei1050Sensor(AbstractSensor):
             temp = reading.getTemperature()  + Ei1050Sensor.KELVINCONVERSION # convert from celsius to kelvin
             temperature = Measurement(self.id,Ei1050Sensor.code,"Temperature",temp,time=reading.getTime())
             humidity = Measurement(self.id,Ei1050Sensor.code,"Humidity",reading.getHumidity(),time=reading.getTime())
-            measurementDict = dict()
-
-            measurementDict['temperature'] = temperature
-            measurementDict['humidity'] = humidity
+            container = Ei1050MeasurementContainer(temperature,humidity)
             self.retries =0
-            return measurementDict
+            return container
         except Exception as e:
             self.retries += 1
             print "Measurement not successful retrying"
@@ -64,10 +81,10 @@ class Ei1050Sensor(AbstractSensor):
     def disconnect(self):
         if self.threaded:
             self.probe.stop()
-            del self.probe
-        else: 
-            del self.probe
+            
 
+    def delete(self):
+        del self.probe
 
     @classmethod
     def create(cls,configuration,device):
