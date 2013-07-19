@@ -33,6 +33,10 @@ class SensorManager(object):
             Dictionary of configuration information for sensor
         """
         sensor = self.sensor_factory.create_sensor(sensor_config)
+
+        if not isinstance(sensor,AbstractSensor):
+            raise TypeError("Is not a sensor: {0}".format(type(sensor)))
+
         self.sensors[sensor.id] = sensor
         sensor.connect()
 
@@ -75,23 +79,8 @@ class SensorManager(object):
         for x in self.configuration.sensors:
             self.add_sensor(x)
 
-    def get_sensor_by_id(self,ID):
-        """
-        Gets a sensor based on its ID string_id
-
-        Parameters
-        ----------
-        ID : str
-            ID string of sensor
-
-        Returns 
-        -------
-        AbstractSensor
-
-        """
-        if ID in self.sensors:
-            return self.sensors[ID]
-        else: raise ValueError("No Sensor exists for id: {0}".format(ID))
+    
+        
 
     def get_data(self,sensor):
         """
@@ -160,6 +149,13 @@ class SensorManager(object):
         else: raise Exception("Sensor has no measurements available")
 
     def measure(self,sensor):
+        """
+        Measures a sensor 
+
+        """
+        if isinstance(sensor,str):
+            sensor = self.get_sensor(sensor)        
+
         if sensor.id not in self.measurements:
             sensorMeasurement = dict()
             self.measurements[sensor.id]= sensorMeasurement
@@ -188,14 +184,28 @@ class SensorManager(object):
         return self.get_data(sensor)
     def measure_all(self):
         for k,v in self.sensors.items():
+            print("measuring {0}".format(k))
             self.measure(v)
         return self.get_all_data()
 
 
     def get_sensor(self,sensor_id):
-        if sensor_id in self.sensors:            
-            return self.sensors[sensor_id]
-        else: raise ValueError("{0} is not a valid sensor id".format(sensor_id))
+        """
+        Gets a sensor based on its ID string_id
+
+        Parameters
+        ----------
+        ID : str
+            ID string of sensor
+
+        Returns 
+        -------
+        AbstractSensor
+
+        """
+        if ID in self.sensors:
+            return self.sensors[ID]
+        else: raise ValueError("No Sensor exists for id: {0}".format(ID))
 
 
     @classmethod

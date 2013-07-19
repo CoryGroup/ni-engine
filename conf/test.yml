@@ -15,10 +15,10 @@ sensors:
    threaded: True
    polling_time: 5
    pins:
-    data: 4
-    clock: 5
-    enable: 7
-    power: 7
+    data: 6
+    clock: 7
+    enable: 3
+    power: 3
  
  - name: Labjack Internal Temperature
    description: Internal temperature of Labjack (k)
@@ -54,7 +54,7 @@ controllers:
 
 
 configuration:
- store_measurements: True
+ store_measurements: False
     
 
 

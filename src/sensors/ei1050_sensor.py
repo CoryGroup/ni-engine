@@ -4,6 +4,7 @@ import Queue
 import config
 from measurement import Measurement
 from measurement_container import AbstractMeasurementContainer
+import quantities as pq
 
 class Ei1050MeasurementContainer(AbstractMeasurementContainer):
     """
@@ -11,7 +12,7 @@ class Ei1050MeasurementContainer(AbstractMeasurementContainer):
     """
     def __init__(self,temperature,humidity):
 
-        super(ei1050MeasurementContainer,self).__init__(temperature=temperature ,humidity=humidity)
+        super(Ei1050MeasurementContainer,self).__init__(temperature=temperature ,humidity=humidity)
 
     @property
     def temperature(self):
@@ -63,7 +64,7 @@ class Ei1050Sensor(AbstractSensor):
     name = "EI1050Sensor"
     description = " "
     KELVIN_CONVERSION = 293.15
-    def __init__(self,ID,device,data_pin,clock_pin,enable_pin,threaded=False,polling_time=0.5,name=name,description=description,retry_limit=20):
+    def __init__(self,ID,device,data_pin,clock_pin,enable_pin,threaded=False,polling_time=0.5,name=name,description=description,retry_limit=1):
         """
         Parameters
         ----------
@@ -131,9 +132,9 @@ class Ei1050Sensor(AbstractSensor):
 
             else:
                 reading = self._probe.getReading()
-            temp = reading.getTemperature()  + Ei1050Sensor.KELVINCONVERSION # convert from celsius to kelvin
+            temp = (reading.getTemperature()  + Ei1050Sensor.KELVIN_CONVERSION)*pq.K # convert from celsius to kelvin
             temperature = Measurement(self.id,Ei1050Sensor.code,"Temperature",temp,time=reading.getTime())
-            humidity = Measurement(self.id,Ei1050Sensor.code,"Humidity",reading.getHumidity(),time=reading.getTime())
+            humidity = Measurement(self.id,Ei1050Sensor.code,"Humidity",reading.getHumidity()*pq.percent,time=reading.getTime())
             container = Ei1050MeasurementContainer(temperature,humidity)
             self._retries =0
             return container

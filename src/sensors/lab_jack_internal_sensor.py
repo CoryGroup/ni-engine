@@ -1,8 +1,8 @@
-from abstractSensor import AbstractSensor
+from abstract_sensor import AbstractSensor
 import config
 from measurement import Measurement
 from measurement_container import AbstractMeasurementContainer
-
+import quantities as pq
 class TemperatureContainer(AbstractMeasurementContainer):
     """
     Container for holding temperature measurements. Implements `AbstractMeasurementContainer`
@@ -50,10 +50,10 @@ class LabJackInternalSensor(AbstractSensor):
         name : str
         description : str
         """
-        self.device = device
-        self.id = ID 
-        self.name = name
-        self.description = description
+        self._device = device
+        self._id = ID 
+        self._name = name
+        self._description = description
 
     def connect(self):
         """
@@ -69,8 +69,8 @@ class LabJackInternalSensor(AbstractSensor):
         -------
         TemperatureContainer
         """
-        temp = self.device.getTemperature()
-        measurement = Measurement(self.id,LabJackInternalSensor.code,"Temperature",temp)
+        temp = self._device.getTemperature()*pq.K
+        measurement = Measurement(self._id,LabJackInternalSensor.code,"Temperature",temp)
         container = TemperatureContainer(measurement)
         return container
 
