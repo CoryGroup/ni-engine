@@ -7,9 +7,7 @@ class AbstractHardware(Item):
     __metaclass__ = ABCMeta
     
 
-    def __init__(self):
-        self._name = ""
-        self._description = ""
+    
 
     @abstractmethod
     def disconnect(self):

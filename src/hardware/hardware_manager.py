@@ -5,31 +5,38 @@ class HardwareManager(object):
 
     def __init__(self,configuration):                
         self.configuration = configuration
-        self.hardware = dict()
-        self.hardwareFactory = HardwareFactory()
+        self._hardware = dict()
+        self._hardwareFactory = HardwareFactory()
     
     def add_hardware(self,hardware_config):
-        hardware = self.hardwareFactory.create_hardware(hardware_config)
-        self.hardware[hardware.id] = hardware
+        hardware = self._hardwareFactory.create_hardware(hardware_config)
+        self._hardware[hardware.id] = hardware
+
+    def add_all_hardware(self):
+        """
+        Adds all hardware in configuration
+        """
+        for x in self.configuration.hardware:
+            self.add_hardware(x)
 
     def remove_hardware(self,hardware):
         if hardware: 
-            del self.hardware[hardware.id]
+            del self._hardware[hardware.id]
             hardware.disconnect()
 
         else: raise ValueError("Must give valid object")
     
     def remove_hardware_by_name(self,hardware_name):
         if hardware_name: 
-            del self.hardware[hardware_name]
+            del self._hardware[hardware_name]
             hardware.disconnect()
 
         else: raise ValueError("Must give valid name")
 
     def remove_all(self):
-        for k,v in self.hardware.iteritems():
+        for k,v in self._hardware.iteritems():
             v.disconnect()
-        self.hardware = dict()
+        self._hardware = dict()
 
 
     def parse_factory_yaml(self,config_yaml):
@@ -40,8 +47,8 @@ class HardwareManager(object):
             self.add_hardware(x)
 
     def get_hardware(self,hardwareId):
-        if hardwareId in self.hardware:            
-            return self.hardware[hardwareId]
+        if hardwareId in self._hardware:            
+            return self._hardware[hardwareId]
         else: raise ValueError("{0} is not a valid hardware id".format(hardwareId))
 
     @classmethod

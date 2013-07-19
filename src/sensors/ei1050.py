@@ -70,7 +70,7 @@ class EI1050(object):
 
         # Set U3 pins
         if self.deviceType == EI1050.U3:
-            self.device.configIO(fio_analog = EI1050.FIO_PIN_STATE)
+            self.device.configIO(FIOAnalog = EI1050.FIO_PIN_STATE)
         
         # Set to write out
         if self.deviceType == EI1050.U3: self.device.getFeedback(u3.BitDirWrite(self.enable_pinNum,1))
@@ -238,9 +238,10 @@ class EI1050Reader(threading.Thread):
             self.probe = EI1050(device, autoUpdate, enable_pinNum, data_pinNum, clock_pinNum, shtOptions)
             self.running = False
             self.exception = None
+            
             threading.Thread.__init__(self, group=None)
         except:
-            self.exception = sys.exc_info()
+           self.exception = sys.exc_info()
 
     def stop(self):
         """

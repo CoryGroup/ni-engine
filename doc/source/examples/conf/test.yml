@@ -13,12 +13,12 @@ sensors:
    hardware_id: lab1
    id: temp1
    threaded: True
-   polling_time: 5
+   pollingTime: 5
    pins:
-    data: 4
-    clock: 5
-    enable: 7
-    power: 7
+    data: 6
+    clock: 7
+    enable: 3
+    
  
  - name: Labjack Internal Temperature
    description: Internal temperature of Labjack (k)
@@ -38,13 +38,13 @@ controllers:
     crowbar: 9
  ### maxVoltage in volts
    default_voltage: 0
-   max_voltage: 120
+   max_Voltage: 120
    
  
  #- name: LJTDAC Test
  #  description: Testing the LJTDAC
  #  code: LJTDAC
- #  hardware_id: lab1
+ #  hardwareID: lab1
  #  id: testDAC
  #  defaultVoltage: 0 
  #  maxVoltage: 10

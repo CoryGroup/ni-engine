@@ -5,4 +5,4 @@
 
 .. autoclass:: AbstractHardware
     :members:
-    :undoc-members:
+    

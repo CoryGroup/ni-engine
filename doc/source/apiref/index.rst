@@ -8,7 +8,7 @@ Contents:
 .. toctree::
     :maxdepth: 2
 
-    
+    configuration
     hardware
     sensors
     controllers

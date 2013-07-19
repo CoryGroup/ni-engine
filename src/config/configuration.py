@@ -3,11 +3,39 @@ import os
 import sys
 import config_variables as config
 class Configuration(object):
-    
+    """
+    Class to read configuration file and handle 
+    offloading of configuration information to other
+    classes as required.
+
+    *Sample available interfaces file:*
+
+    .. literalinclude:: ../examples/conf/available_interfaces.yml
+        :language: YAML
+
+    *Sample interfaces file:*
+
+    .. literalinclude:: ../examples/conf/test.yml
+        :language: YAML
+
+    """
 
     
     def __init__(self,availableInterfaces,**kwargs):
-        
+        """
+        Initializes configuration. 
+
+
+
+        Parameters
+        ----------
+
+        availableInterfaces : str
+            File path to string containing available hardware,controllers and sensors
+
+        kwargs : dict
+            Optional argument of "configFile" to pass a configuration file now
+        """
         self.availableInterfaces = availableInterfaces
         if 'configFile' in kwargs:
             self.configFile = kwargs['configFile']
@@ -18,6 +46,15 @@ class Configuration(object):
         self.availableControllers = interfaces[config.CONTROLLERS]
 
     def read_config(self,configFile=None):
+        """
+        Read in a configuration file and validate/extract information
+
+        Parameters
+        ----------
+        configFile : str         
+            A string containing path to a yaml configuration file
+
+        """
         if configFile:
             self.configFile = configFile
         if not self.configFile:
@@ -27,11 +64,11 @@ class Configuration(object):
 
         self.yamlConfig = yaml.load(file)
 
-        self.sensors = self.yamlConfig[config.SENSORS]
+        self._sensors = self.yamlConfig[config.SENSORS]
 
-        self.hardware = self.yamlConfig[config.HARDWARE]
+        self._hardware = self.yamlConfig[config.HARDWARE]
 
-        self.controllers = self.yamlConfig[config.CONTROLLERS]
+        self._controllers = self.yamlConfig[config.CONTROLLERS]
 
         self.configuration = self.yamlConfig[config.CONFIGURATION]
 
@@ -42,17 +79,42 @@ class Configuration(object):
             sys.exit(1)
 
     @property
-    def get_sensors(self):
-        return self.sensors
+    def sensors(self):
+        """
+        Returns dictionary of sensors in configuration file
+
+        Returns 
+        -------
+        dict
+        """
+        return self._sensors
 
     @property 
-    def get_hardware(self):
-        return self.hardware
+    def hardware(self):
+        """
+        Returns dictionary of hardware in configuration file
+
+        Returns 
+        -------
+        dict
+        """
+        return self._hardware
+
+    @property 
+    def controllers(self):
+        """
+        Returns dictionary of controllers in configuration file
+
+        Returns 
+        -------
+        dict
+        """
+        return self._controllers
 
     @property 
     def required_sensors(self): 
         hard =[]
-        for x in self.sensors:
+        for x in self._sensors:
             if config.CODE in x:
                 hard.append(x[config.CODE])
             else:  
@@ -62,7 +124,7 @@ class Configuration(object):
     @property 
     def required_hardware(self): 
         hard =[]
-        for x in self.hardware:
+        for x in self._hardware:
             if config.CODE in x:
                 hard.append(x[config.CODE])
             else:  
@@ -72,7 +134,7 @@ class Configuration(object):
     @property
     def required_controllers(self): 
         hard =[]
-        for x in self.controllers:
+        for x in self._controllers:
             if config.CODE in x:
                 hard.append(x[config.CODE])
             else:  
@@ -117,10 +179,15 @@ class Configuration(object):
     # Takes a configuration to reference hardware by token: hardwareID
     def are_sensor_reference_to_hardware_valid(self,referenceConfig):
         idDict = dict()
-        for x in self.hardware:            
+        for x in self._hardware:            
             idDict[x[config.ID]] = x
         for y in referenceConfig:            
-            if y[config.HARDWARE_ID] not in idDict:
+            if config.HARDWARE_ID not in y:
+                print y
+                print config.HARDWARE_ID
+                raise ValueError("Sensor: {0} does not have hardware_id parameter".format(y[config.ID] ))
+                return False                  
+            elif y[config.HARDWARE_ID] not in idDict:
                 raise ValueError("Sensor: {0} reference id does not have hardware match".format(y[config.HARDWARE_ID] ))
                 return False
             elif y[config.CODE] not in self.availableHardware[idDict[y[config.HARDWARE_ID]][config.CODE]][config.SENSORSS_FOR_PLATFORM]:
@@ -134,10 +201,13 @@ class Configuration(object):
 
     def are_controller_reference_to_hardware_valid(self,referenceConfig):
         idDict = dict()
-        for x in self.hardware:            
+        for x in self._hardware:            
             idDict[x[config.ID]] = x
-        for y in referenceConfig:            
-            if y[config.HARDWARE_ID] not in idDict:
+        for y in referenceConfig:   
+            if config.HARDWARE_ID not in y:
+                raise ValueError("Controller: {0} does not have hardware_id parameter".format(y[config.ID] ))
+                return False        
+            elif y[config.HARDWARE_ID] not in idDict:
                 raise ValueError("Controller: {0} reference id does not have hardware match".format(y[config.HARDWARE_ID] ))
                 return False
             elif y[config.CODE] not in self.availableHardware[idDict[y[config.HARDWARE_ID]][config.CODE]][config.CONTROLLERS_FOR_PLATFORM]:
@@ -151,7 +221,7 @@ class Configuration(object):
 
     def are__reference_to_sensor_valid(self,referenceConfig):
         idDict = dict()
-        for x in self.sensors:            
+        for x in self._sensors:            
             idDict[x[config.ID]] = x
 
         for x in referenceConfig:
@@ -168,9 +238,9 @@ class Configuration(object):
         sensorVal = self.are_valid_sensor_referenced(self.required_sensors)
         hardwareVal = self.is_valid_hardware_referenced(self.required_hardware)
         controllerVal = self.are_valid_controllers_referenced(self.required_controllers)
-        crossRefSensorHardwareVal = self.are_sensor_reference_to_hardware_valid(self.sensors)
-        crossRefControllerHardwareVal = self.are_controller_reference_to_hardware_valid(self.controllers)
-        refToSensors = self.are__reference_to_sensor_valid(self.controllers)
+        crossRefSensorHardwareVal = self.are_sensor_reference_to_hardware_valid(self._sensors)
+        crossRefControllerHardwareVal = self.are_controller_reference_to_hardware_valid(self._controllers)
+        refToSensors = self.are__reference_to_sensor_valid(self._controllers)
         
         if sensorVal and hardwareVal and controllerVal and crossRefSensorHardwareVal and \
         crossRefControllerHardwareVal and refToSensors:
@@ -181,6 +251,13 @@ class Configuration(object):
 
     @property
     def store_measurements(self):
+        """
+        Check to see if measurements should be stored in a storage engine
+
+        Returns
+        -------
+        bool
+        """
         if config.STORE_MEASUREMENTS in self.configuration:
             return self.configuration[config.STORE_MEASUREMENTS]
         else: 

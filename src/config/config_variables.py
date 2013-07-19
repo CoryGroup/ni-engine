@@ -1,9 +1,12 @@
 
 #Tokens to parse for in configuration files
-
+"""
+Variables that may be needed project wide
+"""
+#: Code String
 CODE = "code"
-HARDWARE_ID = "hardwareID"
-SENSORS_ID = "sensorID"
+HARDWARE_ID = "hardware_id"
+SENSORS_ID = "sensor_id"
 SENSORSS_FOR_PLATFORM = "sensors"
 CONTROLLERS_FOR_PLATFORM = "controllers"
 IS_ON = "enabled"
@@ -14,4 +17,4 @@ SENSORS = "sensors"
 HARDWARE = "hardware"
 CONTROLLERS = "controllers"
 CONFIGURATION = "configuration"
-STORE_MEASUREMENTS = "storeMeasurements"
+STORE_MEASUREMENTS = "store_measurements"
