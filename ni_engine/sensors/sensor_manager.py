@@ -139,6 +139,18 @@ class SensorManager(object):
             curr[k] = self.get_most_recent_data(sen)
 
     def get_most_recent_data(self,sensor):
+        """
+        Gets the current data of a sensor
+
+        Parameters
+        ----------
+        sensor : AbstractSensor
+
+        Returns 
+        -------
+        dictionary
+            Current data by measurement
+        """
         if sensor.id in self.measurements:
             data =  self.measurements[sensor.id]
             recentData = dict()

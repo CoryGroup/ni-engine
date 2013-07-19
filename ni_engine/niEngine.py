@@ -6,20 +6,20 @@ try:
 except Exception:
     print "Couldn't import paths"
 
-import config
-import sensors
-import hardware
-import controllers
+from config import Configuration
+from sensors import SensorManager
+from hardware import HardwareManager
+from controllers import ControllerManager
 class NiEngine(object):
     def __init__(self,sensor_config,available_config):
-        self.configuration = config.Configuration(available_config)
-        self.configuration.readConfig(sensor_config)
-        self.hardware_manager = hardware.HardwareManager(self.configuration)
-        self.hardware_manager.addAllHardware()
-        self.sensor_manager = sensors.SensorManager(self.configuration,self.hardware_manager)
-        self.sensor_manager.addAllSensors()
-        self.controller_manager =  controllers.ControllerManager(self.configuration,self.hardware_manager,self.sensor_manager)
-        self.controller_manager.addAllControllers()
+        self.configuration = Configuration(available_config)
+        self.configuration.read_config(sensor_config)
+        self.hardware_manager = HardwareManager(self.configuration)
+        self.hardware_manager.add_all_hardware()
+        self.sensor_manager = SensorManager(self.configuration,self.hardware_manager)
+        self.sensor_manager.add_all_sensors()
+        self.controller_manager =  ControllerManager(self.configuration,self.hardware_manager,self.sensor_manager)
+        self.controller_manager.add_all_controllers()
 
     
         

@@ -1,6 +1,6 @@
 import config 
 import u3
-from hardwareFactory import HardwareFactory
+from hardware_factory import HardwareFactory
 class HardwareManager(object):
 
     def __init__(self,configuration):                

@@ -19,7 +19,7 @@ class Newport301(NewportESP301):
 
 
     @classmethod
-    def create(cls,configuration)
+    def create(cls,configuration):
         ID = configuration[config.ID]
         n = U3LV.name
         d = U3LV.description

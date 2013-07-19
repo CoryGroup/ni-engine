@@ -1,10 +1,12 @@
-from abc import ABCMeta
+from abc import ABCMeta, abstractmethod , abstractproperty
 
-class AbstractMeasurementContainer(dict,metaclass=ABCMeta):
+class AbstractMeasurementContainer(dict):
     """
     Abstract class to hold all measurements. 
-    Must be implemented for passing of measurements
+    Must be implemented for passing of measurements    
     """
+
+    __metaclass__ = ABCMeta
 
     def __init__(self,*arg,**kw):
         super(AbstractMeasurementContainer,self).__init__(*arg,**kw)
@@ -32,7 +34,8 @@ class AbstractMeasurementContainer(dict,metaclass=ABCMeta):
         ----------
         container : AbstractMeasurementContainer
 
-        Returns :
+        Returns
+        -------
         AbstractMeasurementContainer
             New Holder object
 
@@ -46,18 +49,19 @@ class AbstractMeasurementContainer(dict,metaclass=ABCMeta):
             v.sort()
 
     def join(self,container):
-    """
-    Asserts instances are equal, than calls user implemented join function.
-    After join sorts into chronological order
+        """
+        Asserts instances are equal, than calls user implemented join function.
+        After join sorts into chronological order
 
-    Parameters
-    ----------
-    container : AbstractMeasurementContainer
+        Parameters
+        ----------
+        container : AbstractMeasurementContainer
 
-    Returns :
-    AbstractMeasurementContainer
-        New Holder object
-    """
+        Returns
+        -------    
+        :class:`.AbstractMeasurementContainer`
+            New Holder object
+        """
         if not isinstance(container,type(self)):
             raise TypeError("Instances must be of same type")
 

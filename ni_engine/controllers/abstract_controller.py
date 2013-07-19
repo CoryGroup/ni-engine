@@ -1,20 +1,41 @@
-"""
-Abstract controller module
-"""
-class AbstractController(object):
+
+
+from tools import Item
+from abc import ABCMeta, abstractmethod , abstractproperty
+
+class AbstractController(Item):
+    
     """
     An abstractController class
     """
-    metaInfo = ""
+    
+    __metaclass__ = ABCMeta 
 
+    
+
+    @abstractmethod
     def connect(self):
-        raise NotImplementedError
+        """
+        Abstract connect method
+        """
+        pass
 
-
+    @abstractmethod
     def disconnect(self):
-        raise NotImplementedError    
+        """
+        Abstract disconnect method
+        """
+        pass  
 
     # abstract method to handle sensor creation based on configuration
+
     @classmethod
+    @abstractmethod
     def create(cls,config):
-        raise NotImplementedError
+        """
+        Abstract method that when implemented is the intializer method for the controller.
+        Take a configuration
+        """
+        pass
+
+    

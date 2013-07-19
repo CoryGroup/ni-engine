@@ -1,56 +1,50 @@
 import config 
 from instruments.other import NewportESP301,NewportESP301Axis
 from abstractController import AbstractController
-from .hardware.newport301 import Newport301
+from hardware.newport301 import Newport301
 
 class Newport301Axis(AbstractController):
     code = 'NEWPORTAXIS'
     name = 'NewportESP 301 Axis'
     description = 'Axis of NewportESP 301 Axis Controller '    
     _default_position = 0
-    _default_velocity = 5
-    _default_acceleration = 3 
-    _default_deceleration = 3
-    _max_velocity = 40
-    _max_acceleration = 20 
+    
 
-    def __init__(self,ID,hardware,axis,home=_default_position,default_velocity=_default_velocity,default_acceleration=default_acceleration,
-                            default_deceleration=_default_deceleration,max_velocity=_max_velocity,max_acceleration=_max_acceleration,
-                            units,name=name,description=description,**optional_args):
+    def __init__(self,ID,hardware,axis, default_position,home,name=name,description=description,**optional_args):
         if not isinstance(controller, Newport301):
             raise TypeError("Axis must be controlled by a Newport ESP-301 motor hardware.")
 
         if not isinstance(axis, NewportESP301Axis):
             raise TypeError("Axis must be a Newport ESP-301 Axis.")
 
-        self.axis = axis
-        self.id = ID 
-        self.hardware = hardware
-        self._default_position = default_position
-        self._default_velocity = default_velocity
-        self._default_acceleration = default_acceleration
-        self._default_deceleration = default_deceleration
-        self._max_velocity = max_velocity
-        self._max_acceleration = max_acceleration          
-        self.name = name
-        self.description = description
-        self.optional_args = optional_args
+        
+        self._id = ID 
+        self._axis = self.axis
+        self._newport301 = self._hardware = hardware
+        self._default_position = default_position    
+        self._home = home             
+        self._name = name
+        self._description = description
+        self._optional_args = optional_args
 
     def connect(self):
         self.initialize_defaults()
+        self.move(self._default_position)
 
     def initialize_defaults(self):
-        with self.axis.execute_bulk_command(self):
-            self.axis.max_acceleration = self._max_acceleration
-            self.axis.max_velocity = self._max_velocity
-            self.axis.acceleration = self._default_acceleration
-            self.axis.deceleration = self._default_deceleration
-            self.axis.velocity = self._default_velocity
-            self.axis.home = self.home
+        with self._axis.execute_bulk_command(self):            
+            self._axis.home = self._home
         
             for key,value in self.optional_args.iteritems():
-                setattr(self.axis,key,value)
+                setattr(self._axis,key,value)
 
+
+
+    def move_absolute(self,position):
+        self._axis.move(position,absolute = True)
+
+    def move_relative(self,distance):
+        self._axis.move(distance)
 
  
 
@@ -59,7 +53,8 @@ class Newport301Axis(AbstractController):
         ID = configuration[config.ID]
         n = configuration.get(config.NAME,cls.name)
         d = configuration.get(config.DESCRIPTION,cls.description)
-        home = configuration.get("home",cls._default_position)
+        default_position = configuration.get("default_position",cls._default_position)
+        home = configuration.get("home",cls._home)
         default_velocity = configuration.get("default_velocity",cls._default_velocity)
         default_acceleration = configuration.get("default_acceleration",cls._default_acceleration)
         default_deceleration = configuration.get("default_deceleration",cls._default_deceleration)
@@ -71,6 +66,5 @@ class Newport301Axis(AbstractController):
         axis_id = configuration['axis_id']
         
                 
-        return Newport301Axis(ID,hardware,axis,home,default_velocity,default_acceleration,default_deceleration,
-                            max_velocity,max_acceleration,units=name=n,description=d,**optional_args)
+        return Newport301Axis(ID,hardware,axis,default_position,home,name=n,description=d,**optional_args)
 

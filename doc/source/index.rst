@@ -11,6 +11,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   apiref/index
 
 
 Indices and tables
@@ -20,9 +21,5 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-:class:`AbstractController` - Get money get paid
-=========================================================================
-.. currentmodule:: controllers
-.. autoclass:: AbstractController
-    :members:
-    :undoc-members:
+
+

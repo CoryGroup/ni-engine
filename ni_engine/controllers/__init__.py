@@ -3,7 +3,7 @@ from controller_factory import ControllerFactory
 from controller_manager import ControllerManager
 from kepco_supply import KepcoSupply
 from ljtdac import LJTDAC
-
+from newport301_axis import Newport301Axis
 
 # Register all predefined Sensors here
 ControllerManager.register_controller(KepcoSupply)

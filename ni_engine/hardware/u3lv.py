@@ -35,6 +35,7 @@ class U3LV(U3,AbstractHardware,U3LVBitSetter):
         super(U3LV,self).__init__()
         self.configU3()
         self.id = ID
+        self._name = name 
 
     def delete(self):
         del self
