@@ -8,7 +8,8 @@ class AbstractDataContainer(dict):
 
     __metaclass__ = ABCMeta
 
-    def __init__(self,max_stored_measurements=-1,*arg,**kw):
+    def __init__(self,ID,max_stored_measurements=-1,*arg,**kw):
+        self._id = ID
         self._max_stored_measurements = max_stored_measurements
         super(AbstractDataContainer,self).__init__(*arg,**kw)
 
@@ -30,8 +31,8 @@ class AbstractDataContainer(dict):
         dictionary 
             Containing measurements based on measurement type string key
         """
-        recent = dict()
-        for k,v in self.iteritems():
+        recent = self.deepcopy()
+        for k,v in recent.iteritems():
             recent[k] = v[-1]
         return recent
 
@@ -50,6 +51,7 @@ class AbstractDataContainer(dict):
             New Holder object
 
         """
+        pass
 
     def sortChronologically(self):
         """
@@ -77,10 +79,16 @@ class AbstractDataContainer(dict):
 
         newContainer = self._join(container)
         newContainer.sortChronologically()
+        self.cull_old_measurements()
 
         return newContainer
 
     def cull_old_measurements(self):
+        """
+        Removes extra measurements if too many are stored. Takes from
+        front of values list. Should never have to be called as this should be managed 
+        at joining of `AbstractDataContainer`s
+        """
         for k,v in self.iteritems():
             if self.max_stored_measurements is not None:
                 if self.max_stored_measurements <= len(v):
@@ -105,7 +113,15 @@ class AbstractDataContainer(dict):
         self._max_stored_measurements = number
     
 
-
+    @property 
+    def id(self):
+        """
+        Returns
+        -------
+        str
+            ID of the device for which data is being stored
+        """
+        return self._id
 
 
     def __add__ (self,b):

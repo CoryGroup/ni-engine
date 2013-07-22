@@ -118,7 +118,16 @@ class AbstractPhysicalStorage :
         assert isinstance(write_queue,MeasurementQueue)
         self._write_queue = write_queue
 
-
+    @abstractproperty
+    def code(self):
+        """
+        Should return the storage engine code
+        
+        Returns
+        -------
+        str
+        """
+        pass
         
 
 class MeasurementQueue(Queue):
