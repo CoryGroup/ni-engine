@@ -150,11 +150,22 @@ class SensorManager(object):
 
     def measure(self,sensor):
         """
-        Measures a sensor 
+        Measures a sensor
+
+        Parameters
+        ----------
+        sensor : AbstractSensor or str 
+
+        Returns
+        -------
+        AbstractMeasurementContainer
 
         """
+
         if isinstance(sensor,str):
             sensor = self.get_sensor(sensor)        
+        elif not isinstance(sensor,AbstractSensor):
+            raise TypeError ("Sensor: {0} is not subclass of AbstractSensor".format(type(sensor)))
 
         if sensor.id not in self.measurements:
             sensorMeasurement = dict()
@@ -163,15 +174,11 @@ class SensorManager(object):
             sensorMeasurement = self.measurements[sensor.id]
 
         if self.store_measurements:
-            measurement = sensor.measure()
-            for k,v in measurement.items():
-                if k in sensorMeasurement:
-                    sensorMeasurement[k].append(v)
-                else:
-                    if not isinstance(v,list):
-                        sensorMeasurement[k] = [v]
-                    else:
-                        sensorsMeasurement[k] = v
+            measurement = sensor.measure()            
+            if k in sensorMeasurement:
+                sensorMeasurement[k]+measurement            
+            else:
+                sensorsMeasurement[k] = v
         else:
             measurement = sensor.measure()
             sensorMeasurement = dict()
@@ -182,9 +189,18 @@ class SensorManager(object):
                     sensorMeasurement[k] = v
                     
         return self.get_data(sensor)
+    
     def measure_all(self):
+        """
+        Measure all sensors 
+
+        Returns
+        -------
+        dictionary
+            Contains all AbstractMeasurementContainers for measurements. Dictionary keys by sensor ids. 
+        """
         for k,v in self.sensors.items():
-            print("measuring {0}".format(k))
+            #print("measuring {0}".format(k))
             self.measure(v)
         return self.get_all_data()
 
