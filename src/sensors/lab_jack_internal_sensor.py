@@ -23,8 +23,7 @@ class TemperatureContainer(AbstractDataContainer):
 
         return self['temperature']   
     
-    def _join(self,container):
-        return TemperatureContainer(self.temperature+container.temperature)
+    
 
 class LabJackInternalSensor(AbstractSensor):
     """

@@ -19,8 +19,7 @@ class StorageFactory(object):
         storageCode = self.get_code(configuration)        
 
         if storageCode in StorageFactory._storageBuilders:
-            store = StorageFactory._storageBuilders[storageCode].create(configuration)      
-            print store
+            store = StorageFactory._storageBuilders[storageCode].create(configuration)    
             return store  
 
         else:

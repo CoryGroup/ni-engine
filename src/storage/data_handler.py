@@ -1,5 +1,6 @@
 
 from physical_storage import StorageFactory, AbstractPhysicalStorage
+from data_container import AbstractDataContainer
 
 class DataHandler(object):
     """
@@ -16,14 +17,13 @@ class DataHandler(object):
         """
         self._configuration = configuration
         self._storage_factory = StorageFactory()
-        self._storage = self.add_storage(self._configuration.storage_config)
-        print self._storage
+        self._storage = self.add_storage(self._configuration.storage_config)        
         self._hardware_data = DataDict("hardware")
         self._sensor_data = DataDict("sensors")
         self._controller_data = DataDict("controllers")
         self._data = {"hardware":self._hardware_data, "sensor" : self._sensor_data, "controller" : self._controller_data}
        
-        print self._storage
+        
     def add_storage(self,storage_config):
         """
         Adds a physical storage manager
@@ -33,8 +33,7 @@ class DataHandler(object):
         storage_config : dictionary
             Dictionary of configuration information for sensor
         """
-        storage = self._storage_factory.create_storage(storage_config)
-        print storage
+        storage = self._storage_factory.create_storage(storage_config)        
         if not isinstance(storage,AbstractPhysicalStorage):
             raise TypeError("Is not a physical-storage: {0}".format(type(storage)))
         
@@ -124,6 +123,7 @@ class DataHandler(object):
         else:
             self._storage.store_measurement(storage_type,measurement_container)
             data_dict = self._data[storage_type]
+            data_dict.add_data(ID,measurement_container)
 
     def add_sensor_data(self,ID,measurement_container):
         """
@@ -190,6 +190,7 @@ class DataHandler(object):
         DataDict
             sensor data object
         """
+        
         return self._sensor_data
 
     @property 

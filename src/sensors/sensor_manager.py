@@ -169,8 +169,8 @@ class SensorManager(object):
         measurement = sensor.measure()
         if self.store_measurements:                      
             self._data_handler.add_sensor_data(sensor.id,measurement)   
-            
-        print measurement         
+
+                
         return measurement
     
     def measure_all(self):

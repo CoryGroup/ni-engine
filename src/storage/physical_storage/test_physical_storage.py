@@ -7,9 +7,10 @@ class TestPhysicalStorage(AbstractPhysicalStorage):
     physical storage mediums. 
     """
     code = "TESTSTORAGE"
-    def init(self):
-        self._measurements= list()
-
+    
+    def __init__(self,buffer_size):
+        self._measurements= []
+        self.buffer_size = buffer_size
     
 
     
@@ -20,11 +21,16 @@ class TestPhysicalStorage(AbstractPhysicalStorage):
         """
         Is called when the number of measurements in measurement queue
         is greater than the bulk_write parameter
+
+        Parameters
+        ----------
+        queue : ItemStore
         """
 
-        data_to_write = queue.get_all()
-        print data_to_write
-        self.append(data_to_write)
+        data_to_write = queue.get_all()  
+        print "writing"
+        print data_to_write      
+        self._measurements.append(data_to_write)
         
    
 
@@ -47,7 +53,8 @@ class TestPhysicalStorage(AbstractPhysicalStorage):
         TestPhysicalStorage
             Object of class with correct configuration information
         """
-        return TestPhysicalStorage()
+        buffer_size = configuration.get('buffer_size',10)
+        return TestPhysicalStorage(buffer_size)
 
   
       

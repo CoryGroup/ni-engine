@@ -11,15 +11,49 @@ class AbstractDataContainer(dict):
     def __init__(self,ID,max_stored_measurements=-1,*arg,**kw):
         self._id = ID
         self._max_stored_measurements = max_stored_measurements
-        super(AbstractDataContainer,self).__init__(*arg,**kw)
+        self.update(*arg, **kw)
 
     def __len__(self):
         """
         Override the len argument to give the length of the number of measurements in 
         the container. Otherwise it would give the number of lists of measurements
         """
-        print self.values()
-        return reduce(lambda x,y: len(x[1])+len(y[1]),self.values())
+        
+        return len(self.values())
+    
+
+    def __setitem__(self, key, value):
+        """
+        Overrides setitem to make sure that value is stored as 
+        list so they can be joined
+        """
+        if not isinstance(value,list):
+            value = [value]
+        super(AbstractDataContainer, self).__setitem__(key, value)
+
+    def update(self, *args, **kwargs):
+        """
+        from : http://stackoverflow.com/questions/2060972/subclassing-python-dictionary-to-override-setitem
+        """
+        if args:
+            if len(args) > 1:
+                raise TypeError("update expected at most 1 arguments, "
+                                "got %d" % len(args))
+            other = dict(args[0])
+            for key in other:
+                self[key] = other[key]
+        for key in kwargs:
+            self[key] = kwargs[key]
+
+    def setdefault(self, key, value=None):
+        """
+        from : http://stackoverflow.com/questions/2060972/subclassing-python-dictionary-to-override-setitem
+        """
+        if key not in self:
+            self[key] = value
+        return self[key]
+
+
 
 
     def all_recent_data(self):
@@ -36,7 +70,7 @@ class AbstractDataContainer(dict):
             recent[k] = v[-1]
         return recent
 
-    @abstractmethod
+    
     def _join(self,container):
         """
         Joins two measurement containers into one. 
@@ -51,7 +85,18 @@ class AbstractDataContainer(dict):
             New Holder object
 
         """
-        pass
+        assert isinstance(container,type(self))
+        for k,v in container.iteritems():
+            if k in self:
+                
+                self[k]+=container[k]
+                
+                
+            else:
+                self[k] = v
+
+        return self
+
 
     def sortChronologically(self):
         """
@@ -77,9 +122,10 @@ class AbstractDataContainer(dict):
         if not isinstance(container,type(self)):
             raise TypeError("Instances must be of same type")
 
-        newContainer = self._join(container)
+        newContainer = self._join(container)        
         newContainer.sortChronologically()
         self.cull_old_measurements()
+        
 
         return newContainer
 
@@ -90,7 +136,9 @@ class AbstractDataContainer(dict):
         at joining of `AbstractDataContainer`s
         """
         for k,v in self.iteritems():
-            if self.max_stored_measurements is not None:
+            
+            if self.max_stored_measurements != -1:
+                
                 if self.max_stored_measurements <= len(v):
                     del v[0:len(v)-self.max_stored_measurements]
     @property
@@ -125,5 +173,8 @@ class AbstractDataContainer(dict):
 
 
     def __add__ (self,b):
+        """
+        defines an add function for + operator
+        """
         return self.join(b)
 

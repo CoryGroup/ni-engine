@@ -39,10 +39,7 @@ class Ei1050MeasurementContainer(AbstractDataContainer):
     
     
     
-    def _join(self,container):        
-
-        return Ei1050MeasurementContainer(self.temperature+container.temperature,
-                self.humidity+container.humidity)
+    
 
 class Ei1050Sensor(AbstractSensor):
     """

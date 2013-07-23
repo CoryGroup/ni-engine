@@ -24,9 +24,8 @@ class AbstractPhysicalStorage :
         measurement : AbstractMeasurement or list[AbstractMeasurement]
 
         """
-        self.write_queue.add((type_measurement,copy.deepcopy(measurement)))
-        print len(self.write_queue)
-        if len(self.write_queue)>=self.bulk_write:
+        self.write_queue.add((type_measurement,copy.deepcopy(measurement)))        
+        if len(self.write_queue)>=self.buffer_size:
             self.write_measurement(self.write_queue)
         
 
@@ -34,7 +33,7 @@ class AbstractPhysicalStorage :
     def write_measurement(self,queue):
         """
         Is called when the number of measurements in measurement queue
-        is greater than the bulk_write parameter
+        is greater than the buffer_size parameter
 
         Parameters
         ----------
@@ -96,17 +95,23 @@ class AbstractPhysicalStorage :
         pass
 
     @property
-    def bulk_write(self):
+    def buffer_size(self):
         """
         property for how many measurements should be waited for until written to file
+
+        Parameters
+        ----------
+        value : int
+            When the number of values to stored in write buffer equals or exceeds this, a
+            write is triggered.
         """
-        if not hasattr(self, '_bulk_write'):
-            self._bulk_write = 0
-            return int(self._bulk_write)
-        else: return int(self._bulk_write)
-    @bulk_write.setter    
-    def sbulk_write(self,value):
-        self._bulk_write = value
+        if not hasattr(self, '_buffer_size'):
+            self._buffer_size = 0
+            return int(self._buffer_size)
+        else: return int(self._buffer_size)
+    @buffer_size.setter    
+    def buffer_size(self,value):
+        self._buffer_size = value
     
 
     @property
@@ -146,8 +151,16 @@ class ItemStore(object):
     def __init__(self):
         self.lock = threading.Lock()
         self.items = []
-
+        
     def add(self, item):
+        """
+        Add an item or list to store safely with mutex
+
+        Parameters
+        ----------
+        item : list or object
+        """
+        
         with self.lock:
             if isinstance(item, list):
                 self.items.join(item)
@@ -155,13 +168,29 @@ class ItemStore(object):
                 self.items.append(item)
 
 
-    def get_all(self):
+    def get_all(self,empty=True):
+        """
+        Get all items from store with thread safety
+        and empties the store. 
+
+        Parameters
+        ----------
+        empty : bool
+
+        Returns
+        -------
+        list
+        """
         with self.lock:
-            items, self.items = self.items, []
+            items = self.items
+            if empty: self.items = []
         return items
 
-    def __len__(self):
-        with self.lock:
-            length = reduce(lambda x,y : len(x)+len(y),self.items)
-            print length
+    def __len__(self):        
+        length = 0
+        with self.lock:   
+            
+
+            length = reduce(lambda x,y : x+len(y[1]),self.items,0) 
+                
         return length
