@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod , abstractproperty
-
+import numpy as np
 class AbstractDataContainer(dict):
     """
     Abstract class to hold all measurements. 
@@ -27,8 +27,8 @@ class AbstractDataContainer(dict):
         Overrides setitem to make sure that value is stored as 
         list so they can be joined
         """
-        if not isinstance(value,list):
-            value = [value]
+        if not isinstance(value,np.ndarray):
+            value = np.array([value])
         super(AbstractDataContainer, self).__setitem__(key, value)
 
     def update(self, *args, **kwargs):
@@ -87,10 +87,9 @@ class AbstractDataContainer(dict):
         """
         assert isinstance(container,type(self))
         for k,v in container.iteritems():
-            if k in self:
-                
-                self[k]+=container[k]
-                
+            if k in self:                
+                a= np.append(self[k],v,axis=0)
+                self[k] = a
                 
             else:
                 self[k] = v

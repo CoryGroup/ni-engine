@@ -1,23 +1,35 @@
 
-import config 
 from abstract_physical_storage import AbstractPhysicalStorage
+import tables import *
+import numpy as np
+import config
 
-class TestPhysicalStorage(AbstractPhysicalStorage):
-    """
-    Abstract physical storage class that must be implemented by all 
-    physical storage mediums. 
-    """
-    code = "TESTSTORAGE"
+
+class TableMeasurement(tables.IsDescription):
+    measurement_name = StringCol(50)
+    code = StringCol(20)
     
-    def __init__(self,buffer_size):
+
+class HDF5Storage(AbstractPhysicalStorage):
+
+    """
+    HDF5 data storage engine. 
+    """
+    code = "HDF5"
+    
+    def __init__(self,file_name,buffer_size=100):
         self._measurements= []
         self.buffer_size = buffer_size
+        
     
 
-    
-    
+    def create_measurement_row(self,group):
+        if "time" not in group:
+            group.create_dataset("time",(100,),maxshape=(None,),dtype=str)
 
-    
+        if "measurement" not in group:
+            group.create_dataset("measurement",(100,),maxshape=(None,),dtype='f')
+        
     def write_measurement(self,queue):
         """
         Is called when the number of measurements in measurement queue

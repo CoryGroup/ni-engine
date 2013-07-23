@@ -182,8 +182,7 @@ class SensorManager(object):
         DataDict
             Contains all AbstractMeasurementContainers for measurements. Dictionary keys by sensor ids. 
         """
-        for k,v in self.sensors.iteritems():
-            #print("measuring {0}".format(k))
+        for k,v in self.sensors.iteritems():            
             self.measure(v)
         return self._data_handler.sensor_data
 
