@@ -1,6 +1,7 @@
 import config 
 from abc import ABCMeta, abstractmethod , abstractproperty
-from queue import Queue
+import threading
+import copy
 class AbstractPhysicalStorage :
     """
     Abstract physical storage class that must be implemented by all 
@@ -9,7 +10,7 @@ class AbstractPhysicalStorage :
     __metaclass__ = ABCMeta
 
 
-    
+    CODE = "ABSTRACTSTORAGE"
 
     
     def store_measurement(self,type_measurement,measurement):
@@ -23,16 +24,21 @@ class AbstractPhysicalStorage :
         measurement : AbstractMeasurement or list[AbstractMeasurement]
 
         """
-        self.write_queue.put((type_measurement,measurement.deepcopy()))
-        if(self.write_queue.qsize()>=self.bulk_write):
-            self.write_measurement()
+        self.write_queue.add((type_measurement,copy.deepcopy(measurement)))
+        print len(self.write_queue)
+        if len(self.write_queue)>=self.bulk_write:
+            self.write_measurement(self.write_queue)
         
 
     @abstractmethod
-    def write_measurement(self):
+    def write_measurement(self,queue):
         """
         Is called when the number of measurements in measurement queue
         is greater than the bulk_write parameter
+
+        Parameters
+        ----------
+        queue : ItemStore
         """
         pass
     
@@ -71,9 +77,9 @@ class AbstractPhysicalStorage :
 
 
 
-
-    @abstractmethod
-    def create(self,configuration):
+    @classmethod 
+    @abstractmethod    
+    def create(cls,configuration):
         """
         Takes configuration, generates object of storage engine and returns it.
 
@@ -94,11 +100,12 @@ class AbstractPhysicalStorage :
         """
         property for how many measurements should be waited for until written to file
         """
-        if self._bulk_write is not None:
-            return self._bulk_write
-        else: return 0
-        
-    def set_bulk_write(self,value):
+        if not hasattr(self, '_bulk_write'):
+            self._bulk_write = 0
+            return int(self._bulk_write)
+        else: return int(self._bulk_write)
+    @bulk_write.setter    
+    def sbulk_write(self,value):
         self._bulk_write = value
     
 
@@ -108,14 +115,14 @@ class AbstractPhysicalStorage :
         Queue that holds all of the AbstractDataContainers to be written. The data 
         inside the queue is a tuple of (measurement_type(str),AbstractDataContainer )
         """
-        if self._write_queue is None:
-            self._write_queue = MeasurementQueue()
+        if not hasattr(self, '_write_queue'):
+            self._write_queue = ItemStore()
             return self._write_queue
         else:
             return self._write_queue
-    @write_queue.setter:
+    @write_queue.setter
     def write_queue(self,write_queue):
-        assert isinstance(write_queue,MeasurementQueue)
+        assert isinstance(write_queue,ItemStore)
         self._write_queue = write_queue
 
     @abstractproperty
@@ -130,19 +137,31 @@ class AbstractPhysicalStorage :
         pass
         
 
-class MeasurementQueue(Queue):
+
+class ItemStore(object):
     """
-    Normal, queue with size method overridden 
-    and implemented to get number of measurements stored inside
+    Threadsafe itemstore
     """
-    def __init__(self,maxsize=0):
-        super(MeasurementQueue, self).__init__(maxsize=maxsize)
+
+    def __init__(self):
+        self.lock = threading.Lock()
+        self.items = []
+
+    def add(self, item):
+        with self.lock:
+            if isinstance(item, list):
+                self.items.join(item)
+            else:
+                self.items.append(item)
 
 
-    def _qsize(self, len=len):
-        """
-        Overide _qsize method of python standard library so that it works 
-        with AbstractDataContainers
-        """
-        l = list(self.queue)
-        return reduce(lambda x, y: len(x)+len(y), l)
+    def get_all(self):
+        with self.lock:
+            items, self.items = self.items, []
+        return items
+
+    def __len__(self):
+        with self.lock:
+            length = reduce(lambda x,y : len(x)+len(y),self.items)
+            print length
+        return length

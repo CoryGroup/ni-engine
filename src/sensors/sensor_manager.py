@@ -7,7 +7,7 @@ class SensorManager(object):
     and stores sensors as well as handles measurements from them.
     All from configuration files given to it
     """
-    def __init__(self,configuration,hardware_manager): 
+    def __init__(self,configuration,data_handler,hardware_manager): 
         """
         Parameters
         ----------
@@ -19,10 +19,12 @@ class SensorManager(object):
         """               
         self.configuration = configuration
         self.sensors = dict()
-        self.sensor_factory = SensorFactory(hardware_manager)
+        self._data_handler = data_handler
+        self.sensor_factory = SensorFactory(hardware_manager,self._data_handler)
         self.measurements = dict()
         self.store_measurements = self.configuration.store_measurements
         
+
     def add_sensor(self,sensor_config):
         """
         Adds a sensor based on config and stores it in the sensor manager
@@ -88,7 +90,7 @@ class SensorManager(object):
 
         Parameters 
         ----------
-        sensor : AbstractSensor
+        sensor : AbstractSensor or str
             Sensor object to retrieve data from
 
         Returns
@@ -96,9 +98,9 @@ class SensorManager(object):
         dictionary
             dictionary containing lists of `Measurement` objects
         """
-        if sensor.id in self.measurements:
-            return self.measurements[sensor.id]
-        else: raise Exception("Sensor has no measurements available")
+        if isinstance(sensor,AbstractSensor):
+            sensor = sensor.id
+        return self._data_handler.sensor_data[sensor]
     
     def get_all_data(self):
         """
@@ -110,7 +112,7 @@ class SensorManager(object):
             Keys are sensor IDs at first level and measurement type at second level. 
             Data is list of measurement objects
         """
-        return self.measurements
+        self._data_handler.sensor_data
 
     def get_all_current_data(self):
         """
@@ -122,10 +124,7 @@ class SensorManager(object):
             Keys are sensor IDs at first level and measurement type at second level. 
             Data are measurement objects.
         """
-        curr = dict()
-        for k in self.measurements:
-            sen = self.get_sensor_by_id(k)
-            curr[k] = self.get_most_recent_data(sen)
+        return self._data_handler.recent_sensor_data
 
     def get_most_recent_data(self,sensor):
         """
@@ -133,20 +132,16 @@ class SensorManager(object):
 
         Parameters
         ----------
-        sensor : AbstractSensor
+        sensor : str or AbstractSensor
 
         Returns 
         -------
         dictionary
             Current data by measurement
         """
-        if sensor.id in self.measurements:
-            data =  self.measurements[sensor.id]
-            recentData = dict()
-            for k,v in data.items():
-                recentData[k]= v[-1]
-            return recentData
-        else: raise Exception("Sensor has no measurements available")
+        if isinstance(sensor,AbstractSensor):
+            sensor = sensor.id
+        return self._data_handler.sensor_data[sensor].all_recent_data()
 
     def measure(self,sensor):
         """
@@ -167,28 +162,16 @@ class SensorManager(object):
         elif not isinstance(sensor,AbstractSensor):
             raise TypeError ("Sensor: {0} is not subclass of AbstractSensor".format(type(sensor)))
 
-        if sensor.id not in self.measurements:
-            sensorMeasurement = dict()
-            self.measurements[sensor.id]= sensorMeasurement
-        else:
-            sensorMeasurement = self.measurements[sensor.id]
+        
 
-        if self.store_measurements:
-            measurement = sensor.measure()            
-            if k in sensorMeasurement:
-                sensorMeasurement[k]+measurement            
-            else:
-                sensorsMeasurement[k] = v
-        else:
-            measurement = sensor.measure()
-            sensorMeasurement = dict()
-            for k,v in measurement.items():
-                if not isinstance(v,list):
-                    sensorMeasurement[k] = [v]
-                else:
-                    sensorMeasurement[k] = v
-                    
-        return self.get_data(sensor)
+        
+        
+        measurement = sensor.measure()
+        if self.store_measurements:                      
+            self._data_handler.add_sensor_data(sensor.id,measurement)   
+            
+        print measurement         
+        return measurement
     
     def measure_all(self):
         """
@@ -196,13 +179,13 @@ class SensorManager(object):
 
         Returns
         -------
-        dictionary
+        DataDict
             Contains all AbstractMeasurementContainers for measurements. Dictionary keys by sensor ids. 
         """
-        for k,v in self.sensors.items():
+        for k,v in self.sensors.iteritems():
             #print("measuring {0}".format(k))
             self.measure(v)
-        return self.get_all_data()
+        return self._data_handler.sensor_data
 
 
     def get_sensor(self,sensor_id):

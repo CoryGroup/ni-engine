@@ -3,10 +3,11 @@ import u3
 from hardware_factory import HardwareFactory
 class HardwareManager(object):
 
-    def __init__(self,configuration):                
+    def __init__(self,configuration,data_handler):                
         self.configuration = configuration
         self._hardware = dict()
-        self._hardwareFactory = HardwareFactory()
+        self._data_handler = data_handler
+        self._hardwareFactory = HardwareFactory(self._data_handler)
     
     def add_hardware(self,hardware_config):
         hardware = self._hardwareFactory.create_hardware(hardware_config)

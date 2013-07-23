@@ -61,7 +61,7 @@ class KepcoSupply(AbstractController):
         return 10.0*voltage/self.max_voltage
 
     @classmethod 
-    def create(cls,configuration,hardware,sensors):
+    def create(cls,configuration,data_handler,hardware,sensors):
         ID = configuration[config.ID]
         n = cls.name
         d = cls.description

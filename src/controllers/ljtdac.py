@@ -103,7 +103,7 @@ class LJTDAC(AbstractController):
         return float(wh) + float(dec)/2**32
 
     @classmethod 
-    def create(cls,configuration,hardware,sensors):
+    def create(cls,configuration,data_handler,hardware,sensors):
         ID = configuration[config.ID]
         n = cls.name
         d = cls.description

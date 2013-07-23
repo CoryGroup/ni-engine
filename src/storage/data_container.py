@@ -18,8 +18,8 @@ class AbstractDataContainer(dict):
         Override the len argument to give the length of the number of measurements in 
         the container. Otherwise it would give the number of lists of measurements
         """
-
-        return reduce(lambda x,y: len(x)+len(y),self.values())
+        print self.values()
+        return reduce(lambda x,y: len(x[1])+len(y[1]),self.values())
 
 
     def all_recent_data(self):

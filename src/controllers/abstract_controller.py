@@ -31,7 +31,7 @@ class AbstractController(Item):
 
     @classmethod
     @abstractmethod
-    def create(cls,config):
+    def create(cls,config,data_handler,sensors,hardware):
         """
         Abstract method that when implemented is the intializer method for the controller.
         Take a configuration

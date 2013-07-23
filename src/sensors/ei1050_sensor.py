@@ -10,10 +10,13 @@ class Ei1050MeasurementContainer(AbstractDataContainer):
     """
     Measurement container for Ei1050Sensor
     """
-    def __init__(self,temperature,humidity):
+    def __init__(self,ID,temperature,humidity,max_stored_measurements=-1):
 
-        super(Ei1050MeasurementContainer,self).__init__(temperature=temperature ,humidity=humidity)
-
+        super(Ei1050MeasurementContainer,self).__init__(ID,max_stored_measurements)
+        
+        self['temperature'] = temperature
+        self['humidity'] = humidity
+        
     @property
     def temperature(self):
         """
@@ -64,7 +67,7 @@ class Ei1050Sensor(AbstractSensor):
     name = "EI1050Sensor"
     description = " "
     KELVIN_CONVERSION = 293.15
-    def __init__(self,ID,device,data_pin,clock_pin,enable_pin,threaded=False,polling_time=0.5,name=name,description=description,retry_limit=1):
+    def __init__(self,ID,device,data_pin,clock_pin,enable_pin,threaded=False,polling_time=0.5,name=name,description=description,retry_limit=1,max_stored_measurements=-1):
         """
         Parameters
         ----------
@@ -98,7 +101,7 @@ class Ei1050Sensor(AbstractSensor):
         self._description = description
         self._retry_limit = retry_limit
         self._retries = 0
-
+        self._max_stored_measurements = max_stored_measurements
     def connect(self):
         """
         Connects created device
@@ -135,7 +138,7 @@ class Ei1050Sensor(AbstractSensor):
             temp = (reading.getTemperature()  + Ei1050Sensor.KELVIN_CONVERSION)*pq.K # convert from celsius to kelvin
             temperature = Measurement(self.id,Ei1050Sensor.code,"Temperature",temp,time=reading.getTime())
             humidity = Measurement(self.id,Ei1050Sensor.code,"Humidity",reading.getHumidity()*pq.percent,time=reading.getTime())
-            container = Ei1050MeasurementContainer(temperature,humidity)
+            container = Ei1050MeasurementContainer(self.id,temperature,humidity,self._max_stored_measurements)
             self._retries =0
             return container
         except Exception as e:
@@ -144,7 +147,8 @@ class Ei1050Sensor(AbstractSensor):
             print e
             if self._retries < self._retry_limit:
                 return self.measure()
-            else: raise Exception("Measurement could not be completed: Retry limit exceeded")
+            else: 
+                raise Exception("Measurement could not be completed: Retry limit exceeded")
 
     def disconnect(self):
         """
@@ -161,7 +165,7 @@ class Ei1050Sensor(AbstractSensor):
         del self._probe
 
     @classmethod
-    def create(cls,configuration,device):
+    def create(cls,configuration,data_handler,device):
         """
         Creates device, normally called by sensor manager
         """

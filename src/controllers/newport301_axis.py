@@ -49,7 +49,7 @@ class Newport301Axis(AbstractController):
  
 
     @classmethod 
-    def create(cls,configuration,hardware,sensors):
+    def create(cls,configuration,data_handler,hardware,sensors):
         ID = configuration[config.ID]
         n = configuration.get(config.NAME,cls.name)
         d = configuration.get(config.DESCRIPTION,cls.description)

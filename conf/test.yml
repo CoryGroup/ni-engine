@@ -12,7 +12,7 @@ sensors:
    code: EI1050
    hardware_id: lab1
    id: temp1
-   threaded: True
+   threaded: False
    polling_time: 5
    pins:
     data: 6
@@ -54,7 +54,7 @@ controllers:
 
 
 configuration:
- store_measurements: False
+ store_measurements: True
     
 
 

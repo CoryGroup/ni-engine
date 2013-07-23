@@ -1,5 +1,5 @@
 
-from physical_storage import StorageFactory
+from physical_storage import StorageFactory, AbstractPhysicalStorage
 
 class DataHandler(object):
     """
@@ -14,13 +14,16 @@ class DataHandler(object):
         configuration : Configuration
             configuration file
         """
-
-        self._storage_factory = StorageFactory(hardware_manager)
-        self._hardware_data = DataDict()
-        self._sensor_data = DataDict()
-        self._controller_data = DataDict()
+        self._configuration = configuration
+        self._storage_factory = StorageFactory()
+        self._storage = self.add_storage(self._configuration.storage_config)
+        print self._storage
+        self._hardware_data = DataDict("hardware")
+        self._sensor_data = DataDict("sensors")
+        self._controller_data = DataDict("controllers")
         self._data = {"hardware":self._hardware_data, "sensor" : self._sensor_data, "controller" : self._controller_data}
-
+       
+        print self._storage
     def add_storage(self,storage_config):
         """
         Adds a physical storage manager
@@ -31,11 +34,12 @@ class DataHandler(object):
             Dictionary of configuration information for sensor
         """
         storage = self._storage_factory.create_storage(storage_config)
+        print storage
+        if not isinstance(storage,AbstractPhysicalStorage):
+            raise TypeError("Is not a physical-storage: {0}".format(type(storage)))
+        
+        return storage
 
-        if not isinstance(sensor,AbstractStorage):
-            raise TypeError("Is not a physical-storage: {0}".format(type(sensor)))
-
-        self._storage = storage
         
 
     def get_data(self,sensor):
@@ -121,7 +125,40 @@ class DataHandler(object):
             self._storage.store_measurement(storage_type,measurement_container)
             data_dict = self._data[storage_type]
 
-    
+    def add_sensor_data(self,ID,measurement_container):
+        """
+        Store sensor data
+
+        Parameters
+        ID : str
+        measurement_container : AbstractDataContainer 
+
+        """
+        self.add_data("sensor",ID,measurement_container)
+
+    def add_hardware_data(self,ID,measurement_container):
+        """
+        Store hardware data
+
+        Parameters
+        ID : str
+        measurement_container : AbstractDataContainer 
+
+        """
+        self.add_data("hardware",ID,measurement_container)
+
+    def add_controller_data(self,ID,measurement_container):
+        """
+        Store controller data
+
+        Parameters
+        ID : str
+        measurement_container : AbstractDataContainer 
+
+        """
+        self.add_data("controller",ID,measurement_container)
+
+
     @classmethod
     def register_storage(cls,storage):
         """
@@ -183,6 +220,8 @@ class DataHandler(object):
         -------
         AbstractPhysicalStorage
         """
+        return self._storage
+
     @property 
     def recent_controller_data(self):
         """
@@ -236,6 +275,17 @@ class DataDict(dict):
         super(DataDict,self).__init__(*arg,**kw)
 
     def add_data(self,ID,measurement_container):
+        """
+        Add some data to be stored
+
+        Parameters 
+        ----------
+        ID : str 
+            ID of device to store
+
+        measurement_container : AbstractDataContainer
+            data to be stored
+        """
         assert isinstance(measurement_container,AbstractDataContainer)
 
         if ID in self:

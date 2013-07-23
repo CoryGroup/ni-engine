@@ -41,7 +41,7 @@ class U3LV(U3,AbstractHardware,U3LVBitSetter):
         del self
     
     @classmethod
-    def create(cls,configuration):
+    def create(cls,configuration,data_handler):
         ID = configuration[config.ID]
         n = U3LV.name
         d = U3LV.description

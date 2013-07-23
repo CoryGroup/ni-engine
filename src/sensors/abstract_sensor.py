@@ -10,25 +10,53 @@ class AbstractSensor(Item):
 
     @abstractmethod
     def connect(self):
-        raise NotImplementedError
+        """
+        Connects sensor
+        """
+        pass
 
     @abstractmethod
     def disconnect(self):
-        raise NotImplementedError
+        """
+        Disconnects sensor
+        """
+        pass
 
     @abstractmethod
     def delete(self):
-        raise NotImplementedError
+        """
+        Deletes sensor
+        """
+        pass
 
     @abstractmethod
     def measure(self):
-        raise NotImplementedError
+        """
+        Called to measure sensor
+        Returns
+        -------
+        AbstractDataContainer
+        """
+        pass
 
     # abstract method to handle sensor creation based on configuration
     @classmethod
     @abstractmethod
-    def create(cls,config):
-        raise NotImplementedError
+    def create(cls,config,data_handler,hardware):
+        """
+        Abstract method that when implemented is the intializer method for the sensor.
+        
+        Parameters
+        ----------
+        config : configuration
+        data_handler : data_handler
+        hardware : HardwareManager
+
+        Returns
+        -------
+        AbstractSensor
+        """
+        pass
 
 
     

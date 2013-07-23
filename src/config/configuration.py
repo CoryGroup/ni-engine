@@ -70,7 +70,7 @@ class Configuration(object):
 
         self._controllers = self.yamlConfig[config.CONTROLLERS]
 
-        self.configuration = self.yamlConfig[config.CONFIGURATION]
+        self._configuration = self.yamlConfig[config.CONFIGURATION]
 
         if self.validate_config():
             return True
@@ -258,10 +258,26 @@ class Configuration(object):
         -------
         bool
         """
-        if config.STORE_MEASUREMENTS in self.configuration:
-            return self.configuration[config.STORE_MEASUREMENTS]
+        if config.STORE_MEASUREMENTS in self._configuration:
+            return self._configuration[config.STORE_MEASUREMENTS]
         else: 
             return False
+
+    @property
+    def storage_config(self):
+        """
+        Returns the storage engine configuration. If none is in configuration file uses a `TestPhysicalStorage` storage manager
+
+        Returns 
+        -------
+        dictionary
+        """
+
+        if config.STORAGE in self._configuration:
+            return self._configuration[config.STORE_MEASUREMENTS]
+        else:
+            print "No storage engine defined in configuration file. Using TestPhysicalStorage storage manager"
+            return {config.CODE : "TESTSTORAGE"}
 
     
 

@@ -3,11 +3,12 @@ from controller_factory import ControllerFactory
 
 class ControllerManager(object):
     
-    def __init__(self,configuration,hardware_manager,sensor_manager):
+    def __init__(self,configuration,data_handler,hardware_manager,sensor_manager):
                 
         self.configuration = configuration
+        self._data_handler = data_handler
         self.controllers= dict()
-        self.controllerFactory = ControllerFactory(hardware_manager,sensor_manager)
+        self.controllerFactory = ControllerFactory(self._data_handler,hardware_manager,sensor_manager)
         
     def add_controller(self,controllerConfig):
         controller = self.controllerFactory.create_controller(controllerConfig)
