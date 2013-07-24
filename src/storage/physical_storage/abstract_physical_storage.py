@@ -2,6 +2,7 @@ import config
 from abc import ABCMeta, abstractmethod , abstractproperty
 import threading
 import copy
+import atexit
 class AbstractPhysicalStorage :
     """
     Abstract physical storage class that must be implemented by all 
@@ -24,6 +25,7 @@ class AbstractPhysicalStorage :
         measurement : AbstractMeasurement or list[AbstractMeasurement]
 
         """
+        print (type_measurement,copy.deepcopy(measurement))
         self.write_queue.add((type_measurement,copy.deepcopy(measurement)))        
         if len(self.write_queue)>=self.buffer_size:
             self.write_measurement(self.write_queue)
@@ -49,7 +51,7 @@ class AbstractPhysicalStorage :
         ----------
         controller_measurements : AbstractDataContainer
         """
-        self.write_measurement("controller",controller_measurements)
+        self.write_measurement("controllers",controller_measurements)
 
     
     def store_sensor(self,sensor_measurements):
@@ -60,7 +62,7 @@ class AbstractPhysicalStorage :
         ----------
         sensor_measurements : AbstractDataContainer
         """
-        self.write_measurement("sensor",sensor_measurements)
+        self.write_measurement("sensors",sensor_measurements)
 
     
     def store_hardware(self,hardware_measurements):
@@ -93,6 +95,16 @@ class AbstractPhysicalStorage :
             Object of class with correct configuration information
         """
         pass
+
+    @abstractmethod
+    def close(self):
+        """
+        Method registered with atexit to be called to close connection. On 
+        exit of ni-engine
+        """
+        pass
+
+    atexit.register(close)
 
     @property
     def buffer_size(self):

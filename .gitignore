@@ -51,3 +51,6 @@ nosetests.xml
 #Ipython 
 *.ipynb
 notebooks/
+
+#HDF5 files
+*.h5

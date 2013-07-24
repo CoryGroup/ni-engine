@@ -55,6 +55,11 @@ controllers:
 
 configuration:
  store_measurements: True
+ storage:
+  code: "HDF5"
+  name: "Test Data Storage"
+  file_path: "test.h5"
+  buffer_size : 10
     
 
 

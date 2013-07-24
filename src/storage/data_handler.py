@@ -21,7 +21,7 @@ class DataHandler(object):
         self._hardware_data = DataDict("hardware")
         self._sensor_data = DataDict("sensors")
         self._controller_data = DataDict("controllers")
-        self._data = {"hardware":self._hardware_data, "sensor" : self._sensor_data, "controller" : self._controller_data}
+        self._data = {"hardware":self._hardware_data, "sensors" : self._sensor_data, "controllers" : self._controller_data}
        
         
     def add_storage(self,storage_config):
@@ -134,7 +134,7 @@ class DataHandler(object):
         measurement_container : AbstractDataContainer 
 
         """
-        self.add_data("sensor",ID,measurement_container)
+        self.add_data("sensors",ID,measurement_container)
 
     def add_hardware_data(self,ID,measurement_container):
         """
@@ -156,7 +156,7 @@ class DataHandler(object):
         measurement_container : AbstractDataContainer 
 
         """
-        self.add_data("controller",ID,measurement_container)
+        self.add_data("controllers",ID,measurement_container)
 
 
     @classmethod

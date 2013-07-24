@@ -1,4 +1,6 @@
 from physical_storage_factory import StorageFactory
 from test_physical_storage import TestPhysicalStorage 
 from abstract_physical_storage import AbstractPhysicalStorage
+from hdf5_storage import HDF5Storage
 StorageFactory.register_storage(TestPhysicalStorage)
+StorageFactory.register_storage(HDF5Storage)

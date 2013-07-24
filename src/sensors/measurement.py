@@ -27,3 +27,28 @@ class Measurement(object):
         Allow ordering based on time of measurements
         """
         return self._time < other._time
+
+    @property
+    def value(self):
+        return self._value
+
+    @property
+    def id(self):
+        return self._id
+
+
+    @property
+    def code(self):
+        return self._code 
+
+    @property
+    def time(self):
+        return self._time
+
+    @property 
+    def name(self):
+        return self._name
+    
+    
+   
+    

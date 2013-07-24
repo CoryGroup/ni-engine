@@ -274,7 +274,7 @@ class Configuration(object):
         """
 
         if config.STORAGE in self._configuration:
-            return self._configuration[config.STORE_MEASUREMENTS]
+            return self._configuration[config.STORAGE]
         else:
             print "No storage engine defined in configuration file. Using TestPhysicalStorage storage manager"
             return {config.CODE : "TESTSTORAGE"}
