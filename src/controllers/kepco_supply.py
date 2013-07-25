@@ -1,6 +1,6 @@
 import config 
 from ljtdac import LJTDAC
-from abstractController import AbstractController
+from abstract_controller import AbstractController
 
 
 class KepcoSupply(AbstractController):
@@ -14,43 +14,46 @@ class KepcoSupply(AbstractController):
         if default_crowbar is None:
             self.default_crowbar = max_voltage
 
-        self.id = ID 
-        self.hardware = hardware
-        self.voltage_pin = voltage_pin 
-        self.crowbar_pin = crowbar_pin             
-        self.default_voltage = default_voltage
-        self.max_voltage = max_voltage        
-        self.name = name
-        self.description = description
-        self.voltageOut = self.default_voltage
+        self._id = ID 
+        self._hardware = hardware
+        self._voltage_pin = voltage_pin 
+        self._crowbar_pin = crowbar_pin             
+        self._default_voltage = default_voltage
+        self._max_voltage = max_voltage        
+        self._name = name
+        self._description = description
+        self._voltageOut = self._default_voltage
         
         if abs(voltage_pin-crowbar_pin) != 1 : raise ValueError("Pins must be on same LJTDAC")
 
-        self.dac_pin = min(self.crowbar_pin,self.voltage_pin)
+        self.dac_pin = min(self._crowbar_pin,self._voltage_pin)
 
-        if min(self.voltage_pin,self.crowbar_pin) == self.voltage_pin :
-            self.voltage_a = self.dac_voltage(self.default_voltage)
+        if min(self._voltage_pin,self._crowbar_pin) == self._voltage_pin :
+            self.voltage_a = self.dac_voltage(self._default_voltage)
             self.voltage_b = self.dac_voltage(self.default_crowbar)
         else:
             self.voltage_a = self.dac_voltage(self.default_crowbar)
-            self.voltage_b = self.dac_voltage(self.default_voltage)        
+            self.voltage_b = self.dac_voltage(self._default_voltage)        
 
     def connect(self):
         self.initialize_defaults()
 
+    def disconnect(self):
+        pass
+
     def initialize_defaults(self):
-        self.ljtdac = LJTDAC('kepco supply dac',self.hardware,min(self.voltage_pin,self.crowbar_pin),default_voltage=0,max_voltage=10,name="LJTDAC Kepco",description="Controller managed by Kepco Supply to control it")
+        self.ljtdac = LJTDAC('kepco supply dac',self._hardware,min(self._voltage_pin,self._crowbar_pin),default_voltage=0,max_voltage=10,name="LJTDAC Kepco",description="Controller managed by Kepco Supply to control it")
         self.set_voltage()
     
     def set_voltage(self,voltage=None,crowbar=None):
         if voltage is not None:
-            if min(self.voltage_pin,self.crowbar_pin) == self.voltage_pin :
+            if min(self._voltage_pin,self._crowbar_pin) == self._voltage_pin :
                 self.voltage_a = self.dac_voltage(voltage)
             else:
                 self.voltage_b = self.dac_voltage(voltage)
 
         if crowbar is not None:
-            if min(self.voltage_pin,self.crowbar_pin) == self.voltage_pin :
+            if min(self._voltage_pin,self._crowbar_pin) == self._voltage_pin :
                 self.voltage_b = self.dac_voltage(crowbar)
             else:
                 self.voltage_a = self.dac_voltage(crowbar)
@@ -58,7 +61,7 @@ class KepcoSupply(AbstractController):
         self.ljtdac.set_voltage(voltage_a=self.voltage_a,voltage_b=self.voltage_b)
 
     def dac_voltage(self,voltage):
-        return 10.0*voltage/self.max_voltage
+        return 10.0*voltage/self._max_voltage
 
     @classmethod 
     def create(cls,configuration,data_handler,hardware,sensors):

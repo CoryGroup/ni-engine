@@ -61,7 +61,7 @@ class DataHandler(object):
         Returns
         -------
         dictionary
-            dictionary containing lists of `Measurement` objects
+            dictionary containing lists of `Data` objects
         """
         if sensor.id in self.measurements:
             return self.measurements[sensor.id]

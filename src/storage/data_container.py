@@ -60,7 +60,7 @@ class AbstractDataContainer(dict):
         Parameters
         ----------
         key : str
-        measurement : Measurement
+        measurement : Data
         """
 
         if key in self:            

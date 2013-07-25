@@ -96,7 +96,7 @@ class SensorManager(object):
         Returns
         -------
         dictionary
-            dictionary containing lists of `Measurement` objects
+            dictionary containing lists of `Data` objects
         """
         if isinstance(sensor,AbstractSensor):
             sensor = sensor.id

@@ -1,6 +1,8 @@
 import config
-from abstractController import AbstractController
+from abstract_controller import AbstractController
 import struct
+
+
 class LJTDAC(AbstractController):
     code = 'LJTDAC'
     name = 'LJTDAC Extension'
@@ -14,30 +16,30 @@ class LJTDAC(AbstractController):
     CALIBRATION_OFFSET = 0.03
     
     def __init__(self,ID,device,dac_pin,default_voltage=0,max_voltage=10,name=name,description=description):
-        self.id = ID 
-        self.device = device
-        self.dac_pin = dac_pin    
-        self.default_voltage = default_voltage
-        self.max_voltage = max_voltage
-        self.name = name
-        self.description = description
+        self._id = ID 
+        self._device = device
+        self._dac_pin = dac_pin    
+        self._default_voltage = default_voltage
+        self._max_voltage = max_voltage
+        self._name = name
+        self._description = description
         
-        if self.device.code == "U3LV":
-            self.sclPin = self.dac_pin + LJTDAC.U3_DAC_PIN_OFFSET
+        if self._device.code == "U3LV":
+            self.sclPin = self._dac_pin + LJTDAC.U3_DAC_PIN_OFFSET
             self.sdaPin = self.sclPin + 1
         else:
-            self.sclPin = self.dac_pin
+            self.sclPin = self._dac_pin
             self.sdaPin = self.sclPin + 1
 
-        self.currVoltageA = self.default_voltage
-        self.currVoltageB = self.default_voltage
+        self.currVoltageA = self._default_voltage
+        self.currVoltageB = self._default_voltage
 
     def connect(self):
         self.initialize_default()
 
     def initialize_default(self):
         self.get_cal_constants()
-        self.set_voltage(voltage_a=self.default_voltage,voltage_b=self.default_voltage)
+        self.set_voltage(voltage_a=self._default_voltage,voltage_b=self._default_voltage)
 
     def disconnect(self):
         pass
@@ -53,19 +55,19 @@ class LJTDAC(AbstractController):
         self.voltage_a = self.calibration_function(self.voltage_a)
         self.voltage_b = self.calibration_function(self.voltage_b)
         
-        if self.voltage_a > self.max_voltage:
-            self.voltage_a = self.max_voltage
-        elif self.voltage_a < -self.max_voltage:
-            self.voltage_a = -self.max_voltage
+        if self.voltage_a > self._max_voltage:
+            self.voltage_a = self._max_voltage
+        elif self.voltage_a < -self._max_voltage:
+            self.voltage_a = -self._max_voltage
 
-        if self.voltage_b > self.max_voltage:
-            self.voltage_b = self.max_voltage
-        elif self.voltage_b < -self.max_voltage:
-            self.voltage_b = -self.max_voltage
+        if self.voltage_b > self._max_voltage:
+            self.voltage_b = self._max_voltage
+        elif self.voltage_b < -self._max_voltage:
+            self.voltage_b = -self._max_voltage
 
         try:
-            self.device.i2c(LJTDAC.DAC_ADDRESS, [48, int(self.calibration_function(((self.voltage_a*self.aSlope)+self.aOffset))/256), int(self.calibration_function(((self.voltage_a*self.aSlope)+self.aOffset))%256)], SDAPinNum = self.sdaPin, SCLPinNum = self.sclPin)
-            self.device.i2c(LJTDAC.DAC_ADDRESS, [49, int(((self.voltage_b*self.bSlope)+self.bOffset)/256), int(((self.voltage_b*self.bSlope)+self.bOffset)%256)], SDAPinNum = self.sdaPin, SCLPinNum = self.sclPin)
+            self._device.i2c(LJTDAC.DAC_ADDRESS, [48, int(self.calibration_function(((self.voltage_a*self.aSlope)+self.aOffset))/256), int(self.calibration_function(((self.voltage_a*self.aSlope)+self.aOffset))%256)], SDAPinNum = self.sdaPin, SCLPinNum = self.sclPin)
+            self._device.i2c(LJTDAC.DAC_ADDRESS, [49, int(((self.voltage_b*self.bSlope)+self.bOffset)/256), int(((self.voltage_b*self.bSlope)+self.bOffset)%256)], SDAPinNum = self.sdaPin, SCLPinNum = self.sclPin)
         except Exception as a:
             print e
             print("retrying")
@@ -73,14 +75,14 @@ class LJTDAC(AbstractController):
         
     def get_cal_constants(self):             
         # Make request
-        data = self.device.i2c(LJTDAC.EEPROM_ADDRESS, [64], NumI2CBytesToReceive=36, SDAPinNum = self.sdaPin, SCLPinNum = self.sclPin)
+        data = self._device.i2c(LJTDAC.EEPROM_ADDRESS, [64], NumI2CBytesToReceive=36, SDAPinNum = self.sdaPin, SCLPinNum = self.sclPin)
         response = data['I2CBytes']
         self.aSlope = self.to_double(response[0:8])
         self.aOffset = self.to_double(response[8:16])
         self.bSlope = self.to_double(response[16:24])
         self.bOffset = self.to_double(response[24:32])
 
-        if 255 in response: raise IOError("The calibration constants for controller: {0} seem a little off. Please go into settings and make sure the pin numbers are correct and that the LJTickDAC is properly attached.".format(self.id))
+        if 255 in response: raise IOError("The calibration constants for controller: {0} seem a little off. Please go into settings and make sure the pin numbers are correct and that the LJTickDAC is properly attached.".format(self._id))
     
     #calibrates function to be more accurate
     #testing has shown than an adjusted voltage follows equation

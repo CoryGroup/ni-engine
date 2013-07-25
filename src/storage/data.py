@@ -4,7 +4,7 @@ import time
 
 class Data(object):
     """
-    Measurement class for storing measurements taken from sensors. 
+    Data class for storing measurements taken from sensors. 
     Passed around by the ni-engine system
     """
     def __init__(self,ID,code,name,value,time=None):
@@ -80,7 +80,7 @@ class Data(object):
         Returns
         -------
         str
-            Measurement name (ie. temperature,distance etc.)
+            Data name (ie. temperature,distance etc.)
         """
         return self._name
     

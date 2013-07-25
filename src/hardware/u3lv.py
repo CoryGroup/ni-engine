@@ -1,7 +1,7 @@
 from u3 import U3
 import config
-from abstractBitSetter import AbstractBitSetter
-from abstractHardware import AbstractHardware
+from abstract_bit_setter import AbstractBitSetter
+from abstract_hardware import AbstractHardware
 
 
 class U3LVBitSetter(AbstractBitSetter):
@@ -34,12 +34,15 @@ class U3LV(U3,AbstractHardware,U3LVBitSetter):
     def __init__(self,ID,name=name,description=description):
         super(U3LV,self).__init__()
         self.configU3()
-        self.id = ID
+        self._id = ID
         self._name = name 
 
     def delete(self):
         del self
     
+    def disconnect(self):
+        self.close()
+
     @classmethod
     def create(cls,configuration,data_handler):
         ID = configuration[config.ID]

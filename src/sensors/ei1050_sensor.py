@@ -2,13 +2,12 @@ from abstract_sensor import AbstractSensor
 import ei1050
 import Queue
 import config
-from measurement import Measurement
-from storage import AbstractDataContainer
+from storage import AbstractDataContainer,Data
 import quantities as pq
 
 class Ei1050MeasurementContainer(AbstractDataContainer):
     """
-    Measurement container for Ei1050Sensor
+    Data container for Ei1050Sensor
     """
     def __init__(self,ID,temperature,humidity,max_stored_measurements=-1):
 
@@ -23,7 +22,7 @@ class Ei1050MeasurementContainer(AbstractDataContainer):
         Returns
         -------
         list
-            Containing `Measurement` objects of temperature measurements
+            Containing `Data` objects of temperature measurements
         """
         return self['temperature']
     
@@ -33,7 +32,7 @@ class Ei1050MeasurementContainer(AbstractDataContainer):
         Returns
         -------
         list
-            Containing `Measurement` objects of humidity measurements
+            Containing `Data` objects of humidity measurements
         """
         return self['humidity']
     
@@ -133,19 +132,19 @@ class Ei1050Sensor(AbstractSensor):
             else:
                 reading = self._probe.getReading()
             temp = (reading.getTemperature()  + Ei1050Sensor.KELVIN_CONVERSION)*pq.K # convert from celsius to kelvin
-            temperature = Measurement(self.id,Ei1050Sensor.code,"Temperature",temp,time=reading.getTime())
-            humidity = Measurement(self.id,Ei1050Sensor.code,"Humidity",reading.getHumidity()*pq.percent,time=reading.getTime())
+            temperature = Data(self.id,Ei1050Sensor.code,"Temperature",temp,time=reading.getTime())
+            humidity = Data(self.id,Ei1050Sensor.code,"Humidity",reading.getHumidity()*pq.percent,time=reading.getTime())
             container = Ei1050MeasurementContainer(self.id,temperature,humidity,self._max_stored_measurements)
             self._retries =0
             return container
         except Exception as e:
             self._retries += 1
-            print "Measurement not successful retrying"
+            print "Data not successful retrying"
             print e
             if self._retries < self._retry_limit:
                 return self.measure()
             else: 
-                raise Exception("Measurement could not be completed: Retry limit exceeded")
+                raise Exception("Data could not be completed: Retry limit exceeded")
 
     def disconnect(self):
         """

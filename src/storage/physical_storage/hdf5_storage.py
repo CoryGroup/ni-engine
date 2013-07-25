@@ -7,7 +7,7 @@ import config
 from abstract_physical_storage import AbstractPhysicalStorage
 from ..data_dict import DataDict
 from ..data_container import AbstractDataContainer
-from ..measurement import Measurement
+from ..data import Data
 
 
 class HDF5Storage(AbstractPhysicalStorage):
@@ -102,7 +102,7 @@ class HDF5Storage(AbstractPhysicalStorage):
                             units = data['units']
                             value = pq.Quantity(value,units)
 
-                        temp_con.add_measurement(title,Measurement(ID,code,name,value,time))
+                        temp_con.add_measurement(title,Data(ID,code,name,value,time))
 
                     container = temp_con + container
 
@@ -200,7 +200,7 @@ class HDF5Storage(AbstractPhysicalStorage):
         Parameters
         ----------
         table : tables.Table
-        measurement : Measurement
+        measurement : Data
         """
         
         # gets the time since Jan 1, 1970 in floating point seconds
@@ -222,7 +222,7 @@ class HDF5Storage(AbstractPhysicalStorage):
         group : tables.Group or str
         name : str
             name of the table
-        measurement : Measurement 
+        measurement : Data 
 
         Returns
         (tables.Table,bool)
