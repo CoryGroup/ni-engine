@@ -25,7 +25,7 @@ class AbstractPhysicalStorage :
         measurement : AbstractMeasurement or list[AbstractMeasurement]
 
         """
-        print (type_measurement,copy.deepcopy(measurement))
+        
         self.write_queue.add((type_measurement,copy.deepcopy(measurement)))        
         if len(self.write_queue)>=self.buffer_size:
             self.write_measurement(self.write_queue)

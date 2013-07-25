@@ -1,11 +1,12 @@
 from datetime import datetime
 import quantities as pq
+import time 
 class Measurement(object):
     """
     Measurement class for storing measurements taken from sensors. 
     Passed around by the ni-engine system
     """
-    def __init__(self,ID,code,name,value,time=datetime.now()):
+    def __init__(self,ID,code,name,value,time=None):
         """
         :param str sensor_id: The ID of sensor from which measurement was taken
         :param str sensor_code: The code for sensor type which measurement comes from
@@ -15,7 +16,8 @@ class Measurement(object):
         """
         # Value must be of type pq.quantity
         assert type(value) is pq.Quantity
-
+        if time is None:
+            time = datetime.now()
         self._id = ID
         self._code = code
         self._name = name
