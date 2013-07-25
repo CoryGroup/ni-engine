@@ -1,6 +1,9 @@
 
 from physical_storage import StorageFactory, AbstractPhysicalStorage
 from data_container import AbstractDataContainer
+from data_dict import DataDict
+
+
 
 class DataHandler(object):
     """
@@ -22,7 +25,12 @@ class DataHandler(object):
         self._sensor_data = DataDict("sensors")
         self._controller_data = DataDict("controllers")
         self._data = {"hardware":self._hardware_data, "sensors" : self._sensor_data, "controllers" : self._controller_data}
-       
+        
+        if 'load_previous_entries' in self._configuration.storage_config:
+            self._old_data = self._storage.retrieve_data(self._configuration.
+                storage_config['load_previous_entries'].get('number_entries',-1))
+        else:
+            self._old_data = {}
         
     def add_storage(self,storage_config):
         """
@@ -261,46 +269,6 @@ class DataHandler(object):
 
 
 
-class DataDict(dict):
-    """
-    Holder for in-memory storage of measurements
-    """
-    def __init__(self,source,*arg,**kw):
-        """
-        Parameters
-        ----------
-        source : str 
-            String for source of storage, ie. controller,sensor hardware
-        """
-        self._source = source
-        super(DataDict,self).__init__(*arg,**kw)
 
-    def add_data(self,ID,measurement_container):
-        """
-        Add some data to be stored
-
-        Parameters 
-        ----------
-        ID : str 
-            ID of device to store
-
-        measurement_container : AbstractDataContainer
-            data to be stored
-        """
-        assert isinstance(measurement_container,AbstractDataContainer)
-
-        if ID in self:
-            self[ID] = self[ID] + measurement_container
-        else:
-            self[ID] = measurement_container
-    @property
-    def source(self):
-        """
-        Getter/setter for source parameter
-        """
-        return self._source
-    @source.setter
-    def source(self, source):
-        self._source = source
     
     

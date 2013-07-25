@@ -58,9 +58,15 @@ configuration:
  storage:
   code: "HDF5"
   name: "Test Data Storage"
-  file_path: "testReal.h5"
+  file_path: "new.h5"
   buffer_size : 10
   new_file : True
-    
-
+  # If you want to load old values for intialization etc.
+  load_previous_entries:
+   file_path: "old.h5"
+   # -1 or non-existent for max
+   number_entries: 50
+   #keep old entries around after called
+   #false by default
+   store: True
 

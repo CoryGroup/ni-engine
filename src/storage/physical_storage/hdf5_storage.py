@@ -1,11 +1,13 @@
-
-from abstract_physical_storage import AbstractPhysicalStorage
 import tables 
 import numpy as np
-import config
 import quantities as pq
 import time
-
+import datetime
+import config
+from abstract_physical_storage import AbstractPhysicalStorage
+from ..data_dict import DataDict
+from ..data_container import AbstractDataContainer
+from ..measurement import Measurement
 
 
 class HDF5Storage(AbstractPhysicalStorage):
@@ -15,7 +17,7 @@ class HDF5Storage(AbstractPhysicalStorage):
     """
     code = "HDF5"
 
-    def __init__(self,file_path,title="Ni-Engine Data",buffer_size=100,new_file=False):
+    def __init__(self,file_path,title="Ni-Engine Data",buffer_size=100,new_file=False,past_data_file=None):
         self._measurements= []
         self.buffer_size = buffer_size
         write_code = 'w' if new_file else 'a' 
@@ -27,7 +29,88 @@ class HDF5Storage(AbstractPhysicalStorage):
         self._controllers, c_created = self.get_or_create_group(self._root,"controllers","Controllers Data Acquired")
         self._groups = {"hardware": self._hardware,"sensors" : self._sensors,
                         "controllers":self._controllers}
+
+        self._past_data_file = past_data_file
+
+    def retrieve_data(self,number_elems):
+        if self._past_data_file is None:
+            raise AttributeError("The olf file path was not set. It appears there is an issue with \
+                the configuration file")
+        return self.build_data_from_file(self._past_data_file,number_elems)
+
         
+    def build_data_from_file(self,file_path,number_elems=None):
+        """
+        Builds dictionary of data data containers from HDF5 file.
+        
+        Note: there is definitely lots of room for improvement for 
+        efficency, uses way to much reflection and probably unecessary 
+        loops.
+
+        Example of returned dictionary:
+        >>> {"sensors":{"temp1":AbstractDataContainer},"hardware":{},"controllers":{}}
+
+        Parameters
+        ----------
+        file_path : str
+            path to file
+        number_elems: int
+            number of elements to grab from file
+
+        Returns
+        -------
+        dict
+            
+
+        """
+        data_file = tables.open_file(file_path,mode='r')
+        root = data_file.root
+        try:
+            sensors = root.sensors
+            controllers = root.controllers
+            hardware = root.hardware
+            g = {'sensors': sensors,'controllers': controllers,'hardware':hardware}
+        except Exception,e: 
+            print "Does not appear to be valid ni-engine file"
+            print e
+
+        old_data = {}
+        for k,v in g.iteritems():
+            old_data[k] = DataDict(k)
+            #go through groups of devices
+            for devices in data_file.listNodes(v):
+                #go through tables of devices
+                container = AbstractDataContainer("",number_elems)
+
+                for table in data_file.listNodes(devices):
+                    
+                    title = table.attrs.TITLE
+                    ID = table.attrs.id
+                    code = table.attrs.code
+                    name = table.attrs.name
+                    temp_con = AbstractDataContainer(ID,number_elems)
+                    #cycle through last number_elems in data set
+                    if number_elems is None or number_elems<0:
+                        to_cycle = table
+                    else :
+                        to_cycle = table[-number_elems:]
+                    for data in to_cycle:
+                        value = data['value']
+                        time_seconds = data['time']
+                        time = datetime.datetime.fromtimestamp(time_seconds)
+                        if 'units' in data:
+                            units = data['units']
+                            value = pq.Quantity(value,units)
+
+                        temp_con.add_measurement(title,Measurement(ID,code,name,value,time))
+
+                    container = temp_con + container
+
+                old_data[k][container.id] = container
+
+        return old_data
+
+
     
     def get_or_create_group(self,parent,group_name,title=None):
         """
@@ -124,6 +207,7 @@ class HDF5Storage(AbstractPhysicalStorage):
         row["time"] = time.mktime(measurement.time.timetuple())+measurement.time.microsecond/1000000.
         if isinstance(measurement.value,pq.Quantity):
             row["value"] = float(measurement.value)
+            row["units"] = measurement.value.dimensionality.string
         else:
             row["value"] = measurement.value
 
@@ -190,7 +274,10 @@ class HDF5Storage(AbstractPhysicalStorage):
         file_path = configuration.get('file_path')
         name = configuration.get('name',"Ni-Engine Data")
         new_file = configuration.get('new_file',False)
-        return HDF5Storage(file_path,name,buffer_size,new_file)
+        old_file = None
+        if 'load_previous_entries' in configuration:
+            old_file = configuration['load_previous_entries'].get('file_path',None)
+        return HDF5Storage(file_path,name,buffer_size,new_file,old_file)
 
   
       

@@ -63,7 +63,7 @@ class Ei1050Sensor(AbstractSensor):
     code = "EI1050"
     name = "EI1050Sensor"
     description = " "
-    KELVIN_CONVERSION = 293.15
+    KELVIN_CONVERSION = 273.15
     def __init__(self,ID,device,data_pin,clock_pin,enable_pin,threaded=False,polling_time=0.5,name=name,description=description,retry_limit=1,max_stored_measurements=-1):
         """
         Parameters

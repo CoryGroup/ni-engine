@@ -53,7 +53,21 @@ class AbstractDataContainer(dict):
             self[key] = value
         return self[key]
 
+    def add_measurement(self,key,measurement):
+        """
+        Add a measurement to the container
 
+        Parameters
+        ----------
+        key : str
+        measurement : Measurement
+        """
+
+        if key in self:            
+            self[key] = np.append(self[key],measurement)            
+        else: 
+            print "not appending"
+            self[key] = measurement
 
 
     def all_recent_data(self):
@@ -139,7 +153,7 @@ class AbstractDataContainer(dict):
             if self.max_stored_measurements != -1:
                 
                 if self.max_stored_measurements <= len(v):
-                    del v[0:len(v)-self.max_stored_measurements]
+                    self[k]= v[-self.max_stored_measurements:]
     @property
     def max_stored_measurements(self):
         """

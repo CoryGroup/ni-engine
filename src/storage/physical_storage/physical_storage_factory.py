@@ -32,8 +32,7 @@ class StorageFactory(object):
         Parameters
         ----------
         configuration : dictionary
-        """
-        print configuration
+        """        
         return configuration[config.CODE]    
 
     @classmethod

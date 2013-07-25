@@ -1,7 +1,8 @@
 from datetime import datetime
 import quantities as pq
 import time 
-class Measurement(object):
+
+class Data(object):
     """
     Measurement class for storing measurements taken from sensors. 
     Passed around by the ni-engine system
@@ -14,10 +15,13 @@ class Measurement(object):
         :param quantity.Quantity value: The value measured 
         :param datetime.datetime time: The time at which the measurement was taken
         """
-        # Value must be of type pq.quantity
-        assert type(value) is pq.Quantity
-        if time is None:
-            time = datetime.now()
+
+        #make sure value is acceptable
+        assert (isinstance(value,pq.Quantity) or isinstance(value,str) or
+            isinstance(value,int) or isinstance(value,float) or
+            isinstance(value,bool))
+        
+        time = datetime.now()
         self._id = ID
         self._code = code
         self._name = name
@@ -32,23 +36,52 @@ class Measurement(object):
 
     @property
     def value(self):
+        """
+        Gets value must be of valid type
+        Returns
+        -------
+        pq.Quantity or str or int or float or bool
+        """
         return self._value
 
     @property
     def id(self):
+        """
+        Returns
+        -------
+        str
+            id of where the data was taken from
+        """
         return self._id
 
 
     @property
     def code(self):
+        """
+        Returns
+        -------
+        str
+            code of device data was taken from
+        """
         return self._code 
 
     @property
     def time(self):
+        """
+        Returns
+        -------
+        datetime.datetime
+        """
         return self._time
 
     @property 
     def name(self):
+        """
+        Returns
+        -------
+        str
+            Measurement name (ie. temperature,distance etc.)
+        """
         return self._name
     
     
