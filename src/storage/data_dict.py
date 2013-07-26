@@ -1,4 +1,4 @@
-from data_container import AbstractDataContainer
+from data_container import DataContainer
 
 class DataDict(dict):
     """
@@ -23,10 +23,10 @@ class DataDict(dict):
         ID : str 
             ID of device to store
 
-        measurement_container : AbstractDataContainer
+        measurement_container : DataContainer
             data to be stored
         """
-        assert isinstance(measurement_container,AbstractDataContainer)
+        assert isinstance(measurement_container,DataContainer)
 
         if ID in self:
             self[ID] = self[ID] + measurement_container

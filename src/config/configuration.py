@@ -64,11 +64,11 @@ class Configuration(object):
 
         self.yamlConfig = yaml.load(file)
 
-        self._sensors = self.yamlConfig[config.SENSORS]
+        self._sensors = self.yamlConfig.get(config.SENSORS,{})
 
-        self._hardware = self.yamlConfig[config.HARDWARE]
+        self._hardware = self.yamlConfig.get(config.HARDWARE,{})
 
-        self._controllers = self.yamlConfig[config.CONTROLLERS]
+        self._controllers = self.yamlConfig.get(config.CONTROLLERS,{})
 
         self._configuration = self.yamlConfig[config.CONFIGURATION]
 

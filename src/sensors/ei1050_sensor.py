@@ -2,10 +2,10 @@ from abstract_sensor import AbstractSensor
 import ei1050
 import Queue
 import config
-from storage import AbstractDataContainer,Data
+from storage import DataContainer,Data
 import quantities as pq
 
-class Ei1050MeasurementContainer(AbstractDataContainer):
+class Ei1050MeasurementContainer(DataContainer):
     """
     Data container for Ei1050Sensor
     """

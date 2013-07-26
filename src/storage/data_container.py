@@ -1,17 +1,19 @@
 from abc import ABCMeta, abstractmethod , abstractproperty
 import numpy as np
-class AbstractDataContainer(dict):
+class DataContainer(dict):
     """
     Abstract class to hold all measurements. 
     Must be implemented for passing of measurements    
     """
 
-    __metaclass__ = ABCMeta
+    
 
-    def __init__(self,ID,max_stored_measurements=-1,*arg,**kw):
+    def __init__(self,ID,max_stored_measurements=-1,sort_after_n_joins=1000,*arg,**kw):
         self._id = ID
         self._max_stored_measurements = max_stored_measurements
         self.update(*arg, **kw)
+        self._sort_after_n_joins = sort_after_n_joins
+        self._since_last_sort = 0
 
     def __len__(self):
         """
@@ -29,7 +31,7 @@ class AbstractDataContainer(dict):
         """
         if not isinstance(value,np.ndarray):
             value = np.array([value])
-        super(AbstractDataContainer, self).__setitem__(key, value)
+        super(DataContainer, self).__setitem__(key, value)
 
     def update(self, *args, **kwargs):
         """
@@ -91,11 +93,11 @@ class AbstractDataContainer(dict):
 
         Parameters
         ----------
-        container : AbstractDataContainer
+        container : DataContainer
 
         Returns
         -------
-        AbstractDataContainer
+        DataContainer
             New Holder object
 
         """
@@ -125,18 +127,24 @@ class AbstractDataContainer(dict):
 
         Parameters
         ----------
-        container : AbstractDataContainer
+        container : DataContainer
 
         Returns
         -------    
-        :class:`.AbstractDataContainer`
+        :class:`.DataContainer`
             New Holder object
         """
         if not isinstance(container,type(self)):
             raise TypeError("Instances must be of same type")
 
-        newContainer = self._join(container)        
-        newContainer.sortChronologically()
+        newContainer = self._join(container) 
+        if self._sort_after_n_joins >= 1:
+            if self._since_last_sort >= self._sort_after_n_joins:       
+                newContainer.sortChronologically()
+                self._since_last_sort = 0
+
+        #newContainer.sortChronologically()
+
         self.cull_old_measurements()
         
 
@@ -146,7 +154,7 @@ class AbstractDataContainer(dict):
         """
         Removes extra measurements if too many are stored. Takes from
         front of values list. Should never have to be called as this should be managed 
-        at joining of `AbstractDataContainer`s
+        at joining of `DataContainer`s
         """
         for k,v in self.iteritems():
             

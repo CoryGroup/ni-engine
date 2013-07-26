@@ -16,7 +16,7 @@ class AbstractPhysicalStorage :
     
     def store_measurement(self,type_measurement,measurement):
         """
-        Takes a AbstractDataContainer and stores to file
+        Takes a DataContainer and stores to file
 
         Parameters 
         ----------
@@ -49,7 +49,7 @@ class AbstractPhysicalStorage :
 
         Parameters
         ----------
-        controller_measurements : AbstractDataContainer
+        controller_measurements : DataContainer
         """
         self.write_measurement("controllers",controller_measurements)
 
@@ -60,7 +60,7 @@ class AbstractPhysicalStorage :
 
         Parameters
         ----------
-        sensor_measurements : AbstractDataContainer
+        sensor_measurements : DataContainer
         """
         self.write_measurement("sensors",sensor_measurements)
 
@@ -71,7 +71,7 @@ class AbstractPhysicalStorage :
 
         Parameters
         ----------
-        hardware_measurements : AbstractDataContainer
+        hardware_measurements : DataContainer
         """
         self.write_measurement("hardware",hardware_measurements)
 
@@ -130,7 +130,7 @@ class AbstractPhysicalStorage :
     def write_queue(self):
         """
         Queue that holds all of the AbstractDataContainers to be written. The data 
-        inside the queue is a tuple of (measurement_type(str),AbstractDataContainer )
+        inside the queue is a tuple of (measurement_type(str),DataContainer )
         """
         if not hasattr(self, '_write_queue'):
             self._write_queue = ItemStore()

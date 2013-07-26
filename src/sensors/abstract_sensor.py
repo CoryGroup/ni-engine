@@ -35,7 +35,7 @@ class AbstractSensor(Item):
         Called to measure sensor
         Returns
         -------
-        AbstractDataContainer
+        DataContainer
         """
         pass
 

@@ -1,6 +1,6 @@
 
 from physical_storage import StorageFactory, AbstractPhysicalStorage
-from data_container import AbstractDataContainer
+from data_container import DataContainer
 from data_dict import DataDict
 
 
@@ -124,7 +124,7 @@ class DataHandler(object):
         ----------
         storage_type : str
         ID : str
-        measurement_container : AbstractDataContainer
+        measurement_container : DataContainer
         """
         if storage_type not in self._data:
             raise ValueError("storage type: {0} is not valid".format(storage_type))
@@ -139,7 +139,7 @@ class DataHandler(object):
 
         Parameters
         ID : str
-        measurement_container : AbstractDataContainer 
+        measurement_container : DataContainer 
 
         """
         self.add_data("sensors",ID,measurement_container)
@@ -150,7 +150,7 @@ class DataHandler(object):
 
         Parameters
         ID : str
-        measurement_container : AbstractDataContainer 
+        measurement_container : DataContainer 
 
         """
         self.add_data("hardware",ID,measurement_container)
@@ -161,7 +161,7 @@ class DataHandler(object):
 
         Parameters
         ID : str
-        measurement_container : AbstractDataContainer 
+        measurement_container : DataContainer 
 
         """
         self.add_data("controllers",ID,measurement_container)

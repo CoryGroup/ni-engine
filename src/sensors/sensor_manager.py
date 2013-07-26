@@ -201,9 +201,9 @@ class SensorManager(object):
         AbstractSensor
 
         """
-        if ID in self.sensors:
-            return self.sensors[ID]
-        else: raise ValueError("No Sensor exists for id: {0}".format(ID))
+        if sensor_id in self.sensors:
+            return self.sensors[sensor_id]
+        else: raise ValueError("No Sensor exists for id: {0}".format(sensor_id))
 
 
     @classmethod

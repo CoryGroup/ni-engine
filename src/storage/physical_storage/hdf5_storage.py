@@ -6,7 +6,7 @@ import datetime
 import config
 from abstract_physical_storage import AbstractPhysicalStorage
 from ..data_dict import DataDict
-from ..data_container import AbstractDataContainer
+from ..data_container import DataContainer
 from ..data import Data
 
 
@@ -48,7 +48,7 @@ class HDF5Storage(AbstractPhysicalStorage):
         loops.
 
         Example of returned dictionary:
-        >>> {"sensors":{"temp1":AbstractDataContainer},"hardware":{},"controllers":{}}
+        >>> {"sensors":{"temp1":DataContainer},"hardware":{},"controllers":{}}
 
         Parameters
         ----------
@@ -80,7 +80,7 @@ class HDF5Storage(AbstractPhysicalStorage):
             #go through groups of devices
             for devices in data_file.listNodes(v):
                 #go through tables of devices
-                container = AbstractDataContainer("",number_elems)
+                container = DataContainer("",number_elems)
 
                 for table in data_file.listNodes(devices):
                     
@@ -88,7 +88,7 @@ class HDF5Storage(AbstractPhysicalStorage):
                     ID = table.attrs.id
                     code = table.attrs.code
                     name = table.attrs.name
-                    temp_con = AbstractDataContainer(ID,number_elems)
+                    temp_con = DataContainer(ID,number_elems)
                     #cycle through last number_elems in data set
                     if number_elems is None or number_elems<0:
                         to_cycle = table

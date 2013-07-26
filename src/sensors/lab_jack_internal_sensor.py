@@ -1,8 +1,8 @@
 from abstract_sensor import AbstractSensor
 import config
-from storage import AbstractDataContainer,Data
+from storage import DataContainer,Data
 import quantities as pq
-class TemperatureContainer(AbstractDataContainer):
+class TemperatureContainer(DataContainer):
     """
     Container for holding temperature measurements. Implements `AbstractMeasurementContainer`
     """
