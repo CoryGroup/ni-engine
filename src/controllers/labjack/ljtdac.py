@@ -1,5 +1,5 @@
 import config
-from abstract_controller import AbstractController
+from ..abstract_controller import AbstractController
 import struct
 
 

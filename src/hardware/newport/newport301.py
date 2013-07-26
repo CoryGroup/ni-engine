@@ -1,6 +1,6 @@
 
 from instruments.other import NewportESP301
-from abstract_hardware import AbstractHardware
+from ..abstract_hardware import AbstractHardware
 class Newport301(AbstractHardware,NewportESP301):
     code = "NEW301"
     name = "Newport ESP301 motor controller"

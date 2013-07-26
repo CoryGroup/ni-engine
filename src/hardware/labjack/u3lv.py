@@ -1,7 +1,7 @@
 from u3 import U3
 import config
-from abstract_bit_setter import AbstractBitSetter
-from abstract_hardware import AbstractHardware
+from ..abstract_bit_setter import AbstractBitSetter
+from ..abstract_hardware import AbstractHardware
 
 
 class U3LVBitSetter(AbstractBitSetter):

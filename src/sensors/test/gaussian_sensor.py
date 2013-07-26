@@ -1,5 +1,5 @@
 from tools import Item
-from abstract_sensor import AbstractSensor
+from ..abstract_sensor import AbstractSensor
 import random
 from storage import DataContainer,Data
 import config

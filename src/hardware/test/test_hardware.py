@@ -1,4 +1,4 @@
-from abstract_hardware import AbstractHardware
+from ..abstract_hardware import AbstractHardware
 import config
 class TestHardware(AbstractHardware):
     code = "TEST"

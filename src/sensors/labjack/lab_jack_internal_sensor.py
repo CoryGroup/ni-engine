@@ -1,4 +1,4 @@
-from abstract_sensor import AbstractSensor
+from ..abstract_sensor import AbstractSensor
 import config
 from storage import DataContainer,Data
 import quantities as pq

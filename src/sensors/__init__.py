@@ -1,10 +1,9 @@
 from abstract_sensor import AbstractSensor
-from ei1050_sensor import Ei1050Sensor
-from lab_jack_internal_sensor import LabJackInternalSensor
+from labjack import Ei1050Sensor,LabJackInternalSensor
 from sensor_factory import SensorFactory
 from sensor_manager import SensorManager
 from storage import Data,DataContainer
-from gaussian_sensor import GaussianSensor
+from test import GaussianSensor
 # Register all predefined Sensors here
 SensorManager.register_sensor(Ei1050Sensor)
 SensorManager.register_sensor(LabJackInternalSensor)

@@ -1,6 +1,6 @@
 import config 
-from ljtdac import LJTDAC
-from abstract_controller import AbstractController
+from ..labjack import LJTDAC
+from ..abstract_controller import AbstractController
 
 
 class KepcoSupply(AbstractController):

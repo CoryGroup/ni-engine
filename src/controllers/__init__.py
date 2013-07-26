@@ -1,9 +1,9 @@
 from abstract_controller import AbstractController
 from controller_factory import ControllerFactory
 from controller_manager import ControllerManager
-from kepco_supply import KepcoSupply
-from ljtdac import LJTDAC
-from newport301_axis import Newport301Axis
+from kepco import KepcoSupply
+from labjack import LJTDAC
+from newport import Newport301Axis
 
 # Register all predefined Sensors here
 ControllerManager.register_controller(KepcoSupply)

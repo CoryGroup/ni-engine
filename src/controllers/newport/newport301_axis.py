@@ -1,7 +1,7 @@
 import config 
 from instruments.other import NewportESP301,NewportESP301Axis
-from abstract_controller import AbstractController
-from hardware.newport301 import Newport301
+from ..abstract_controller import AbstractController
+from hardware.newport import Newport301
 
 class Newport301Axis(AbstractController):
     code = 'NEWPORTAXIS'
