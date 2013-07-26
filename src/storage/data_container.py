@@ -8,7 +8,7 @@ class DataContainer(dict):
 
     
 
-    def __init__(self,ID,max_stored_measurements=-1,sort_after_n_joins=1000,*arg,**kw):
+    def __init__(self,ID,max_stored_measurements=-1,sort_after_n_joins=-1,*arg,**kw):
         self._id = ID
         self._max_stored_measurements = max_stored_measurements
         self.update(*arg, **kw)

@@ -1,5 +1,7 @@
 class AbstractBitSetter (object):
-
+    """
+    Abstract class to handle setting of pins. Not really used right now
+    """
     def set_pins(self,list):
         raise NotImplementedError
 

@@ -12,6 +12,7 @@ sensors:
    code: GAUSSSENSOR
    hardware_id: test
    id: temp
+   max_measurements: 10
    
  
  
