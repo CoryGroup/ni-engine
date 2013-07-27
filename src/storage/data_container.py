@@ -199,3 +199,8 @@ class DataContainer(dict):
         """
         return self.join(b)
 
+
+    def compound (self):
+        
+        return reduce(lambda x,y: zip(x,y),self.values())
+

@@ -24,7 +24,8 @@ class DataHandler(object):
         self._hardware_data = DataDict("hardware")
         self._sensor_data = DataDict("sensors")
         self._controller_data = DataDict("controllers")
-        self._data = {"hardware":self._hardware_data, "sensors" : self._sensor_data, "controllers" : self._controller_data}
+        self._mixed_data = DataDict("mixed")
+        self._data = {"hardware":self._hardware_data, "sensors" : self._sensor_data, "controllers" : self._controller_data,"mixed": self._mixed_data}
         
         if 'load_previous_entries' in self._configuration.storage_config:
             self._old_data = self._storage.retrieve_data(self._configuration.
@@ -115,7 +116,7 @@ class DataHandler(object):
    
     
 
-    def add_data(self,storage_type,ID,measurement_container):
+    def add_data(self,storage_type,ID,measurement_container,compound=False):
         """
         Adds a measurement to proper `DataDict` based on it's ID. Also adds 
         it to be written to physical storage. 
@@ -129,11 +130,14 @@ class DataHandler(object):
         if storage_type not in self._data:
             raise ValueError("storage type: {0} is not valid".format(storage_type))
         else:
-            self._storage.store_measurement(storage_type,measurement_container)
+            if not compound:
+                self._storage.store_data(storage_type,measurement_container)
+            else:
+                self._storage.store_compound(storage_type,measurement_container)
             data_dict = self._data[storage_type]
             data_dict.add_data(ID,measurement_container)
 
-    def add_sensor_data(self,ID,measurement_container):
+    def add_sensor_data(self,ID,measurement_container,compound=False):
         """
         Store sensor data
 
@@ -142,9 +146,9 @@ class DataHandler(object):
         measurement_container : DataContainer 
 
         """
-        self.add_data("sensors",ID,measurement_container)
+        self.add_data("sensors",ID,measurement_container,compound)
 
-    def add_hardware_data(self,ID,measurement_container):
+    def add_hardware_data(self,ID,measurement_container,compound=False):
         """
         Store hardware data
 
@@ -153,9 +157,9 @@ class DataHandler(object):
         measurement_container : DataContainer 
 
         """
-        self.add_data("hardware",ID,measurement_container)
+        self.add_data("hardware",ID,measurement_container,compound)
 
-    def add_controller_data(self,ID,measurement_container):
+    def add_controller_data(self,ID,measurement_container,compound=False):
         """
         Store controller data
 
@@ -164,7 +168,18 @@ class DataHandler(object):
         measurement_container : DataContainer 
 
         """
-        self.add_data("controllers",ID,measurement_container)
+        self.add_data("controllers",ID,measurement_container,compound)
+
+    def add_mixed_data(self,ID,compound_container,compound=False):        
+        """
+        Store controller data
+
+        Parameters
+        ID : str
+        measurement_container : DataContainer 
+
+        """
+        self.add_data("mixed",ID,measurement_container,compound)
 
 
     @classmethod
@@ -210,6 +225,16 @@ class DataHandler(object):
             controller data object
         """
         return self._controller_data
+
+    @property 
+    def mixed_data(self):
+        """
+        Returns
+        -------
+        DataDict
+            controller data object
+        """
+        return self._mixed_data
 
     @property 
     def data(self):
@@ -268,7 +293,17 @@ class DataHandler(object):
         return self.get_all_recent_data(self.hardware_data)
 
 
+    @property 
+    def recent_mixed_data(self):
+        """
+        Get most recent mixed data
 
+        Returns 
+        -------
+        dictionary
+            keys are mixed name and datacontainers are values
+        """
+        return self.get_all_recent_data(self.hardware_data)
 
     
     

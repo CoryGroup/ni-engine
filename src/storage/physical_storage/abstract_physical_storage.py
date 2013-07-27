@@ -14,7 +14,7 @@ class AbstractPhysicalStorage :
     CODE = "ABSTRACTSTORAGE"
 
     
-    def store_measurement(self,type_measurement,measurement):
+    def store_data(self,type_measurement,measurement):
         """
         Takes a DataContainer and stores to file
 
@@ -28,11 +28,11 @@ class AbstractPhysicalStorage :
         
         self.write_queue.add((type_measurement,copy.deepcopy(measurement)))        
         if len(self.write_queue)>=self.buffer_size:
-            self.write_measurement(self.write_queue)
+            self.write_data(self.write_queue)
         
 
     @abstractmethod
-    def write_measurement(self,queue):
+    def write_data(self,queue):
         """
         Is called when the number of measurements in measurement queue
         is greater than the buffer_size parameter
@@ -42,8 +42,38 @@ class AbstractPhysicalStorage :
         queue : ItemStore
         """
         pass
+
+
+    def store_compound(self,type_measurement,measurement):
+        """
+        Takes a DataContainer and stores to file
+
+        Parameters 
+        ----------
+        type_measurement : str 
+            What type of information to store. Ie. controller, hardware or sensor
+        measurement : AbstractMeasurement or list[AbstractMeasurement]
+
+        """
+        
+        self.write_compound_queue.add((type_measurement,copy.deepcopy(measurement)))        
+        if len(self.write_compound_queue)>=self.buffer_size:
+            self.write_compound(self.write_compund_queue)
+
+    @abstractmethod
+    def write_compound(self,queue):
+        """
+        Is called when the number of measurements in measurement queue
+        is greater than the buffer_size parameter. Writes compound measurement
+
+        Parameters
+        ----------
+        queue : ItemStore
+        """
+        pass
+
     
-    def store_controller(self,controller_measurements):
+    def store_controller(self,controller_measurements,compound=False):
         """
         Stores controller information
 
@@ -51,10 +81,13 @@ class AbstractPhysicalStorage :
         ----------
         controller_measurements : DataContainer
         """
-        self.write_measurement("controllers",controller_measurements)
+        if not compound:
+            self.store_data("controllers",controller_measurements)
+        else:
+            self.store_compound("controllers",controller_measurements)
 
     
-    def store_sensor(self,sensor_measurements):
+    def store_sensor(self,sensor_measurements,compound=False):
         """
         Stores sensor information
 
@@ -62,10 +95,13 @@ class AbstractPhysicalStorage :
         ----------
         sensor_measurements : DataContainer
         """
-        self.write_measurement("sensors",sensor_measurements)
+        if not compound:
+            self.store_data("sensors",sensor_measurements)
+        else:
+            self.store_compound("sensors",sensor_measurements)
 
     
-    def store_hardware(self,hardware_measurements):
+    def store_hardware(self,hardware_measurements,compound=False):
         """
         Stores hardware information
 
@@ -73,7 +109,24 @@ class AbstractPhysicalStorage :
         ----------
         hardware_measurements : DataContainer
         """
-        self.write_measurement("hardware",hardware_measurements)
+        if not compound:
+            self.store_data("hardware",hardware_measurements)
+        else:
+            self.store_compound("hardware",hardware_measurements)
+
+    def store_mixed(self,mixed_data,compound=False):
+        """
+        Stores mixed information
+
+        Parameters
+        ----------
+        mixed_data : DataContainer
+        """
+        if not compound:
+            self.store_data("hardware",mixed_data)
+        else:
+            self.store_compound("hardware",mixed_data)
+
 
 
 
@@ -96,6 +149,13 @@ class AbstractPhysicalStorage :
         """
         pass
 
+    def _close(self):
+        """
+        Make sure to make final writes
+        """
+        self.write_data(self.write_queue)
+        self.write_compound(self.write_compund_queue)
+
     @abstractmethod
     def close(self):
         """
@@ -104,7 +164,9 @@ class AbstractPhysicalStorage :
         """
         pass
 
-    atexit.register(close)
+
+
+    atexit.register(_close)
 
     @property
     def buffer_size(self):
@@ -141,6 +203,22 @@ class AbstractPhysicalStorage :
     def write_queue(self,write_queue):
         assert isinstance(write_queue,ItemStore)
         self._write_queue = write_queue
+
+    @property
+    def write_compound_queue(self):
+        """
+        Queue that holds all of the AbstractDataContainers to be written. The data 
+        inside the queue is a tuple of (measurement_type(str),DataContainer )
+        """
+        if not hasattr(self, '_write_compound_queue'):
+            self._write_compound_queue = ItemStore()
+            return self._write_compound_queue
+        else:
+            return self._write_compound_queue
+    @write_compound_queue.setter
+    def write_compound_queue(self,write_compound_queue):
+        assert isinstance(write_compound_queue,ItemStore)
+        self._write_queue = write__compoundqueue
 
     @abstractproperty
     def code(self):

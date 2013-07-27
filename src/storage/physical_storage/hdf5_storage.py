@@ -168,7 +168,7 @@ class HDF5Storage(AbstractPhysicalStorage):
         else:               
             return  self._file.create_table(parent,table_name,description,title), True
         
-    def write_measurement(self,queue):
+    def write_data(self,queue):
         """
         Is called when the number of measurements in measurement queue
         is greater than the bulk_write parameter
@@ -184,14 +184,30 @@ class HDF5Storage(AbstractPhysicalStorage):
             data_container = data[1]
             group , was_created = self.get_or_create_group(data_class,data_container.id)         
             for k,v in data_container.iteritems():
-                table, table_created = self.generate_table_from_measurement(group,k,v[0])                
+                table, table_created = self.generate_table_from_measurement(group,k,v[0])    
+                row = table.row            
                 for x in v.flat:                    
-                    self.create_measurement(table.row,x)
+                    self.create_measurement(row,x)
                 table.flush()
 
 
+    def write_compound(self,queue):
+        data_to_write = queue.get_all()
+        compound = map(lambda x: x.compound(),data_to_write[1])
 
+        for x in zip(data_to_write,compoud):
+            data_class = self._groups[x[0][0]]
+            data_container = x[0][1]
+            compound_data = x[1]
+            group , was_created = self.get_or_create_group(data_class,data_container.id)
+            for d in compound_data:
+                table , table_created = self.generate_table_from_compound(group,data_container.id)
+                row = table.row
+                for data = d.flat:
+                    self.create_compound(row,data)
+                table.flush()
 
+    
         
     def create_measurement(self,row,measurement):
         """
@@ -199,7 +215,7 @@ class HDF5Storage(AbstractPhysicalStorage):
 
         Parameters
         ----------
-        table : tables.Table
+        row : tables.Table.row
         measurement : Data
         """
         
@@ -210,6 +226,27 @@ class HDF5Storage(AbstractPhysicalStorage):
             row["units"] = measurement.value.dimensionality.string
         else:
             row["value"] = measurement.value
+
+        row.append()
+
+    def create_compound(row,compound):
+        """
+        Creates a pytables entry and appends it to be written
+        from a list of measurements 
+
+        Parameters
+        ----------
+        row : tables.Table.row
+        compound: list(Data)
+        """
+
+        for x in compound:
+            row["{0} time".format(x.name)] = time.mktime(measurement.time.timetuple())+measurement.time.microsecond/1000000.
+            if isinstance(measurement.value,pq.Quantity):
+                row["{0} value".format(x.name)] = float(measurement.value)
+                row["{0} units".format(x.name)] = measurement.value.dimensionality.string
+            else:
+                row["{0} value".format(x.name)] = measurement.value
 
         row.append()
 
@@ -231,7 +268,7 @@ class HDF5Storage(AbstractPhysicalStorage):
         """
         # is shallow copy, this way we don't mess up for other objects
         table_dict = {}
-        table_dict["time"] = tables.Float64Col(pos=0)
+        
         if isinstance(measurement.value,pq.Quantity):
             table_dict["value"] = tables.Float64Col(pos=1)
             table_dict["units"] = tables.StringCol(20,pos=2)
@@ -242,7 +279,8 @@ class HDF5Storage(AbstractPhysicalStorage):
         elif isinstance(measurement.value,float):
             table_dict["value"] = tables.Float64Col(pos=1)
         elif isinstance(measurement.value,int):
-            table_dict["value"] = tables.Int32Col(pos=1)        
+            table_dict["value"] = tables.Int32Col(pos=1)   
+        table_dict["time"] = tables.Float64Col(pos=0)     
         table, created = self.get_or_create_table(group,name,table_dict,name)
         table.attrs.name = measurement.name
         table.attrs.id = measurement.id
@@ -251,6 +289,29 @@ class HDF5Storage(AbstractPhysicalStorage):
             table.attrs.units = measurement.value.units        
         return table , created
 
+    def generate_table_from_compound(self,group,name,compound):
+        table_dict = {}
+        for x in compound :
+            if isinstance(measurement.value,pq.Quantity):
+            table_dict["{0} value".format(x.name)] = tables.Float64Col(pos=1)
+            table_dict["{0} units".format(x.name)] = tables.StringCol(20,pos=2)
+            elif isinstance(measurement.value,bool):
+                table_dict["{0} value".format(x.name)] = tables.BoolCol(pos=1)
+            elif isinstance(measurement.value,str):
+                table_dict["{0} value".format(x.name)] = tables.StringCol(50)
+            elif isinstance(measurement.value,float):
+                table_dict["{0} value".format(x.name)] = tables.Float64Col(pos=1)
+            elif isinstance(measurement.value,int):
+                table_dict["{0} value".format(x.name)] = tables.Int32Col(pos=1)   
+            table_dict["{0} time".format(x.name)] = tables.Float64Col(pos=0)     
+    
+        table, created = self.get_or_create_table(group,name,table_dict,name)
+        table.attrs.name = measurement.name
+        for x in compound:
+            setattr(table.attrs,x.name,x.id)
+
+        return table,created
+    
     def close(self):
         print "closing"
         self._file.close()

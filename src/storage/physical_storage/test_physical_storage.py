@@ -18,7 +18,7 @@ class TestPhysicalStorage(AbstractPhysicalStorage):
     
 
     
-    def write_measurement(self,queue):
+    def write_data(self,queue):
         """
         Is called when the number of measurements in measurement queue
         is greater than the bulk_write parameter
@@ -33,8 +33,20 @@ class TestPhysicalStorage(AbstractPhysicalStorage):
         print data_to_write      
         self._measurements.append(data_to_write)
         
-   
+    def write_compound(self,queue):
+        """
+        Is called when the number of measurements in measurement queue
+        is greater than the bulk_write parameter
 
+        Parameters
+        ----------
+        queue : ItemStore
+        """
+        data_to_write = queue.get_all()
+        data_to_write = map(lambda x:x.compound(),data_to_write)  
+        print "writing"
+        print data_to_write      
+        self._compound.append(data_to_write)
 
 
 
