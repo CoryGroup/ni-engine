@@ -193,19 +193,23 @@ class HDF5Storage(AbstractPhysicalStorage):
 
     def write_compound(self,queue):
         data_to_write = queue.get_all()
-        compound = map(lambda x: x.compound(),data_to_write[1])
+        
+        compound = map(lambda x: x[1].compound(),data_to_write)
 
-        for x in zip(data_to_write,compoud):
+        for x in zip(data_to_write,compound):
             data_class = self._groups[x[0][0]]
-            data_container = x[0][1]
+            data_container = x[0][1] 
+            print x           
             compound_data = x[1]
+            print compound_data
             group , was_created = self.get_or_create_group(data_class,data_container.id)
-            for d in compound_data:
-                table , table_created = self.generate_table_from_compound(group,data_container.id)
-                row = table.row
-                for data = d.flat:
-                    self.create_compound(row,data)
-                table.flush()
+            table , table_created = self.generate_table_from_compound(group,data_container.id,compound_data)
+            row = table.row
+                           
+                
+                
+            self.create_compound(row,compound_data)
+            table.flush()
 
     
         
@@ -229,7 +233,7 @@ class HDF5Storage(AbstractPhysicalStorage):
 
         row.append()
 
-    def create_compound(row,compound):
+    def create_compound(self,row,compound):
         """
         Creates a pytables entry and appends it to be written
         from a list of measurements 
@@ -241,12 +245,12 @@ class HDF5Storage(AbstractPhysicalStorage):
         """
 
         for x in compound:
-            row["{0} time".format(x.name)] = time.mktime(measurement.time.timetuple())+measurement.time.microsecond/1000000.
-            if isinstance(measurement.value,pq.Quantity):
-                row["{0} value".format(x.name)] = float(measurement.value)
-                row["{0} units".format(x.name)] = measurement.value.dimensionality.string
+            row["{0} time".format(x.name)] = time.mktime(x.time.timetuple())+x.time.microsecond/1000000.
+            if isinstance(x.value,pq.Quantity):
+                row["{0} value".format(x.name)] = float(x.value)
+                row["{0} units".format(x.name)] = x.value.dimensionality.string
             else:
-                row["{0} value".format(x.name)] = measurement.value
+                row["{0} value".format(x.name)] = x.value
 
         row.append()
 
@@ -292,21 +296,21 @@ class HDF5Storage(AbstractPhysicalStorage):
     def generate_table_from_compound(self,group,name,compound):
         table_dict = {}
         for x in compound :
-            if isinstance(measurement.value,pq.Quantity):
-            table_dict["{0} value".format(x.name)] = tables.Float64Col(pos=1)
-            table_dict["{0} units".format(x.name)] = tables.StringCol(20,pos=2)
-            elif isinstance(measurement.value,bool):
-                table_dict["{0} value".format(x.name)] = tables.BoolCol(pos=1)
-            elif isinstance(measurement.value,str):
-                table_dict["{0} value".format(x.name)] = tables.StringCol(50)
-            elif isinstance(measurement.value,float):
+            if isinstance(x.value,pq.Quantity):
                 table_dict["{0} value".format(x.name)] = tables.Float64Col(pos=1)
-            elif isinstance(measurement.value,int):
+                table_dict["{0} units".format(x.name)] = tables.StringCol(20,pos=2)
+            elif isinstance(x.value,bool):
+                table_dict["{0} value".format(x.name)] = tables.BoolCol(pos=1)
+            elif isinstance(x.value,str):
+                table_dict["{0} value".format(x.name)] = tables.StringCol(50)
+            elif isinstance(x.value,float):
+                table_dict["{0} value".format(x.name)] = tables.Float64Col(pos=1)
+            elif isinstance(x.value,int):
                 table_dict["{0} value".format(x.name)] = tables.Int32Col(pos=1)   
             table_dict["{0} time".format(x.name)] = tables.Float64Col(pos=0)     
     
         table, created = self.get_or_create_table(group,name,table_dict,name)
-        table.attrs.name = measurement.name
+        table.attrs.name = name
         for x in compound:
             setattr(table.attrs,x.name,x.id)
 

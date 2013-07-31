@@ -11,7 +11,7 @@ sensors:
    description: Pulls from distribution
    code: GAUSSSENSOR
    hardware_id: test
-   id: temp
+   id: gaussian
    max_measurements: 10
    
  

@@ -58,7 +58,7 @@ class AbstractPhysicalStorage :
         
         self.write_compound_queue.add((type_measurement,copy.deepcopy(measurement)))        
         if len(self.write_compound_queue)>=self.buffer_size:
-            self.write_compound(self.write_compund_queue)
+            self.write_compound(self.write_compound_queue)
 
     @abstractmethod
     def write_compound(self,queue):
@@ -154,7 +154,7 @@ class AbstractPhysicalStorage :
         Make sure to make final writes
         """
         self.write_data(self.write_queue)
-        self.write_compound(self.write_compund_queue)
+        self.write_compound(self.write_compound_queue)
 
     @abstractmethod
     def close(self):
