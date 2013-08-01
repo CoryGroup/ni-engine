@@ -2,7 +2,7 @@ import config
 from instruments.other import NewportESP301,NewportESP301Axis
 from ..abstract_controller import AbstractController
 from hardware.newport import Newport301
-
+from storage import DataContainer,Data
 class Newport301Axis(AbstractController):
     code = 'NEWPORTAXIS'
     name = 'NewportESP 301 Axis'
@@ -10,61 +10,156 @@ class Newport301Axis(AbstractController):
     _default_position = 0
     
 
-    def __init__(self,ID,hardware,axis, default_position,home,name=name,description=description,**optional_args):
-        if not isinstance(controller, Newport301):
+    def __init__(self,ID,hardware,axis, default_position,configuration_parameters=None,max_stored_data=100,name=name,description=description):
+        """
+        Initialize the newport axis 
+        """
+        if not isinstance(hardware, Newport301):
             raise TypeError("Axis must be controlled by a Newport ESP-301 motor hardware.")
 
         if not isinstance(axis, NewportESP301Axis):
             raise TypeError("Axis must be a Newport ESP-301 Axis.")
 
-        
+        self._axis = axis
+        self._axis.disable()
         self._id = ID 
-        self._axis = self.axis
+        
         self._newport301 = self._hardware = hardware
-        self._default_position = default_position    
-        self._home = home             
+        self._default_position = default_position                       
         self._name = name
         self._description = description
-        self._optional_args = optional_args
+        self._max_stored_data = max_stored_data
+        self.configuration_parameters = configuration_parameters 
 
     def connect(self):
+        """
+        Connect to axis
+        """
+        self._axis.disable()
         self.initialize_defaults()
-        self.move(self._default_position)
+        self._axis.enable()
+        self.move_absolute(self._default_position,wait=True,block=True)
 
     def initialize_defaults(self):
-        with self._axis.execute_bulk_command(self):            
-            self._axis.home = self._home
-        
-            for key,value in self.optional_args.iteritems():
-                setattr(self._axis,key,value)
+        """
+        Setup axis configuration values
+        """
+        if self.configuration_parameters is not None:
+            self._axis.setup_axis(**self.configuration_parameters)
 
 
 
-    def move_absolute(self,position):
-        self._axis.move(position,absolute = True)
+    def move_absolute(self,position,wait=False,block=False):
+        """
+        Move relative to zero position.
 
-    def move_relative(self,distance):
-        self._axis.move(distance)
+        Parameters
+        ----------
+        distance : quantities.Quantity or float
+        """
+        self._axis.move(position,absolute = True,wait=wait,block=block)
 
- 
+    def move_relative(self,distance,wait=False,block=False):
+        """
+        Move relative to current position.
+
+        Parameters
+        ----------
+        distance : quantities.Quantity or float
+        """
+        self._axis.move(distance,absolute=False,wait=wait,block=block)
+
+    def get_status(self):
+        """
+        Gets status of axis. 
+        Returns a DataContainer of Data elements:
+        * "position"
+        * "units"
+        * "desired_position"
+        * "desired_velocity"
+        * "is_motion_done"
+
+        Returns 
+        -------
+        DataContainer
+            contains Data items
+        """
+        status_dict = self._axis.get_status()
+        status = DataContainer(self.id,self._max_stored_data)
+        for k,v in status_dict.iteritems():
+            status[k] = Data(self.id,Newport301Axis.code,k,v)
+
+        return status 
+
+    def get_configuration(self):
+        """
+        Gets status of axis. 
+        Returns a DataContainer of Data elements:
+        * 'units'
+        * 'motor_type'
+        * 'feedback_configuration'
+        * 'full_step_resolution'
+        * 'position_display_resolution'
+        * 'current'
+        * 'max_velocity'
+        * 'encoder_resolution'
+        * 'acceleration'
+        * 'deceleration'
+        * 'velocity'
+        * 'max_acceleration'
+        * 'homing_velocity'
+        * 'jog_high_velocity'
+        * 'jog_low_velocity'
+        * 'estop_deceleration'
+        * 'jerk'
+        * 'error_threshold'
+        * 'proportional_gain'
+        * 'derivative_gain'
+        * 'integral_gain'
+        * 'integral_saturation_gain'
+        * 'home'
+        * 'microstep_factor'
+        * 'acceleration_feed_forward'
+        * 'trajectory'
+        * 'hardware_limit_configuration'
+
+        Returns 
+        -------
+        DataContainer
+            contains Data items
+        """
+        conf_dict = self._axis.get_status()
+        conf = DataContainer(self.id,self._max_stored_data)
+        for k,v in conf_dict.iteritems():
+            conf[k] = Data(self.id,Newport301Axis.code,k,v)
+
+        return conf
+
+
+    @property
+    def axis(self):
+        """
+        Returns
+        -------
+        newportesp301.NewportESP301Axis
+        """
+        return self._axis
+    
+    def disconnect(self):
+        pass  
+    
 
     @classmethod 
     def create(cls,configuration,data_handler,hardware,sensors):
+
         ID = configuration[config.ID]
         n = configuration.get(config.NAME,cls.name)
         d = configuration.get(config.DESCRIPTION,cls.description)
-        default_position = configuration.get("default_position",cls._default_position)
-        home = configuration.get("home",cls._home)
-        default_velocity = configuration.get("default_velocity",cls._default_velocity)
-        default_acceleration = configuration.get("default_acceleration",cls._default_acceleration)
-        default_deceleration = configuration.get("default_deceleration",cls._default_deceleration)
-        max_velocity = configuration.get("max_velocity",cls._max_velocity)
-        max_acceleration = configuration.get("max_acceleration",cls._max_acceleration)
-        optional_args = configuration.get("optional_args",dict())
-
-        
+        default_position = configuration.get("default_position",cls._default_position)        
+        configuration_parameters = configuration.get("configuration_parameters",None)        
         axis_id = configuration['axis_id']
+        axis = hardware.axis[axis_id]
         
                 
-        return Newport301Axis(ID,hardware,axis,default_position,home,name=n,description=d,**optional_args)
+        return Newport301Axis(ID,hardware,axis,default_position,configuration_parameters,name=n,description=d)
 

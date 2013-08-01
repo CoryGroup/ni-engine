@@ -25,6 +25,9 @@ class Item(object):
         except AttributeError,e:
             print e
             return ""
+    @id.setter 
+    def id(self,value):
+        self._id = value
 
     @property
     def code(self):

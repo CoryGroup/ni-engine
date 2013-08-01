@@ -7,8 +7,8 @@ class TemperatureContainer(DataContainer):
     Container for holding temperature measurements. Implements `AbstractMeasurementContainer`
     """
 
-    def __init__(self,ID,temperature,max_stored_measurements=-1):
-        super(TemperatureContainer,self).__init__(ID,max_stored_measurements=-1)
+    def __init__(self,ID,temperature,max_stored_data=-1):
+        super(TemperatureContainer,self).__init__(ID,max_stored_data=-1)
         self['temperature'] = temperature
 
     @property
@@ -40,7 +40,7 @@ class LabJackInternalSensor(AbstractSensor):
     name = "Labjack internal temperature sensor"
     description = "Built-in labjack sensor measures temperature"
 
-    def __init__(self,ID,device,name=name,description=description,max_stored_measurements=-1):
+    def __init__(self,ID,device,name=name,description=description,max_stored_data=-1):
         """
         Parameters
         ----------
@@ -53,7 +53,7 @@ class LabJackInternalSensor(AbstractSensor):
         self._id = ID 
         self._name = name
         self._description = description
-        self._max_stored_measurements = -1
+        self._max_stored_data = -1
 
     def connect(self):
         """
@@ -71,7 +71,7 @@ class LabJackInternalSensor(AbstractSensor):
         """
         temp = self._device.getTemperature()*pq.K
         measurement = Data(self._id,LabJackInternalSensor.code,"Temperature",temp)
-        container = TemperatureContainer(self._id,measurement,self._max_stored_measurements)
+        container = TemperatureContainer(self._id,measurement,self._max_stored_data)
         return container
 
     def disconnect(self):

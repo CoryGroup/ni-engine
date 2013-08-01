@@ -1,4 +1,4 @@
-
+import config
 from instruments.other import NewportESP301
 from ..abstract_hardware import AbstractHardware
 class Newport301(AbstractHardware,NewportESP301):
@@ -11,24 +11,26 @@ class Newport301(AbstractHardware,NewportESP301):
     ## As with instrument kit we can't use inits
     ## use this setter method to set all required 
     ## variables after intialization
-    def initialize(self,ID,name=name,description=description):
+    def initialize(self,ID,name="name",description="description"):
         self.id = ID
         self.name = name
         self.description = description
 
-
+    def disconnect(self):
+        pass
 
     @classmethod
     def create(cls,configuration,data_handler):
-        ID = configuration[config.ID]
-        n = U3LV.name
-        d = U3LV.description
+        ID = configuration[config.ID]        
         d = configuration.get(config.DESCRIPTION,cls.description)
         n = configuration.get(config.NAME,cls.name)
         uri = configuration['uri']
 
 
         hardware = Newport301.open_from_uri(uri)
+        hardware.initialize(ID,name=n,description=d)
+        #hardware._file.debug = True
+        return hardware
 
                     
 

@@ -9,9 +9,9 @@ class Ei1050MeasurementContainer(DataContainer):
     """
     Data container for Ei1050Sensor
     """
-    def __init__(self,ID,temperature,humidity,max_stored_measurements=-1):
+    def __init__(self,ID,temperature,humidity,max_stored_data=-1):
 
-        super(Ei1050MeasurementContainer,self).__init__(ID,max_stored_measurements)
+        super(Ei1050MeasurementContainer,self).__init__(ID,max_stored_data)
         
         self['temperature'] = temperature
         self['humidity'] = humidity
@@ -63,7 +63,7 @@ class Ei1050Sensor(AbstractSensor):
     name = "EI1050Sensor"
     description = " "
     KELVIN_CONVERSION = 273.15
-    def __init__(self,ID,device,data_pin,clock_pin,enable_pin,threaded=False,polling_time=0.5,name=name,description=description,retry_limit=1,max_stored_measurements=-1):
+    def __init__(self,ID,device,data_pin,clock_pin,enable_pin,threaded=False,polling_time=0.5,name=name,description=description,retry_limit=1,max_stored_data=-1):
         """
         Parameters
         ----------
@@ -97,7 +97,7 @@ class Ei1050Sensor(AbstractSensor):
         self._description = description
         self._retry_limit = retry_limit
         self._retries = 0
-        self._max_stored_measurements = max_stored_measurements
+        self._max_stored_data = max_stored_data
     def connect(self):
         """
         Connects created device
@@ -134,7 +134,7 @@ class Ei1050Sensor(AbstractSensor):
             temp = (reading.getTemperature()  + Ei1050Sensor.KELVIN_CONVERSION)*pq.K # convert from celsius to kelvin
             temperature = Data(self.id,Ei1050Sensor.code,"Temperature",temp,time=reading.getTime())
             humidity = Data(self.id,Ei1050Sensor.code,"Humidity",reading.getHumidity()*pq.percent,time=reading.getTime())
-            container = Ei1050MeasurementContainer(self.id,temperature,humidity,self._max_stored_measurements)
+            container = Ei1050MeasurementContainer(self.id,temperature,humidity,self._max_stored_data)
             self._retries =0
             return container
         except Exception as e:

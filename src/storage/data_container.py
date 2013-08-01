@@ -8,9 +8,9 @@ class DataContainer(dict):
 
     
 
-    def __init__(self,ID,max_stored_measurements=-1,sort_after_n_joins=-1,*arg,**kw):
+    def __init__(self,ID,max_stored_data=-1,sort_after_n_joins=-1,*arg,**kw):
         self._id = ID
-        self._max_stored_measurements = max_stored_measurements
+        self._max_stored_data = max_stored_data
         self.update(*arg, **kw)
         self._sort_after_n_joins = sort_after_n_joins
         self._since_last_sort = 0
@@ -158,12 +158,12 @@ class DataContainer(dict):
         """
         for k,v in self.iteritems():
             
-            if self.max_stored_measurements != -1:
+            if self.max_stored_data != -1:
                 
-                if self.max_stored_measurements <= len(v):
-                    self[k]= v[-self.max_stored_measurements:]
+                if self.max_stored_data <= len(v):
+                    self[k]= v[-self.max_stored_data:]
     @property
-    def max_stored_measurements(self):
+    def max_stored_data(self):
         """
         Maximum measurements to be stored before culling old ones
 
@@ -176,10 +176,10 @@ class DataContainer(dict):
         -------
         int 
         """
-        return self._max_stored_measurements
-    @max_stored_measurements.setter
-    def max_stored_measurements(self, number):
-        self._max_stored_measurements = number
+        return self._max_stored_data
+    @max_stored_data.setter
+    def max_stored_data(self, number):
+        self._max_stored_data = number
     
 
     @property 

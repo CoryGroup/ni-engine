@@ -2,6 +2,7 @@
 
 from tools import Item
 from abc import ABCMeta, abstractmethod , abstractproperty
+from storage import DataContainer,Data
 
 class AbstractController(Item):
     
@@ -26,6 +27,17 @@ class AbstractController(Item):
         Abstract disconnect method
         """
         pass  
+
+    @abstractmethod 
+    def get_status(self):
+        """
+        Returns a data_container containing parameters of controller relevant to status 
+
+        Returns
+        -------
+        DataContainer
+            Made up of data objects containing elements relevent to status
+        """
 
     # abstract method to handle sensor creation based on configuration
 
