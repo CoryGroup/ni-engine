@@ -18,6 +18,7 @@ class HDF5Storage(AbstractPhysicalStorage):
     code = "HDF5"
 
     def __init__(self,file_path,title="Ni-Engine Data",buffer_size=100,new_file=False,past_data_file=None):
+        super(AbstractPhysicalStorage,self).__init__()
         self._measurements= []
         self.buffer_size = buffer_size
         write_code = 'w' if new_file else 'a' 
@@ -27,8 +28,9 @@ class HDF5Storage(AbstractPhysicalStorage):
         self._hardware, h_created = self.get_or_create_group(self._root,"hardware","Hardware Data Acquired")
         self._sensors, s_created = self.get_or_create_group(self._root,"sensors","Sensor Data Acquired")        
         self._controllers, c_created = self.get_or_create_group(self._root,"controllers","Controllers Data Acquired")
+        self._compound , com_created = self.get_or_create_group(self._root,"compound", "Compound data")
         self._groups = {"hardware": self._hardware,"sensors" : self._sensors,
-                        "controllers":self._controllers}
+                        "controllers":self._controllers,"compound":self._compound}
 
         self._past_data_file = past_data_file
 
@@ -38,7 +40,7 @@ class HDF5Storage(AbstractPhysicalStorage):
                 the configuration file")
         return self.build_data_from_file(self._past_data_file,number_elems)
 
-        
+    @classmethod 
     def build_data_from_file(self,file_path,number_elems=None):
         """
         Builds dictionary of data data containers from HDF5 file.
@@ -69,7 +71,8 @@ class HDF5Storage(AbstractPhysicalStorage):
             sensors = root.sensors
             controllers = root.controllers
             hardware = root.hardware
-            g = {'sensors': sensors,'controllers': controllers,'hardware':hardware}
+            compound = root.compound
+            g = {'sensors': sensors,'controllers': controllers,'hardware':hardware,"compound":compound}
         except Exception,e: 
             print "Does not appear to be valid ni-engine file"
             print e
@@ -167,7 +170,8 @@ class HDF5Storage(AbstractPhysicalStorage):
             return getattr(parent,table_name) , False
         else:               
             return  self._file.create_table(parent,table_name,description,title), True
-        
+    
+
     def write_data(self,queue):
         """
         Is called when the number of measurements in measurement queue

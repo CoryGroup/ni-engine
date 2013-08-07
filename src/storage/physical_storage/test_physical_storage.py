@@ -10,6 +10,7 @@ class TestPhysicalStorage(AbstractPhysicalStorage):
     code = "TESTSTORAGE"
     
     def __init__(self,buffer_size):
+        super(TestPhysicalStorage,self).__init__()
         self._measurements= []
         self.buffer_size = buffer_size
     

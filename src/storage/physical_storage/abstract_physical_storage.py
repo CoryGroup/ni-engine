@@ -3,7 +3,8 @@ from abc import ABCMeta, abstractmethod , abstractproperty
 import threading
 import copy
 import atexit
-class AbstractPhysicalStorage :
+
+class AbstractPhysicalStorage(object):
     """
     Abstract physical storage class that must be implemented by all 
     physical storage mediums. 
@@ -13,6 +14,9 @@ class AbstractPhysicalStorage :
 
     CODE = "ABSTRACTSTORAGE"
 
+    def __init__(self):
+        atexit.register(self._close,self)
+    
     
     def store_data(self,type_measurement,measurement):
         """
@@ -166,7 +170,7 @@ class AbstractPhysicalStorage :
 
 
 
-    atexit.register(_close)
+    
 
     @property
     def buffer_size(self):

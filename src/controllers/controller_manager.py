@@ -42,7 +42,7 @@ class ControllerManager(object):
         for x in self.configuration.controllers:
             self.add_controller(x)
 
-    def get_controller_by_id(self,ID):
+    def get_controller(self,ID):
         if ID in self.controllers:
             return self.controllers[ID]
         else: raise ValueError("No Controllerexists for id: {0}".format(ID))    

@@ -72,7 +72,7 @@ class GaussianSensor(AbstractSensor):
         ID = configuration.get(config.ID)
         name = configuration.get(config.NAME,"gaussian sensor")
         description = configuration.get(config.DESCRIPTION,"pulls from gaussian distribution")
-        max_measurements = configuration.get(config.MAX_MEASUREMENTS,-1)
+        max_measurements = configuration.get(config.MAX_DATA,-1)
         return GaussianSensor(ID,mu,sigma,max_measurements,name,description)
 
 
