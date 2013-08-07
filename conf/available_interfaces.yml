@@ -16,6 +16,11 @@ hardware:
   controllers:
    NEWPORTAXIS:
     enabled: True
+ CTC100:
+  enabled: True
+  sensors:
+   CTCTHERMISTOR:
+    enabled: True
 
  TEST: 
   enabled: True
@@ -29,6 +34,8 @@ sensors:
  LABINT:
   enabled: True
  GAUSSSENSOR:
+  enabled: True
+ CTCTHERMISTOR:
   enabled: True
 
 controllers: 

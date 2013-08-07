@@ -1,0 +1,43 @@
+hardware:
+ - name: CTC 100
+   description: 2 sensors
+   code: CTC100
+   id: ctc
+   uri: "tcpip://192.168.0.2:23"
+
+sensors:
+ - name: Thermistor 1
+   description: temperature sensors
+   code: CTCTHERMISTOR
+   hardware_id: ctc
+   id: temp1 
+   channel_name: "In1"
+   max_data: 200
+
+ - name: Thermistor 1
+   description: temperature sensors
+   code: CTCTHERMISTOR
+   hardware_id: ctc
+   id: temp2
+   channel_name: "In2"
+   max_data: 200
+   
+ 
+ 
+
+
+
+   
+ 
+ 
+
+configuration:
+ store_measurements: True
+ storage:
+  code: "HDF5"
+  name: "Test Data Storage"
+  file_path: "ctc_test.h5"
+  buffer_size : 10
+  new_file : True
+  # If you want to load old values for intialization etc.
+  

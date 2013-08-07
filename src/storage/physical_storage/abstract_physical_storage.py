@@ -168,9 +168,13 @@ class AbstractPhysicalStorage(object):
         """
         pass
 
-
-
-    
+    @classmethod
+    @abstractmethod
+    def build_data_from_file(cls,file_path,number_elems=None):
+        """
+        Abstract method to build stored data into Dictionary of Data containers
+        """
+        pass    
 
     @property
     def buffer_size(self):
