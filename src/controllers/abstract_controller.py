@@ -2,7 +2,7 @@
 
 from tools import Item
 from abc import ABCMeta, abstractmethod , abstractproperty
-from storage import DataContainer,Data
+from storage import DataContainer,data
 
 class AbstractController(Item):
     

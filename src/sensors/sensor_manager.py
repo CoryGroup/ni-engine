@@ -96,7 +96,7 @@ class SensorManager(object):
         Returns
         -------
         dictionary
-            dictionary containing lists of `Data` objects
+            dictionary containing lists of `data` objects
         """
         if isinstance(sensor,AbstractSensor):
             sensor = sensor.id
@@ -110,7 +110,7 @@ class SensorManager(object):
         -------
         dictionary
             Keys are sensor IDs at first level and measurement type at second level. 
-            Data is list of measurement objects
+            data is list of measurement objects
         """
         self._data_handler.sensor_data
 
@@ -122,7 +122,7 @@ class SensorManager(object):
         -------
         dictionary
             Keys are sensor IDs at first level and measurement type at second level. 
-            Data are measurement objects.
+            data are measurement objects.
         """
         return self._data_handler.recent_sensor_data
 

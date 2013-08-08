@@ -7,7 +7,7 @@ import config
 from abstract_physical_storage import AbstractPhysicalStorage
 from ..data_dict import DataDict
 from ..data_container import DataContainer
-from ..data import Data
+from ..data_value import data
 
 
 class HDF5Storage(AbstractPhysicalStorage):

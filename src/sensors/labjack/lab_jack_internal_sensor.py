@@ -1,6 +1,6 @@
 from ..abstract_sensor import AbstractSensor
 import config
-from storage import DataContainer,Data
+from storage import DataContainer,data
 import quantities as pq
 class TemperatureContainer(DataContainer):
     """
@@ -16,7 +16,7 @@ class TemperatureContainer(DataContainer):
         """
         Returns
         -------
-        Data
+        data
             returns the temperature measurement
         """
 
@@ -70,7 +70,7 @@ class LabJackInternalSensor(AbstractSensor):
         TemperatureContainer
         """
         temp = self._device.getTemperature()*pq.K
-        measurement = Data(self._id,LabJackInternalSensor.code,"Temperature",temp)
+        measurement = data(self._id,LabJackInternalSensor.code,"Temperature",temp)
         container = TemperatureContainer(self._id,measurement,self._max_stored_data)
         return container
 

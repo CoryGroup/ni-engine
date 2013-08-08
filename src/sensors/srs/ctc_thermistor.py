@@ -3,7 +3,7 @@ from instruments.srs import SRSCTC100
 
 from ..abstract_sensors import AbstractTemperatureSensor
 
-from storage import DataContainer,Data
+from storage import DataContainer,data
 
 class CTCThermistor(AbstractTemperatureSensor):
     code = 'CTCTHERMISTOR'
@@ -42,16 +42,16 @@ class CTCThermistor(AbstractTemperatureSensor):
     @property
     def temperature(self):
         temp = self.channel.value    
-        return Data(self.id,self.code,"current temperature",temp)
+        return data(self.id,self.code,"current temperature",temp)
     @property
     def average_temperature(self):
         temp = self.channel.average
-        return Data(self.id,self.code,"average temperature",temp)
+        return data(self.id,self.code,"average temperature",temp)
 
     @property 
     def std_dev_temperature(self):
         std = self.channel.std_dev
-        return Data(self.id,self.code,"standard deviation of temperature",std)
+        return data(self.id,self.code,"standard deviation of temperature",std)
 
     @property
     def units(self):
@@ -61,7 +61,8 @@ class CTCThermistor(AbstractTemperatureSensor):
         con = DataContainer(self.id,self._max_stored_data)
         con['temperature'] = self.temperature
         con['average_temperature'] = self.average_temperature
-        con['std_temperature'] = self.std_temperature
+        con['std_dev_temperature'] = self.std_dev_temperature        
+        return con
 
     def _get_temperature(self):
         pass

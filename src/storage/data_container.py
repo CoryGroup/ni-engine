@@ -1,5 +1,7 @@
 from abc import ABCMeta, abstractmethod , abstractproperty
 import numpy as np
+import quantities as pq
+from . import QuantityData
 class DataContainer(dict):
     """
     Abstract class to hold all measurements. 
@@ -29,8 +31,14 @@ class DataContainer(dict):
         Overrides setitem to make sure that value is stored as 
         list so they can be joined
         """
-        if not isinstance(value,np.ndarray):
+        
+        if not isinstance(value,np.ndarray) : 
+            
             value = np.array([value])
+
+        if isinstance(value,QuantityData):
+            value = np.array([value],dtype=QuantityData)
+            
         super(DataContainer, self).__setitem__(key, value)
 
     def update(self, *args, **kwargs):
@@ -67,8 +75,7 @@ class DataContainer(dict):
 
         if key in self:            
             self[key] = np.append(self[key],measurement)            
-        else: 
-            print "not appending"
+        else:             
             self[key] = measurement
 
 
@@ -103,7 +110,8 @@ class DataContainer(dict):
         """
         assert isinstance(container,type(self))
         for k,v in container.iteritems():
-            if k in self:                
+            if k in self:
+                           
                 a= np.append(self[k],v,axis=0)
                 self[k] = a
                 
@@ -118,7 +126,7 @@ class DataContainer(dict):
         Sorts container chronologically
         """
         for k,v in self.iteritems():
-            v.sort()
+            v.sort(key=lambda x: x.time, reverse=False)
 
     def join(self,container):
         """

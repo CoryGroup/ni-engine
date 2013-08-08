@@ -1,7 +1,7 @@
 from tools import Item
 from ..abstract_sensor import AbstractSensor
 import random
-from storage import DataContainer,Data
+from storage import DataContainer,data
 import config
 class GaussianSensor(AbstractSensor): 
     """
@@ -46,7 +46,7 @@ class GaussianSensor(AbstractSensor):
         DataContainer
         """
         val = random.gauss(self._mu,self._sigma)
-        measurement = Data(self.id,self.code,self.name,val)
+        measurement = data(self.id,self.code,self.name,val)
         container = DataContainer(self._id,self._max_measurements)
         container["gaussian"]=measurement
         return container

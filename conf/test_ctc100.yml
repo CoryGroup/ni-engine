@@ -3,7 +3,7 @@ hardware:
    description: 2 sensors
    code: CTC100
    id: ctc
-   uri: "tcpip://192.168.0.2:23"
+   uri: "tcpip://192.168.0.100:23"
 
 sensors:
  - name: Thermistor 1

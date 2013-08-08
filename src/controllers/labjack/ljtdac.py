@@ -1,7 +1,7 @@
 import config
 from ..abstract_controllers import AbstractDAC
 import struct
-from storage import DataContainer,Data
+from storage import DataContainer,data
 
 class LJTDAC(AbstractDAC):
     code = 'LJTDAC'
@@ -105,8 +105,8 @@ class LJTDAC(AbstractDAC):
 
     def get_status(self):
         con = DataContainer(self.id,self._max_stored_data)
-        con['voltage'] = Data(self.id,self.code,self.name,self.voltage)
-        con['max_voltage'] = Data(self.id,self.code,self.name,self.max_voltage)
+        con['voltage'] = data(self.id,self.code,self.name,self.voltage)
+        con['max_voltage'] = data(self.id,self.code,self.name,self.max_voltage)
         return con
 
     @classmethod 

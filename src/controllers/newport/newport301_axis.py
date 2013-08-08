@@ -2,7 +2,7 @@ import config
 from instruments.other import NewportESP301,NewportESP301Axis
 from ..abstract_controller import AbstractController
 from hardware.newport import Newport301
-from storage import DataContainer,Data
+from storage import DataContainer,data
 class Newport301Axis(AbstractController):
     code = 'NEWPORTAXIS'
     name = 'NewportESP 301 Axis'
@@ -72,7 +72,7 @@ class Newport301Axis(AbstractController):
     def get_status(self):
         """
         Gets status of axis. 
-        Returns a DataContainer of Data elements:
+        Returns a DataContainer of data elements:
         * "position"
         * "units"
         * "desired_position"
@@ -82,19 +82,19 @@ class Newport301Axis(AbstractController):
         Returns 
         -------
         DataContainer
-            contains Data items
+            contains data items
         """
         status_dict = self._axis.get_status()
         status = DataContainer(self.id,self._max_stored_data)
         for k,v in status_dict.iteritems():
-            status[k] = Data(self.id,Newport301Axis.code,k,v)
+            status[k] = data(self.id,Newport301Axis.code,k,v)
 
         return status 
 
     def get_configuration(self):
         """
         Gets status of axis. 
-        Returns a DataContainer of Data elements:
+        Returns a DataContainer of data elements:
         * 'units'
         * 'motor_type'
         * 'feedback_configuration'
@@ -126,12 +126,12 @@ class Newport301Axis(AbstractController):
         Returns 
         -------
         DataContainer
-            contains Data items
+            contains data items
         """
         conf_dict = self._axis.get_status()
         conf = DataContainer(self.id,self._max_stored_data)
         for k,v in conf_dict.iteritems():
-            conf[k] = Data(self.id,Newport301Axis.code,k,v)
+            conf[k] = data(self.id,Newport301Axis.code,k,v)
 
         return conf
 
