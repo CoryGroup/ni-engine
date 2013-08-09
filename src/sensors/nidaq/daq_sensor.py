@@ -17,6 +17,48 @@ from storage import DataContainer, data
 from itertools import izip
 import ctypes as C
 
+from flufl.enum import IntEnum
+
+## ENUMS #######################################################################
+
+class pause_triggergerType(IntEnum):
+    """
+    Allowed values for the Pause Trigger Type attribute of a DAQmx Task.
+    Documentation on the meaning of each value can be found in the
+    `C API Reference`_.
+    
+    .. _C API Reference: http://zone.ni.com/reference/en-XX/help/370471Y-01/mxcprop/attr1366/
+    """
+    analog_level = daq.DAQmx_Val_AnlgLvl
+    analog_window = daq.DAQmx_Val_AnlgWin
+    digital_level = daq.DAQmx_Val_DigLvl
+    digital_pattern = daq.DAQmx_Val_DigPattern
+    none = daq.DAQmx_Val_None
+    
+class DigitalLevel(IntEnum):
+    """
+    Allowed values for properties that can take on one of two digital levels,
+    high and low.
+    """
+    low = daq.DAQmx_Val_Low
+    high = daq.DAQmx_Val_High
+    
+class SampleTimingType(IntEnum):
+    """
+    Allowed values for the sample timing type attribute of a DAQmx Task.
+    Documentation on the meaning of each value can be found in the
+    `C API Reference`_.
+    
+    .. _C API Reference: http://zone.ni.com/reference/en-XX/help/370471Y-01/mxcprop/attr1347/
+    """
+    sample_clock = daq.DAQmx_Val_SampClk
+    burst_handshake = daq.DAQmx_Val_BurstHandshake
+    handshake = daq.DAQmx_Val_Handshake
+    implicit = daq.DAQmx_Val_Implicit
+    on_demand = daq.DAQmx_Val_OnDemand
+    change_detection = daq.DAQmx_Val_ChangeDetection
+    pipelined_sample_clock = daq.DAQmx_Val_PipelinedSampClk
+
 ## CLASSES #####################################################################
 
 class Task(daq.Task):
@@ -25,8 +67,11 @@ class Task(daq.Task):
     by the limitations of that class.
     """
     
+    ## READ PROPERTIES ##
+    # These properties implement reading of scalar values from the task.
+    
     @property
-    def counter_scalar(self):
+    def counter_value(self):
         """
         Returns the current value of the counter scalar associated with this 
         task.
@@ -38,20 +83,63 @@ class Task(daq.Task):
         self.ReadCounterScalarU32(1.0, C.byref(counter_val), None)
         return counter_val.value
         
+    ## SAMPLE TIMING PROPERTIES ##
+        
     @property
-    def diglvl_pausetrig_src(self):
+    def sample_timing_type(self):
+        ret_val = C.c_uint32(0)
+        self.GetSampTimingType(C.byref(ret_val))
+        return SampleTimingType(ret_val.value)
+    @sample_timing_type.setter
+    def sample_timing_type(self, newval):
+        self.SetSampTimingType(C.c_uint32(newval))
+        
+    ## TRIGGER PROPERTIES ##
+    
+    @property
+    def diglvl_pause_trigger_src(self):
         """
         Returns the current source for the digital level pause trigger.
         """
         # TODO: TEST!
         buf = C.create_string_buffer(100)
-        self.GetTrigAttribute(daq.DAQmx_DigLvl_PauseTrig_Src, buf)
+        self.GetTrigAttribute(daq.DAQmx_DigLvl_pause_trigger_Src, buf)
         return buf.value
-    @diglvl_pausetrig_src.setter
-    def diglvl_pausetrig_src(self, newval):
+    @diglvl_pause_trigger_src.setter
+    def diglvl_pause_trigger_src(self, newval):
         # TODO: TEST!
-        self.SetDigLvlPauseTrigSrc(newval)
+        self.SetDigLvlpause_triggerSrc(newval)
+        
+    @property
+    def pause_trigger_type(self):
+        """
+        Gets/sets the type of pause trigger for this task, or
+        `pause_triggergerType.none` if no pause trigger currently exists.
+        """
+        ret_val = C.c_uint32(0)
+        self.Getpause_triggerType(C.byref(ret_val))
+        return pause_triggergerType(ret_val.value)
+    @pause_trigger_type.setter
+    def pause_trigger_type(self, newval):
+        task.Setpause_triggerType(C.c_uint32(newval))
+        
+    @property
+    def diglvl_pause_trigger_when(self):
+        ret_val = C.c_uint32(0)
+        self.GetDigLvlpause_triggerWhen(C.byref(ret_val))
+        return DigitalLevel(ret_val.value)
+    @diglvl_pause_trigger_when.setter
+    def diglvl_pause_trigger_when(self, newval):
+        self.SetDigLvlpause_triggerWhen(C.c_uint32(newval))
 
+    @property
+    def start_retriggerable(self):
+        ret_val = C.c_uint32(0)
+        self.GetStartTrigRetriggerable(C.byref(ret_val))
+        return bool(ret_val.value)
+    @start_retriggerable.setter
+    def start_retriggerable(self, newval):
+        self.SetStartTrigRetriggerable(C.c_uint32(1 if newval else 0))
 
 class DAQCounterSensor(AbstractCounterSensor):
     """
@@ -123,11 +211,12 @@ class DAQCounterSensor(AbstractCounterSensor):
                 )
             # We want to make the pulse repeat indefinitely.
             # That only works if the timing type is Implicit for some reason.
-            # TODO: add software triggering for the pulse output instead of
-            #       repeating indefinitely; the current mode is only useful for
-            #       testing.
+            # TODO: Oops... http://forums.ni.com/t5/Multifunction-DAQ/How-do-I-use-the-daqmx-send-software-trigger-vi/td-p/111867
+            #       Looks like we may have to start and stop the tasks instead.
+            #       If so, then this needs to change to run a finite number of
+            #       times instead of continuously.
             self._gate_task.CfgSampClkTiming("OnboardClock", 10000.0, daq.DAQmx_Val_Rising, daq.DAQmx_Val_ContSamps, 0)
-            self._gate_task.SetSampTimingType(daq.DAQmx_Val_Implicit)
+            self._gate_task.sample_timing_type = SampleTimingType.implicit
             
         # OK, now create the input tasks.
         self._input_tasks = [Task() for chan in self._channel_names]
@@ -139,15 +228,21 @@ class DAQCounterSensor(AbstractCounterSensor):
             # Do we need to gate the channel?
             if self._gate_channel is not None:
                 # TODO: make an enum for this and move into Task().
-                task.SetPauseTrigType(daq.DAQmx_Val_DigLvl)
-                task.GetTrigAttribute(daq.DAQmx_PauseTrig_Type, C.byref(ret_val))
-                task.SetDigLvlPauseTrigWhen(daq.DAQmx_Val_Low)
+                task.pause_trigger_type = pause_triggergerType.digital_level
+                assert task.pause_trigger_type == pause_triggergerType.digital_level, \
+                    "Pause trigger type for channel {} not changed!".format(chan_name)
+                task.diglvl_pause_trigger_when = DigitalLevel.low
             
     def __start_tasks(self):
         # TODO: add error handling so that as many tasks as possible are
         #       started.
-        if self._gate_channel is not None:
-            self._gate_channel.StartTask()
+        
+        # We want to make sure that the inputs start *before* the gate.
+        # This allows us to work around the limit of not having a software
+        # trigger.
         for chan_task in self._input_tasks:
             chan_task.StartTask()
+            
+        if self._gate_channel is not None:
+            self._gate_channel.StartTask()
         
