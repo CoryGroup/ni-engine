@@ -1,0 +1,60 @@
+
+hardware:
+ - name: labjack U3-LV
+   description: Labjack for temperature sensor
+   code: U3LV 
+   id: lab1
+
+
+sensors:
+ - name: EI-1050
+   description: Temperature and humidity probe
+   code: EI1050
+   hardware_id: lab1
+   id: temp1
+   threaded: True
+   pollingTime: 5
+   pins:
+    data: 6
+    clock: 7
+    enable: 3
+    
+ 
+ - name: Labjack Internal Temperature
+   description: Internal temperature of Labjack (k)
+   code: LABINT
+   hardware_id: lab1 
+   id: temp2
+
+
+controllers:
+ - name: KEPCO Power Supply
+   description: Voltage controlled power Supply
+   code: KEPCO
+   hardware_id: lab1    
+   id: kepco1
+   pins: 
+    voltage: 8
+    crowbar: 9
+ ### maxVoltage in volts
+   default_voltage: 0
+   max_Voltage: 120
+   
+ 
+ #- name: LJTDAC Test
+ #  description: Testing the LJTDAC
+ #  code: LJTDAC
+ #  hardwareID: lab1
+ #  id: testDAC
+ #  defaultVoltage: 0 
+ #  maxVoltage: 10
+ # #Fio/Eio dac pin
+ #  pins:
+ #   dac: 8
+
+
+configuration:
+ store_measurements: True
+    
+
+

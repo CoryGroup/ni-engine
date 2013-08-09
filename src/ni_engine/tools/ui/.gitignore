@@ -1,5 +1,0 @@
-# Ignore *.py files, but only in this directory...
-*.py
-# ...except we still need __init__.py.
-!__init__.py
-

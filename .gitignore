@@ -47,3 +47,10 @@ nosetests.xml
 
 #Mr Developer
 .mr.developer.cfg
+
+#Ipython 
+*.ipynb
+notebooks/
+
+#HDF5 files
+*.h5

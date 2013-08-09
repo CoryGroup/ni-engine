@@ -1,0 +1,51 @@
+
+hardware:
+ - name: test hardware
+   description: Test hardware which does nothing
+   code: TEST
+   id: test
+
+
+sensors:
+ - name: Gaussian
+   description: Pulls from distribution
+   code: GAUSSSENSOR
+   hardware_id: test
+   id: gaussian
+   max_measurements: 10
+   
+ 
+ 
+
+
+
+   
+ 
+ #- name: LJTDAC Test
+ #  description: Testing the LJTDAC
+ #  code: LJTDAC
+ #  hardware_id: lab1
+ #  id: testDAC
+ #  defaultVoltage: 0 
+ #  maxVoltage: 10
+ # #Fio/Eio dac pin
+ #  pins:
+ #   dac: 8
+
+
+configuration:
+ store_measurements: True
+ storage:
+  code: "HDF5"
+  name: "Test Data Storage"
+  file_path: "long_test_2.h5"
+  buffer_size : 10
+  new_file : True
+  # If you want to load old values for intialization etc.
+  load_previous_entries:
+   file_path: "old.h5"
+   # -1 or non-existent for max
+   number_entries: 50
+   #keep old entries around after called
+   #false by default
+   store: True
