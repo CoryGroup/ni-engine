@@ -1,27 +1,75 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 ##
 # daq_sensor.py: Sensor class for NI-DAQ devices, backed by the PyDAQmx library.
 ##
 # Part of the NI Engine project.
 ##
 
+## ALL #########################################################################
+
+__all__ = [
+    ## SINGLETONS ##
+    'Continuous',
+    ## ENUMS ##
+    'PauseTriggerType',
+    'DigitalLevel',
+    'SampleTimingType',
+    ## CLASSES ##
+    'DAQCounterSensor'
+]
+
 ## IMPORTS #####################################################################
 
-import config 
-import PyDAQmx as daq
-
+## NI Engine Imports ##
+import config
 from ..abstract_sensors import AbstractCounterSensor
 from util_fns import assume_units
-
 from storage import DataContainer, data
 
+## Hardware Support Imports ##
+import PyDAQmx as daq
+
+## Standard Library Imports ##
 from itertools import izip
 import ctypes as C
 
+## Other Libraries ##
 from flufl.enum import IntEnum
+
+## SINGLETONS ##################################################################
+
+## METACLASS ##
+# The following metaclass is borrowed from:
+# http://stackoverflow.com/questions/6760685/creating-a-singleton-in-python
+
+class Singleton(type):
+    _instances = {}
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+        
+## SINGLETON CLASSES ##
+
+class SingletonBase(object):    
+    def __copy__(self): return self
+    def __deepcopy__(self, memo): return self
+
+class ContinuousType(SingletonBase):
+    """
+    Represents that a process is to be repeated continuously.
+    """
+    __metaclass__ = Singleton
+    
+    def __repr__(self):
+        return "Continuous"
+    
+Continuous = ContinuousType()
 
 ## ENUMS #######################################################################
 
-class pause_triggergerType(IntEnum):
+class PauseTriggerType(IntEnum):
     """
     Allowed values for the Pause Trigger Type attribute of a DAQmx Task.
     Documentation on the meaning of each value can be found in the
@@ -66,6 +114,14 @@ class Task(daq.Task):
     Used to add some nice logic to `PyDAQmx.Task` for when we are frustrated
     by the limitations of that class.
     """
+    
+    ## TASK STATE PROPERTIES ##
+    
+    @property
+    def is_done(self):
+        ret_val = C.c_uint32(0)
+        self.IsTaskDone(C.byref(ret_val))
+        return bool(ret_val.value)
     
     ## READ PROPERTIES ##
     # These properties implement reading of scalar values from the task.
@@ -114,11 +170,11 @@ class Task(daq.Task):
     def pause_trigger_type(self):
         """
         Gets/sets the type of pause trigger for this task, or
-        `pause_triggergerType.none` if no pause trigger currently exists.
+        `PauseTriggerType.none` if no pause trigger currently exists.
         """
         ret_val = C.c_uint32(0)
         self.Getpause_triggerType(C.byref(ret_val))
-        return pause_triggergerType(ret_val.value)
+        return PauseTriggerType(ret_val.value)
     @pause_trigger_type.setter
     def pause_trigger_type(self, newval):
         task.Setpause_triggerType(C.c_uint32(newval))
@@ -163,6 +219,10 @@ class DAQCounterSensor(AbstractCounterSensor):
         Time that the pulse is low (counting disabled) in each cycle.
     gate_hightime : pq.Quantity [default units: s]
         Time that the pulse is high (counting enabled) in each cycle.
+    gate_repeat : int or Continuous
+        Number of times to repeat the gate pulse each time the DAQ tasks are
+        started, or Continuous to indicate that the gate pulses should repeat
+        indefinitely.
     """
     
     ## NI ENGINE SPECIAL PROPERTIES ##
@@ -177,6 +237,7 @@ class DAQCounterSensor(AbstractCounterSensor):
             gate_delay=pq.Quantity(0.0, "s"),
             gate_lowtime=pq.Quantity(0.1, "s"),
             gate_hightime=pq.Quantity(0.1, "s"),
+            gate_repeat=1,
             name=name, description=description
         ):
         
@@ -185,13 +246,14 @@ class DAQCounterSensor(AbstractCounterSensor):
         self._gate_delay = gate_delay
         self._gate_hightime = gate_hightime
         self._gate_lowtime = gate_lowtime
+        self._gate_repeat = gate_repeat
         self._name = name
         self._description = description
         super(CTCThermistor,self).__init__() 
 
-        self.__init_tasks()
         
     ## TASK CREATION AND MANAGEMENT ##
+    
     def __init_tasks(self):
         """
         Creates input and output tasks for each of the channels that will be
@@ -209,13 +271,13 @@ class DAQCounterSensor(AbstractCounterSensor):
                     assume_units(self._gate_lowtime, "s"), 
                     assume_units(self._gate_hightime, "s")
                 )
-            # We want to make the pulse repeat indefinitely.
+            # We want to make the pulse repeat indefinitely or for a finite
+            # number of samples, depending on the value of self._gate_repeat.
             # That only works if the timing type is Implicit for some reason.
-            # TODO: Oops... http://forums.ni.com/t5/Multifunction-DAQ/How-do-I-use-the-daqmx-send-software-trigger-vi/td-p/111867
-            #       Looks like we may have to start and stop the tasks instead.
-            #       If so, then this needs to change to run a finite number of
-            #       times instead of continuously.
-            self._gate_task.CfgSampClkTiming("OnboardClock", 10000.0, daq.DAQmx_Val_Rising, daq.DAQmx_Val_ContSamps, 0)
+            if self._gate_repeat is Continuous:
+                self._gate_task.CfgSampClkTiming("OnboardClock", 10000.0, daq.DAQmx_Val_Rising, daq.DAQmx_Val_ContSamps, 0)
+            else:
+                self._gate_task.CfgSampClkTiming("OnboardClock", 10000.0, daq.DAQmx_Val_Rising, daq.DAQmx_Val_FiniteSamps, self._gate_repeat)
             self._gate_task.sample_timing_type = SampleTimingType.implicit
             
         # OK, now create the input tasks.
@@ -228,8 +290,8 @@ class DAQCounterSensor(AbstractCounterSensor):
             # Do we need to gate the channel?
             if self._gate_channel is not None:
                 # TODO: make an enum for this and move into Task().
-                task.pause_trigger_type = pause_triggergerType.digital_level
-                assert task.pause_trigger_type == pause_triggergerType.digital_level, \
+                task.pause_trigger_type = PauseTriggerType.digital_level
+                assert task.pause_trigger_type == PauseTriggerType.digital_level, \
                     "Pause trigger type for channel {} not changed!".format(chan_name)
                 task.diglvl_pause_trigger_when = DigitalLevel.low
             
@@ -245,4 +307,41 @@ class DAQCounterSensor(AbstractCounterSensor):
             
         if self._gate_channel is not None:
             self._gate_channel.StartTask()
+            
+    def __stop_tasks(self):
+        # We need to do things in the opposite order of __start_tasks, so
+        # first, stop the gate pulses.
+        if self._gate_channel is not None:
+            self._gate_channel.StopTask()
+            
+        for chan_task in self._input_tasks:
+            chan_task.StopTask()
         
+    ## SENSOR CONTRACT ##
+        
+    def connect(self):
+        self.__init_tasks()
+        
+    def disconnect(self):
+        # TODO: write the __destroy_tasks method.
+        self.__destroy_tasks()
+        
+    def delete(self):
+        try:
+            self.disconnect()
+        finally:
+            del self
+        
+    def measure(self):
+        """
+        Get a measurement from the device, consisting of a count from each of
+        the channels.
+
+        Returns
+        -------
+        measurement : CountContainer
+        """
+        # TODO: write this method.
+        #       Roughly, need to stop the gate, read the inputs, stop the inputs,
+        #       then restart the inputs and restart the inputs.
+        return container
