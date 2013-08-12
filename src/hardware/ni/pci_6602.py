@@ -3,7 +3,24 @@ import PyDAQmx as daq
 import ctypes as C
 import time
 
-class NPPCI6602(AbstractHardware,NewportESP301):
+class NIPCI6602(AbstractHardware,NewportESP301):
+    """
+    Class to handle National Instruments PCI-6602. 
+    As PyDAQmx is mostly just a wrapper this doesn't 
+    do very much due to the library having a poor OO 
+    interface. Still required though
+
+    Configuration requires:
+    ==========================  ================== ========
+    Key                         Description        Example
+    ==========================  ================== ========
+    normal hardware parameters  As seen in 
+                                `AbstractHardware`
+        
+    path                        String path to     '/Dev1/'
+                                device
+    ==========================  ================== ========
+    """
     code = "NIPCI6602"
     name = "Ni-Daq 8-channel counter"
     description = "PCI card"
@@ -38,7 +55,7 @@ class NPPCI6602(AbstractHardware,NewportESP301):
         path = configuration['path']        
         
         #hardware._file.debug = True
-        return hardware
+        return NIPCI6602(path,ID,n,d)
 
                     
 
