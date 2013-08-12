@@ -33,9 +33,14 @@ import PyDAQmx as daq
 ## Standard Library Imports ##
 from itertools import izip
 import ctypes as C
+import threading
 
 ## Other Libraries ##
 from flufl.enum import IntEnum
+
+## GLOBALS #####################################################################
+
+__daq_lock = threading.Lock()
 
 ## SINGLETONS ##################################################################
 
@@ -135,8 +140,11 @@ class Task(daq.Task):
         .. seealso::
             PyDAQmx.Task.ReadCounterScalarU32
         """
+        global __daq_lock
+        
         counter_val = C.c_uint32(0)
-        self.ReadCounterScalarU32(1.0, C.byref(counter_val), None)
+        with __daq_lock:
+            self.ReadCounterScalarU32(1.0, C.byref(counter_val), None)
         return counter_val.value
         
     ## SAMPLE TIMING PROPERTIES ##

@@ -264,6 +264,16 @@ class Configuration(object):
             return False
 
     @property
+    def max_workers (self):
+        """
+        Maximum number of workers to use with threading. 
+
+        Returns 
+        -------
+        int
+        """
+        return self._configuration.get(config.MAX_WORKERS,5)
+    @property
     def storage_config(self):
         """
         Returns the storage engine configuration. If none is in configuration file uses a `TestPhysicalStorage` storage manager

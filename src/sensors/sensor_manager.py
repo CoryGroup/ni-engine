@@ -1,5 +1,8 @@
 from sensor_factory import SensorFactory
 from abstract_sensor import AbstractSensor
+from concurrent import futures
+import inspect
+
 
 class SensorManager(object):
     """
@@ -22,8 +25,8 @@ class SensorManager(object):
         self._data_handler = data_handler
         self.sensor_factory = SensorFactory(hardware_manager,self._data_handler)
         self.measurements = dict()
-        self.store_measurements = self.configuration.store_measurements
-        
+        self._store_measurements = self.configuration.store_measurements
+        self._max_workers = self.configuration.max_workers
 
     def add_sensor(self,sensor_config):
         """
@@ -143,9 +146,9 @@ class SensorManager(object):
             sensor = sensor.id
         return self._data_handler.sensor_data[sensor].all_recent_data()
 
-    def measure(self,sensor):
+    def measure(self,sensors):
         """
-        Measures a sensor
+        Measures a list of sensors or single sensor
 
         Parameters
         ----------
@@ -153,25 +156,24 @@ class SensorManager(object):
 
         Returns
         -------
-        AbstractMeasurementContainer
+        [`DataContainer`] or singleton `DataContainer` if only single sensor
 
         """
-
-        if isinstance(sensor,str):
-            sensor = self.get_sensor(sensor)        
-        elif not isinstance(sensor,AbstractSensor):
-            raise TypeError ("Sensor: {0} is not subclass of AbstractSensor".format(type(sensor)))
-
-        
-
-        
-        
-        measurement = sensor.measure()
-        if self.store_measurements:                      
-            self._data_handler.add_sensor_data(sensor.id,measurement)   
-
-                
-        return measurement
+        if not isinstance(sensors,list):
+            sensors = [sensors]
+        for idx,sen in enumerate(sensors):
+            if isinstance(sen,str):
+                sensors[idx] = self.get_sensor(sen)        
+            elif not isinstance(sen,AbstractSensor):
+                raise TypeError ("Sensor: {0} is not subclass of AbstractSensor".format(type(sen)))
+        # generate list of measurement functions to be executed
+        function_list = map(lambda x: (x.measure,x.threadsafe),sensors)  
+        # execute the functions
+        results = self.execute_functions(function_list)
+        # return singleton if only 1 object
+        if len(results)==1:
+            results = results[0]
+        return results
     
     def measure_all(self):
         """
@@ -182,10 +184,56 @@ class SensorManager(object):
         DataDict
             Contains all AbstractMeasurementContainers for measurements. Dictionary keys by sensor ids. 
         """
-        for k,v in self.sensors.iteritems():            
-            self.measure(v)
-        return self._data_handler.sensor_data
+        result = self.measure(self.sensors.values())
 
+        return result
+
+    def execute_functions(self,fns):
+        """
+        Execute a series as functions passed as lambda expressions and store there results.
+        The functions must either return a DataContainer or a future that will eventually return
+        a data container. All data containers will than be stored
+
+        Parameters
+        ----------
+        fns : list (tuple(function,threadsafe))
+
+        Returns 
+        -------
+        dict[id] = `DataContainer`
+        """
+        # make sure is list
+        if not isinstance(fns,list):
+            fns = [fns]
+        # store methods
+        methods = []
+        # store methods to be futures
+        fut = []
+        for fn in fns:
+            #make sure is a function
+            print type(fn[0])
+            assert inspect.ismethod(fn[0]) or inspect.isfunction(fn[0])
+            # if threadsafe add to futures
+            if fn[1]: fut.append(fn[0])
+            # if not threadsafe add to normal methods
+            else: methods.append(fn[0])
+        executor = futures.ThreadPoolExecutor(max_workers=self._max_workers)
+        #execute all futures and store in list
+        future_list = map(lambda x : executor.submit(x),fut) 
+        # execute all methods
+        method_results = map(lambda x : x(),methods) 
+        # wait for all futures to finish 
+        futures.wait(future_list,)
+        #get all results of futures
+        future_results = map(lambda x : x.result(),future_list)
+        results = future_results + method_results
+
+        #store measurements if turned on 
+        if self._store_measurements:
+            for mes in results:                
+                self._data_handler.add_sensor_data(mes.id,mes)
+
+        return dict((v.id, v) for v in results)
 
     def get_sensor(self,sensor_id):
         """

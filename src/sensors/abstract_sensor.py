@@ -39,6 +39,20 @@ class AbstractSensor(Item):
         """
         pass
 
+    @property
+    def threadsafe(self):
+        """
+        Must be overwritten to be made true. 
+        If is threadsafe return True and can 
+        be used with futures.
+        Returns
+        -------
+        bool
+        """
+        return False
+    
+    
+
     # abstract method to handle sensor creation based on configuration
     @classmethod
     @abstractmethod
