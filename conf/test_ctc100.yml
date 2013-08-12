@@ -14,7 +14,7 @@ sensors:
    channel_name: "In1"
    max_data: 200
 
- - name: Thermistor 1
+ - name: Thermistor 2
    description: temperature sensors
    code: CTCTHERMISTOR
    hardware_id: ctc
