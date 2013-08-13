@@ -21,6 +21,11 @@ hardware:
   sensors:
    CTCTHERMISTOR:
     enabled: True
+ NIPCI6602:
+  enabled: True
+  sensors:
+   DAQCOUNTER:
+    enabled: True
 
  TEST: 
   enabled: True
@@ -36,6 +41,8 @@ sensors:
  GAUSSSENSOR:
   enabled: True
  CTCTHERMISTOR:
+  enabled: True
+ DAQCOUNTER: 
   enabled: True
 
 controllers: 

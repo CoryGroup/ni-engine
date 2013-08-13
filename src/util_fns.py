@@ -14,5 +14,5 @@ def assume_units(value, units):
 
 def rescale_with_default(quantity, units):
 	quantity = assume_units(quantity, units)
-	return quantity.rescale(units).value
+	return quantity.rescale(units).magnitude
 

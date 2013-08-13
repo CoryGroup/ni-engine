@@ -22,8 +22,7 @@ import config
 from ..abstract_sensors import AbstractCounterSensor
 from util_fns import assume_units
 from storage import DataContainer, data
-from ..hardware.nidaq import daqmx_threadsafe as daq
-
+from hardware.nidaq import daqmx_threadsafe as daq
 ## Other Libraries ##
 import quantities as pq
 
@@ -32,7 +31,7 @@ from itertools import izip
 import ctypes as C
 import threading
 
-<<<<<<< HEAD
+
 ## Other Libraries ##
 from flufl.enum import IntEnum
 
@@ -40,8 +39,7 @@ from flufl.enum import IntEnum
 
 __daq_lock = threading.Lock()
 
-=======
->>>>>>> f053803866bd4f46df69497a227756661f5f7ada
+
 ## SINGLETONS ##################################################################
 
 ## METACLASS ##
@@ -80,100 +78,7 @@ SAMPLE_CLOCK_RATE = pq.Quantity(10000.0, daq.samples / pq.s)
 
 ## CLASSES #####################################################################
 
-<<<<<<< HEAD
-class Task(daq.Task):
-    """
-    Used to add some nice logic to `PyDAQmx.Task` for when we are frustrated
-    by the limitations of that class.
-    """
-    
-    ## TASK STATE PROPERTIES ##
-    
-    @property
-    def is_done(self):
-        ret_val = C.c_uint32(0)
-        self.IsTaskDone(C.byref(ret_val))
-        return bool(ret_val.value)
-    
-    ## READ PROPERTIES ##
-    # These properties implement reading of scalar values from the task.
-    
-    @property
-    def counter_value(self):
-        """
-        Returns the current value of the counter scalar associated with this 
-        task.
-        
-        .. seealso::
-            PyDAQmx.Task.ReadCounterScalarU32
-        """
-        global __daq_lock
-        
-        counter_val = C.c_uint32(0)
-        with __daq_lock:
-            self.ReadCounterScalarU32(1.0, C.byref(counter_val), None)
-        return counter_val.value
-        
-    ## SAMPLE TIMING PROPERTIES ##
-        
-    @property
-    def sample_timing_type(self):
-        ret_val = C.c_uint32(0)
-        self.GetSampTimingType(C.byref(ret_val))
-        return SampleTimingType(ret_val.value)
-    @sample_timing_type.setter
-    def sample_timing_type(self, newval):
-        self.SetSampTimingType(C.c_uint32(newval))
-        
-    ## TRIGGER PROPERTIES ##
-    
-    @property
-    def diglvl_pause_trigger_src(self):
-        """
-        Returns the current source for the digital level pause trigger.
-        """
-        # TODO: TEST!
-        buf = C.create_string_buffer(100)
-        self.GetTrigAttribute(daq.DAQmx_DigLvl_pause_trigger_Src, buf)
-        return buf.value
-    @diglvl_pause_trigger_src.setter
-    def diglvl_pause_trigger_src(self, newval):
-        # TODO: TEST!
-        self.SetDigLvlpause_triggerSrc(newval)
-        
-    @property
-    def pause_trigger_type(self):
-        """
-        Gets/sets the type of pause trigger for this task, or
-        `PauseTriggerType.none` if no pause trigger currently exists.
-        """
-        ret_val = C.c_uint32(0)
-        self.Getpause_triggerType(C.byref(ret_val))
-        return PauseTriggerType(ret_val.value)
-    @pause_trigger_type.setter
-    def pause_trigger_type(self, newval):
-        task.Setpause_triggerType(C.c_uint32(newval))
-        
-    @property
-    def diglvl_pause_trigger_when(self):
-        ret_val = C.c_uint32(0)
-        self.GetDigLvlpause_triggerWhen(C.byref(ret_val))
-        return DigitalLevel(ret_val.value)
-    @diglvl_pause_trigger_when.setter
-    def diglvl_pause_trigger_when(self, newval):
-        self.SetDigLvlpause_triggerWhen(C.c_uint32(newval))
 
-    @property
-    def start_retriggerable(self):
-        ret_val = C.c_uint32(0)
-        self.GetStartTrigRetriggerable(C.byref(ret_val))
-        return bool(ret_val.value)
-    @start_retriggerable.setter
-    def start_retriggerable(self, newval):
-        self.SetStartTrigRetriggerable(C.c_uint32(1 if newval else 0))
-
-=======
->>>>>>> f053803866bd4f46df69497a227756661f5f7ada
 class DAQCounterSensor(AbstractCounterSensor):
     """
     Sensor implementing communication with a NI-DAQ counter card or device.
@@ -208,16 +113,19 @@ class DAQCounterSensor(AbstractCounterSensor):
     description = 'Sensor for NI-DAQ counting devices.'
     
     ## INITIALIZER ##
-    def __init__(self, ID,
+    def __init__(self, ID,hardware,
             channels=('/Dev1/ctr1',),
             gate_channel=None,
             gate_delay=pq.Quantity(0.0, "s"),
             gate_lowtime=pq.Quantity(0.1, "s"),
             gate_hightime=pq.Quantity(0.1, "s"),
             gate_repeat=1,
-            name=name, description=description
+            name=name, description=description,max_stored_data=100
         ):
-        
+        self._id = ID 
+        self._name = name
+        self._description = description
+        self._hardware = hardware
         self._channel_names = channels
         self._gate_channel = gate_channel
         self._gate_delay = gate_delay
@@ -226,7 +134,9 @@ class DAQCounterSensor(AbstractCounterSensor):
         self._gate_repeat = gate_repeat
         self._name = name
         self._description = description
-        super(CTCThermistor,self).__init__() 
+        self._max_stored_data = max_stored_data
+        self._n_channels = len(self._channel_names)
+        super(AbstractCounterSensor,self).__init__() 
 
         
     ## TASK CREATION AND MANAGEMENT ##
@@ -238,7 +148,7 @@ class DAQCounterSensor(AbstractCounterSensor):
         """
         # Do we need to gate?
         if self._gate_channel is not None:
-            self._gate_task = daq.Task()
+            self._gate_task = self._hardware.make_task()
             self._gate_task.create_co_pulse_channel_time(
                     self._gate_channel,
                     "gate",
@@ -260,10 +170,10 @@ class DAQCounterSensor(AbstractCounterSensor):
                 "OnboardClock", SAMPLE_CLOCK_RATE, daq.Edge.rising,
                 *args
             )
-            self._gate_task.sample_timing_type = SampleTimingType.implicit
+            self._gate_task.sample_timing_type = daq.SampleTimingType.implicit
             
         # OK, now create the input tasks.
-        self._input_tasks = [Task() for chan in self._channel_names]
+        self._input_tasks = [self._hardware.make_task() for chan in self._channel_names]
         for idx, (task, chan_name) in enumerate(izip(self._input_tasks, self._channel_names)):
             task.create_ci_count_edges_chan(
                 chan_name, "ch{}".format(idx),
@@ -274,10 +184,10 @@ class DAQCounterSensor(AbstractCounterSensor):
             # Do we need to gate the channel?
             if self._gate_channel is not None:
                 # TODO: make an enum for this and move into Task().
-                task.pause_trigger_type = PauseTriggerType.digital_level
-                assert task.pause_trigger_type == PauseTriggerType.digital_level, \
+                task.pause_trigger_type = daq.PauseTriggerType.digital_level
+                assert task.pause_trigger_type == daq.PauseTriggerType.digital_level, \
                     "Pause trigger type for channel {} not changed!".format(chan_name)
-                task.diglvl_pause_trigger_when = DigitalLevel.low
+                task.diglvl_pause_trigger_when = daq.DigitalLevel.low
             
     def __start_tasks(self):
         # TODO: add error handling so that as many tasks as possible are
@@ -328,6 +238,48 @@ class DAQCounterSensor(AbstractCounterSensor):
         # TODO: write this method.
         #       Roughly, need to stop the gate, read the inputs, stop the inputs,
         #       then restart the inputs and restart the inputs.
-        with self._gate_task: # Tasks now support context manager protocols.
-            pass
-        return container
+        # Tasks now support context manager protocols.
+        con = DataContainer(self.id,self._max_stored_data)
+        for t in self._input_tasks:
+            t.start()
+        self._gate_task.start()
+        self._gate_task.wait_until_done((self._gate_hightime+self._gate_lowtime)+self._gate_delay+pq.Quantity(1,'s'))
+        self._gate_task.stop()
+        for t in zip(self._channel_names,self._input_tasks):
+            val = t[1].counter_value
+            con[t[0]] = Data(self.id,self.code,t[0],val)
+            t[1].stop() 
+        return con  
+    
+    @property
+    def n_channels(self):
+        """
+        Returns
+        -------
+        n_channels : int
+            Number of channels admitted by this sensor.
+        """
+        return self._n_channels
+
+    
+    
+
+    @classmethod 
+    def create(cls,configuration,data_handler,hardware):
+
+        ID = configuration[config.ID]
+        n = configuration.get(config.NAME,cls.name)
+        d = configuration.get(config.DESCRIPTION,cls.description)
+        path = hardware.path        
+        channels = map(lambda x: path+x,configuration.get("channels",('ctr1',)))
+        max_stored_data = configuration.get(config.MAX_DATA)
+        if 'gate' in configuration:
+            gate_configuration = configuration['gate']
+            gate_channel_name = path+gate_configuration['channel_name']            
+            gate_delay = pq.Quantity(gate_configuration['delay'],'s')
+            gate_hightime = pq.Quantity(gate_configuration['hightime'],'s')
+            gate_lowtime = pq.Quantity(gate_configuration['lowtime'],'s')
+            gate_repeat = gate_configuration['repeat']
+            return DAQCounterSensor(ID,hardware,channels,gate_channel_name,gate_delay,gate_lowtime,gate_hightime,gate_repeat,name=n,description=d)
+        else:
+            return DAQCounterSensor(ID,hardware,channels,name=n,description=d,max_stored_data=max_stored_data)

@@ -23,25 +23,7 @@ class AbstractCounterSensor(AbstractSensor):
     def __init__(self):
         super(AbstractCounterSensor, self).__init__()
 
-    @abstractproperty
-    def n_channels(self):
-        """
-        Returns
-        -------
-        n_channels : int
-            Number of channels admitted by this sensor.
-        """
-        pass
-
-    @abstractproperty
-    def counts(self):
-        """
-        Returns
-        -------
-        counts : quantities.Quantity
-            The number of counts seen since the last reset.
-        """
-        pass
+       
         
     @property
     def units(self):

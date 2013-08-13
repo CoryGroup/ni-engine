@@ -1,0 +1,41 @@
+hardware:
+ - name: NI-DAQ PCI-6602
+   description: ni-daq pci hardware
+   code: NIPCI6602
+   id: daq
+   path: "/Dev1/"
+
+sensors:
+ - name: DAQ Counter
+   description: daq counter test
+   code: DAQCOUNTER
+   hardware_id: daq
+   id: counter
+   channels:
+    - ctr1
+   max_data: 200
+   
+   gate:
+    channel_name : 'ctr0'
+    hightime: 0.1
+    lowtime: 0.1
+    repeat: 100 
+    delay: 0
+ 
+
+
+
+   
+ 
+ 
+
+configuration:
+ store_measurements: True
+ storage:
+  code: "HDF5"
+  name: "Test Data Storage"
+  file_path: "ctc_test.h5"
+  buffer_size : 10
+  new_file : True
+  # If you want to load old values for intialization etc.
+  
