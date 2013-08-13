@@ -159,7 +159,9 @@ class SensorManager(object):
         [`DataContainer`] or singleton `DataContainer` if only single sensor
 
         """
+        is_list = True
         if not isinstance(sensors,list):
+            is_list = False
             sensors = [sensors]
         for idx,sen in enumerate(sensors):
             if isinstance(sen,str):
@@ -171,8 +173,9 @@ class SensorManager(object):
         # execute the functions
         results = self.execute_functions(function_list)
         # return singleton if only 1 object
-        if len(results)==1:
-            results = results[0]
+        if len(results)==1 and not is_list:            
+            key, value = results.popitem()
+            results = value
         return results
     
     def measure_all(self):
@@ -209,14 +212,15 @@ class SensorManager(object):
         methods = []
         # store methods to be futures
         fut = []
-        for fn in fns:
+        for (func,threadsafe) in fns:
             #make sure is a function
-            print type(fn[0])
-            assert inspect.ismethod(fn[0]) or inspect.isfunction(fn[0])
+            
+            assert inspect.ismethod(func) or inspect.isfunction(func)
             # if threadsafe add to futures
-            if fn[1]: fut.append(fn[0])
+            if threadsafe: fut.append(func)
             # if not threadsafe add to normal methods
-            else: methods.append(fn[0])
+            else: methods.append(func)
+
         executor = futures.ThreadPoolExecutor(max_workers=self._max_workers)
         #execute all futures and store in list
         future_list = map(lambda x : executor.submit(x),fut) 
@@ -230,7 +234,8 @@ class SensorManager(object):
 
         #store measurements if turned on 
         if self._store_measurements:
-            for mes in results:                
+            for mes in results:
+                print type(mes)              
                 self._data_handler.add_sensor_data(mes.id,mes)
 
         return dict((v.id, v) for v in results)

@@ -25,7 +25,7 @@ from storage import DataContainer, data
 from hardware.nidaq import daqmx_threadsafe as daq
 ## Other Libraries ##
 import quantities as pq
-
+import time
 ## Standard Library Imports ##
 from itertools import izip
 import ctypes as C
@@ -119,7 +119,7 @@ class DAQCounterSensor(AbstractCounterSensor):
             gate_delay=pq.Quantity(0.0, "s"),
             gate_lowtime=pq.Quantity(0.1, "s"),
             gate_hightime=pq.Quantity(0.1, "s"),
-            gate_repeat=1,
+            gate_repeat=1,count_time=pq.Quantity(1,'s'),
             name=name, description=description,max_stored_data=100
         ):
         self._id = ID 
@@ -136,6 +136,7 @@ class DAQCounterSensor(AbstractCounterSensor):
         self._description = description
         self._max_stored_data = max_stored_data
         self._n_channels = len(self._channel_names)
+        self._count_time = count_time
         super(AbstractCounterSensor,self).__init__() 
 
         
@@ -147,8 +148,19 @@ class DAQCounterSensor(AbstractCounterSensor):
         counted or used as a gate.
         """
         # Do we need to gate?
+
+        self._input_tasks = [self._hardware.make_task() for chan in self._channel_names]
         if self._gate_channel is not None:
             self._gate_task = self._hardware.make_task()
+
+        for idx, (task, chan_name) in enumerate(izip(self._input_tasks, self._channel_names)):
+            task.create_ci_count_edges_chan(
+                chan_name, "ch{}".format(idx),
+                daq.Edge.rising,
+                pq.Quantity(0, pq.counts),
+                daq.CountDirection.up
+            )
+        if self._gate_channel is not None:            
             self._gate_task.create_co_pulse_channel_time(
                     self._gate_channel,
                     "gate",
@@ -157,11 +169,13 @@ class DAQCounterSensor(AbstractCounterSensor):
                     self._gate_lowtime,
                     self._gate_hightime
                 )
+
             # We want to make the pulse repeat indefinitely or for a finite
             # number of samples, depending on the value of self._gate_repeat.
             # That only works if the timing type is Implicit for some reason.
             
             if self._gate_repeat is Continuous:
+            
                 args = (daq.SampleMode.continuous_samples, 0)
             else:
                 args = (daq.SampleMode.finite_samples, self._gate_repeat)
@@ -173,14 +187,7 @@ class DAQCounterSensor(AbstractCounterSensor):
             self._gate_task.sample_timing_type = daq.SampleTimingType.implicit
             
         # OK, now create the input tasks.
-        self._input_tasks = [self._hardware.make_task() for chan in self._channel_names]
         for idx, (task, chan_name) in enumerate(izip(self._input_tasks, self._channel_names)):
-            task.create_ci_count_edges_chan(
-                chan_name, "ch{}".format(idx),
-                daq.Edge.rising,
-                pq.Quantity(0, pq.counts),
-                daq.CountDirection.up
-            )
             # Do we need to gate the channel?
             if self._gate_channel is not None:
                 # TODO: make an enum for this and move into Task().
@@ -200,13 +207,13 @@ class DAQCounterSensor(AbstractCounterSensor):
             chan_task.start()
             
         if self._gate_channel is not None:
-            self._gate_channel.start()
+            self._gate_task.start()
             
     def __stop_tasks(self):
         # We need to do things in the opposite order of __start_tasks, so
         # first, stop the gate pulses.
         if self._gate_channel is not None:
-            self._gate_channel.stop()
+            self._gate_task.stop()
             
         for chan_task in self._input_tasks:
             chan_task.stop()
@@ -240,15 +247,17 @@ class DAQCounterSensor(AbstractCounterSensor):
         #       then restart the inputs and restart the inputs.
         # Tasks now support context manager protocols.
         con = DataContainer(self.id,self._max_stored_data)
-        for t in self._input_tasks:
-            t.start()
-        self._gate_task.start()
-        self._gate_task.wait_until_done((self._gate_hightime+self._gate_lowtime)+self._gate_delay+pq.Quantity(1,'s'))
-        self._gate_task.stop()
-        for t in zip(self._channel_names,self._input_tasks):
-            val = t[1].counter_value
-            con[t[0]] = Data(self.id,self.code,t[0],val)
-            t[1].stop() 
+        self.__start_tasks()
+        if self._gate_repeat is not Continuous and self._gate_channel is not None:        
+            self._gate_task.wait_until_done((self._gate_hightime+self._gate_lowtime)+self._gate_delay+pq.Quantity(1,'s'))
+        else : 
+            time.sleep(self._count_time)
+        if self._gate_channel is not None:
+            self._gate_task.stop()
+        for task in self._input_tasks:
+            val = task.counter_value            
+            con[task.name] = data(self.id,self.code,task.name,val)
+            task.stop()
         return con  
     
     @property
@@ -261,7 +270,17 @@ class DAQCounterSensor(AbstractCounterSensor):
         """
         return self._n_channels
 
-    
+    @property
+    def threadsafe(self):
+        """
+        Must be overwritten to be made true. 
+        If is threadsafe return True and can 
+        be used with futures.
+        Returns
+        -------
+        bool
+        """
+        return True
     
 
     @classmethod 
@@ -273,6 +292,7 @@ class DAQCounterSensor(AbstractCounterSensor):
         path = hardware.path        
         channels = map(lambda x: path+x,configuration.get("channels",('ctr1',)))
         max_stored_data = configuration.get(config.MAX_DATA)
+        count_time = pq.Quantity(configuration.get('count_time',1),"s")
         if 'gate' in configuration:
             gate_configuration = configuration['gate']
             gate_channel_name = path+gate_configuration['channel_name']            
@@ -280,6 +300,16 @@ class DAQCounterSensor(AbstractCounterSensor):
             gate_hightime = pq.Quantity(gate_configuration['hightime'],'s')
             gate_lowtime = pq.Quantity(gate_configuration['lowtime'],'s')
             gate_repeat = gate_configuration['repeat']
-            return DAQCounterSensor(ID,hardware,channels,gate_channel_name,gate_delay,gate_lowtime,gate_hightime,gate_repeat,name=n,description=d)
+            if gate_repeat == 'continuous':
+                gate_repeat = Continuous
+                print "--Warning: continuous count_time are governed by software clock,\
+                and not NI-6602 hardware clock. Accuracy is not guranteed."
+            elif not isinstance(gate_repeat,int):
+                raise ValueError("Repeat must either be int or string of value 'continuous'")
+            elif gate_repeat != 1:
+                raise ValueError("Ni-6602 currently only supports repeat value of 1. Sorry :(")
+            return DAQCounterSensor(ID,hardware,channels,gate_channel_name,gate_delay,gate_lowtime,gate_hightime,
+                gate_repeat,count_time=count_time,name=n,description=d)
         else:
-            return DAQCounterSensor(ID,hardware,channels,name=n,description=d,max_stored_data=max_stored_data)
+            return DAQCounterSensor(ID,hardware,channels,count_time =count_time,name=n,description=d,
+                max_stored_data=max_stored_data)

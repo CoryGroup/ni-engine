@@ -153,18 +153,21 @@ class Task(object):
     by the limitations of that class. In particular, all calls to PyDAQmx from
     this class lock the DAQmx library such that this class is threadsafe.
     """
+    @log_calls
     def __init__(self):
         self._task = daq.Task()
-        print "[DEBUG] Created new task {}.".format(self.name)
-    
+        
     ## TASK METADATA ##
 
     @property
     @locks_daq
     def name(self):
-        buf = C.create_string_buffer(100)
-        self._task.GetTaskAttribute(daq.DAQmx_Task_Name, buf)
-        return buf.value
+        if hasattr(self, '_task'):
+            buf = C.create_string_buffer(100)
+            self._task.GetTaskAttribute(daq.DAQmx_Task_Name, buf)
+            return buf.value
+        else:
+            return None
         
     def __repr__(self):
         return "<Task object at {} with name {}>".format(id(self), self.name)
@@ -172,7 +175,7 @@ class Task(object):
     ## TASK STATE PROPERTIES AND METHODS ##
     @locks_daq
     @log_calls
-    def wait_until_done(timeout=pq.Quantity(1, "s")):
+    def wait_until_done(self,timeout=pq.Quantity(1, "s")):
         # TODO: catch for timeout error.
         self._task.WaitUntilTaskDone(assume_units(timeout, 's').rescale('s').magnitude)
     
@@ -211,9 +214,9 @@ class Task(object):
         .. seealso::
             PyDAQmx.Task.ReadCounterScalarU32
         """
-        counter_val = C.c_int32(0)
+        counter_val = C.c_uint32(0)
         self._task.ReadCounterScalarU32(1.0, C.byref(counter_val), None)
-        return counter_val.value
+        return pq.Quantity(counter_val.value,'counts')
         
     ## SAMPLE TIMING PROPERTIES ##
         

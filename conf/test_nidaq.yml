@@ -11,15 +11,18 @@ sensors:
    code: DAQCOUNTER
    hardware_id: daq
    id: counter
+   count_time: 100
    channels:
     - ctr1
+    - ctr2
+    - ctr3
    max_data: 200
    
    gate:
     channel_name : 'ctr0'
-    hightime: 0.1
+    hightime: 1.0
     lowtime: 0.1
-    repeat: 100 
+    repeat: 1
     delay: 0
  
 
@@ -34,7 +37,7 @@ configuration:
  storage:
   code: "HDF5"
   name: "Test Data Storage"
-  file_path: "ctc_test.h5"
+  file_path: "nidac_test.h5"
   buffer_size : 10
   new_file : True
   # If you want to load old values for intialization etc.

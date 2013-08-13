@@ -44,6 +44,13 @@ class NIPCI6602(AbstractHardware):
         return self._path
     
     def make_task(self):
+        """
+        Create a new task
+
+        Returns 
+        -------
+        `daqmx_threadsafe.Task`
+        """
         return Task()
 
     def disconnect(self):

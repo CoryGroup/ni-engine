@@ -7,7 +7,8 @@ import config
 from abstract_physical_storage import AbstractPhysicalStorage
 from ..data_dict import DataDict
 from ..data_container import DataContainer
-from ..data_value import data
+from ..data_value import Data,data
+
 
 
 class HDF5Storage(AbstractPhysicalStorage):
@@ -16,7 +17,7 @@ class HDF5Storage(AbstractPhysicalStorage):
     HDF5 data storage engine. 
     """
     code = "HDF5"
-
+    REMOVE = set("""/!@#$%^&*()+=`~,.\\|:"'; '""")
     def __init__(self,file_path,title="Ni-Engine Data",buffer_size=100,new_file=False,past_data_file=None):
         super(AbstractPhysicalStorage,self).__init__()
         self._measurements= []
@@ -75,7 +76,7 @@ class HDF5Storage(AbstractPhysicalStorage):
             g = {'sensors': sensors,'controllers': controllers,'hardware':hardware,"compound":compound}
         except Exception,e: 
             print "Does not appear to be valid ni-engine file"
-            print e
+            raise 
 
         old_data = {}
         for k,v in g.iteritems():
@@ -136,6 +137,9 @@ class HDF5Storage(AbstractPhysicalStorage):
         """
         if title is None:
             title = group_name
+        string_to_modify = 'this is a string'
+
+        group_name= ''.join(x for x in group_name if x not in self.REMOVE)
 
         if hasattr(parent,group_name):
             a= getattr(parent,group_name)            
@@ -165,7 +169,7 @@ class HDF5Storage(AbstractPhysicalStorage):
         """
         if title is None:
             title = table_name
-
+        table_name= ''.join(x for x in table_name if x not in self.REMOVE)
         if hasattr(parent,table_name):
             return getattr(parent,table_name) , False
         else:               
@@ -186,8 +190,10 @@ class HDF5Storage(AbstractPhysicalStorage):
         for data in data_to_write:            
             data_class = self._groups[data[0]]   
             data_container = data[1]
-            group , was_created = self.get_or_create_group(data_class,data_container.id)         
+            group , was_created = self.get_or_create_group(data_class,data_container.id) 
+             
             for k,v in data_container.iteritems():
+                
                 table, table_created = self.generate_table_from_measurement(group,k,v[0])    
                 row = table.row            
                 for x in v.flat:                    
@@ -203,9 +209,9 @@ class HDF5Storage(AbstractPhysicalStorage):
         for x in zip(data_to_write,compound):
             data_class = self._groups[x[0][0]]
             data_container = x[0][1] 
-            print x           
+                      
             compound_data = x[1]
-            print compound_data
+            
             group , was_created = self.get_or_create_group(data_class,data_container.id)
             table , table_created = self.generate_table_from_compound(group,data_container.id,compound_data)
             row = table.row
@@ -275,8 +281,8 @@ class HDF5Storage(AbstractPhysicalStorage):
             already exist or created.
         """
         # is shallow copy, this way we don't mess up for other objects
-        table_dict = {}
-        
+        assert isinstance(measurement,Data)
+        table_dict = {}        
         if isinstance(measurement.value,pq.Quantity):
             table_dict["value"] = tables.Float64Col(pos=1)
             table_dict["units"] = tables.StringCol(20,pos=2)

@@ -1,7 +1,7 @@
 from datetime import datetime
 import quantities as pq
 import time 
-
+import copy
 
 class Data(object):
 
@@ -20,9 +20,7 @@ class Data(object):
         """
 
         #make sure value is acceptable
-        assert (isinstance(value,pq.Quantity) or isinstance(value,str) or
-            isinstance(value,int) or isinstance(value,float) or
-            isinstance(value,bool))   
+        assert isinstance(value,(pq.Quantity,str,int,float,long,bool))   
         
         time = datetime.now()
         self._id = ID
@@ -89,6 +87,14 @@ class Data(object):
     def __str__(self):
         return "( {0}, {1}, {2} )".format(self.name,self.time,self.value)
 
+    def __copy__(self,memo):
+        t = type(self)
+        return t(self.id,self.code,self.name,self.value,self.time)
+
+    def __deepcopy__(self,memo):
+        t = type(self)
+        return t(self.id,self.code,self.name,copy.deepcopy(self.value),copy.deepcopy(self.time))
+
 class FloatData(Data,float):
     def __init__(self,ID,code,name,value,time=None):
         assert(isinstance(value,float))                
@@ -102,7 +108,13 @@ class StringData(Data,str):
 class IntData(Data,int):
     def __init__(self,ID,code,name,value,time=None):
         assert(isinstance(value,int))                
-        super(IntData,self).__init__(ID,code,name,value,time)  
+        super(IntData,self).__init__(ID,code,name,value,time) 
+
+class LongData(Data,long):
+    def __init__(self,ID,code,name,value,time=None):
+        assert(isinstance(value,long))                
+        Data.__init__(ID,code,name,value,time) 
+
 class BoolData(Data):
     def __init__(self,ID,code,name,value,time=None):
         assert(isinstance(value,bool))            
@@ -119,12 +131,17 @@ class QuantityData(Data,pq.Quantity):
         assert(isinstance(value,pq.Quantity))
         Data.__init__(self,ID,code,name,value,time)  
     
-
+    def __deepcopy__(self,memo):
+        t = type(self)
+        return t(self.id,self.code,self.name,pq.Quantity(self.value.magnitude,self.value.units),
+            copy.deepcopy(self.time))
 
 def data(ID,code,name,value,time=None):
     "Factory method to create correct data object"
     if isinstance(value,int):
         return IntData(ID,code,name,value,time)
+    elif isinstance(value,long):
+        return LongData(ID,code,name,value,time)
     elif isinstance(value,bool):
         return Data(ID,code,name,value,time)
     elif isinstance(value,float):
