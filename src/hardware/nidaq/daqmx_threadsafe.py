@@ -33,9 +33,11 @@ import PyDAQmx as daq
 import quantities as pq
 from flufl.enum import IntEnum
 import ctypes as C
+
 ## Standard Library Imports ##
 import threading
 import functools
+import logging
 
 ## GLOBALS ####################################################################
 
@@ -43,6 +45,9 @@ import functools
 # the same thread, nothing goes wrong. We only really care that DAQmx is always
 # called from one thread at a time.
 __daqmx_lock = threading.RLock()
+
+# Make or get a logger instance that we'll use for debugging.
+__logger = logging.getLogger('ni_engine.hardware.daqmx_threadsafe')
 
 ## UNITS ######################################################################
 
@@ -124,6 +129,22 @@ def locks_daq(fn):
             return fn(*args, **kwargs)
     return locking_fn
 
+def log_calls(fn):
+    """
+    Causes all calls to the decorated function to be logged.
+    """
+    name = getattr(fn, '__name__', '<unnamed>')
+    @functools.wraps(fn)
+    def logging_fn(*args, **kwargs):
+        global __logger
+        __logger.debug("{name}({args}, {kwargs})".format(
+            name=name,
+            args=", ".join(map(repr, args)),
+            kwargs=", ".join("{}={}".format(key, val) for key, val in kwargs.iteritems())
+        ))
+        return fn(*args, **kwargs)
+    return logging_fn
+
 ## CLASSES #####################################################################
 
 class Task(object):
@@ -144,9 +165,13 @@ class Task(object):
         buf = C.create_string_buffer(100)
         self._task.GetTaskAttribute(daq.DAQmx_Task_Name, buf)
         return buf.value
+        
+    def __repr__(self):
+        return "<Task object at {} with name {}>".format(id(self), self.name)
     
     ## TASK STATE PROPERTIES AND METHODS ##
     @locks_daq
+    @log_calls
     def wait_until_done(timeout=pq.Quantity(1, "s")):
         # TODO: catch for timeout error.
         self._task.WaitUntilTaskDone(assume_units(timeout, 's').rescale('s').magnitude)
@@ -160,12 +185,12 @@ class Task(object):
         return bool(ret_val.value)
 
     @locks_daq
+    @log_calls
     def start(self):
-        print "[DEBUG] Starting task {}...".format(self.name)
         self._task.StartTask()
     @locks_daq
+    @log_calls
     def stop(self):
-        print "[DEBUG] Stopping task {}...".format(self.name)
         self._task.StopTask()
 
     # We implement the context manager protocol by aliasing __enter__
@@ -200,6 +225,7 @@ class Task(object):
         return SampleTimingType(ret_val.value)
     @sample_timing_type.setter
     @locks_daq
+    @log_calls
     def sample_timing_type(self, newval):
         self._task.SetSampTimingType(newval)
         
@@ -217,6 +243,7 @@ class Task(object):
         return buf.value
     @diglvl_pause_trigger_src.setter
     @locks_daq
+    @log_calls
     def diglvl_pause_trigger_src(self, newval):
         # TODO: TEST!
         self._task.SetDigLvlPauseTrigSrc(newval)
@@ -233,6 +260,7 @@ class Task(object):
         return PauseTriggerType(ret_val.value)
     @pause_trigger_type.setter
     @locks_daq
+    @log_calls
     def pause_trigger_type(self, newval):
         self._task.SetPauseTrigType(C.c_int32(newval))
         
@@ -244,6 +272,7 @@ class Task(object):
         return DigitalLevel(ret_val.value)
     @diglvl_pause_trigger_when.setter
     @locks_daq
+    @log_calls
     def diglvl_pause_trigger_when(self, newval):
         self._task.SetDigLvlPauseTrigWhen(C.c_int32(newval))
 
@@ -255,6 +284,7 @@ class Task(object):
         return bool(ret_val.value)
     @start_retriggerable.setter
     @locks_daq
+    @log_calls
     def start_retriggerable(self, newval):
         self._task.SetStartTrigRetriggerable(C.c_int32(1 if newval else 0))
 
@@ -275,6 +305,7 @@ class Task(object):
     ## CHANNEL CREATION FUNCTIONS ##
 
     @locks_daq
+    @log_calls
     def create_co_pulse_channel_time(self,
             counter,
             name,
@@ -282,7 +313,6 @@ class Task(object):
             initital_delay,
             low_time, high_time
     ):
-        print "[DEBUG] Adding channel on {} to {}...".format(counter, self.name)
         initital_delay = rescale_with_default(initital_delay, 's')
         low_time = rescale_with_default(low_time, 's')
         high_time = rescale_with_default(high_time, 's')
@@ -296,6 +326,7 @@ class Task(object):
         )
 
     @locks_daq
+    @log_calls
     def create_ci_count_edges_chan(self,
             counter,
             name,
@@ -303,7 +334,6 @@ class Task(object):
             initial_count,
             count_direction
     ):
-        print "[DEBUG] Adding channel on {} to {}...".format(counter, self.name)
         self._task.CreateCICountEdgesChan(
             counter, name,
             C.c_int32(edge),
@@ -314,6 +344,7 @@ class Task(object):
     ## TIMING FUNCTIONS ##
 
     @locks_daq
+    @log_calls
     def config_sample_clock_timing(self,
             source, rate, active_edge, sample_mode,
             samples_per_chan
@@ -326,10 +357,3 @@ class Task(object):
             C.c_uint64(samples_per_chan)
         )
         
-
-
-
-
-
-
-                    
