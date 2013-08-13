@@ -30,7 +30,7 @@ import time
 from itertools import izip
 import ctypes as C
 import threading
-
+import datetime
 
 ## Other Libraries ##
 from flufl.enum import IntEnum
@@ -221,6 +221,9 @@ class DAQCounterSensor(AbstractCounterSensor):
     ## SENSOR CONTRACT ##
         
     def connect(self):
+        """
+        Called to connect NI-6602 channels
+        """
         self.__init_tasks()
         
     def disconnect(self):
@@ -240,7 +243,7 @@ class DAQCounterSensor(AbstractCounterSensor):
 
         Returns
         -------
-        measurement : CountContainer
+        measurement : DataContainer
         """
         # TODO: write this method.
         #       Roughly, need to stop the gate, read the inputs, stop the inputs,
@@ -254,9 +257,11 @@ class DAQCounterSensor(AbstractCounterSensor):
             time.sleep(self._count_time)
         if self._gate_channel is not None:
             self._gate_task.stop()
+        #store same time for all measurements
+        now = datetime.datetime.now()
         for task in self._input_tasks:
             val = task.counter_value            
-            con[task.name] = data(self.id,self.code,task.name,val)
+            con[task.channels[0]] = data(self.id,self.code,task.channels[0],val,now)
             task.stop()
         return con  
     
@@ -285,7 +290,10 @@ class DAQCounterSensor(AbstractCounterSensor):
 
     @classmethod 
     def create(cls,configuration,data_handler,hardware):
+        """
+        Create method called by sensor manager
 
+        """
         ID = configuration[config.ID]
         n = configuration.get(config.NAME,cls.name)
         d = configuration.get(config.DESCRIPTION,cls.description)

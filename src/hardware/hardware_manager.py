@@ -28,6 +28,8 @@ class HardwareManager(object):
             Contains all information for creation of hardware object
         """
         hardware = self._hardwareFactory.create_hardware(hardware_config)
+        if hardware.id == 'newport':
+            hardware._file._debug = True
         self._hardware[hardware.id] = hardware
 
     def add_all_hardware(self):

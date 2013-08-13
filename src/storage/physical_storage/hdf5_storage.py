@@ -205,7 +205,7 @@ class HDF5Storage(AbstractPhysicalStorage):
         data_to_write = queue.get_all()
         
         compound = map(lambda x: x[1].compound(),data_to_write)
-
+        print compound
         for x in zip(data_to_write,compound):
             data_class = self._groups[x[0][0]]
             data_container = x[0][1] 
@@ -305,7 +305,9 @@ class HDF5Storage(AbstractPhysicalStorage):
 
     def generate_table_from_compound(self,group,name,compound):
         table_dict = {}
+        print compound
         for x in compound :
+            print x
             if isinstance(x.value,pq.Quantity):
                 table_dict["{0} value".format(x.name)] = tables.Float64Col(pos=1)
                 table_dict["{0} units".format(x.name)] = tables.StringCol(20,pos=2)

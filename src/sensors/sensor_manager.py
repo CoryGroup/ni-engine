@@ -146,7 +146,7 @@ class SensorManager(object):
             sensor = sensor.id
         return self._data_handler.sensor_data[sensor].all_recent_data()
 
-    def measure(self,sensors):
+    def measure(self,sensors,compound=False):
         """
         Measures a list of sensors or single sensor
 
@@ -171,14 +171,14 @@ class SensorManager(object):
         # generate list of measurement functions to be executed
         function_list = map(lambda x: (x.measure,x.threadsafe),sensors)  
         # execute the functions
-        results = self.execute_functions(function_list)
+        results = self.execute_functions(function_list,compound)
         # return singleton if only 1 object
         if len(results)==1 and not is_list:            
             key, value = results.popitem()
             results = value
         return results
     
-    def measure_all(self):
+    def measure_all(self,compound=False):
         """
         Measure all sensors 
 
@@ -187,11 +187,11 @@ class SensorManager(object):
         DataDict
             Contains all AbstractMeasurementContainers for measurements. Dictionary keys by sensor ids. 
         """
-        result = self.measure(self.sensors.values())
+        result = self.measure(self.sensors.values(),compound)
 
         return result
 
-    def execute_functions(self,fns):
+    def execute_functions(self,fns,compound=False):
         """
         Execute a series as functions passed as lambda expressions and store there results.
         The functions must either return a DataContainer or a future that will eventually return
@@ -235,8 +235,8 @@ class SensorManager(object):
         #store measurements if turned on 
         if self._store_measurements:
             for mes in results:
-                print type(mes)              
-                self._data_handler.add_sensor_data(mes.id,mes)
+
+                self._data_handler.add_sensor_data(mes.id,mes,compound=compound)
 
         return dict((v.id, v) for v in results)
 
