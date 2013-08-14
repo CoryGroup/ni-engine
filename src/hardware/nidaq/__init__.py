@@ -1,2 +1,0 @@
-import daqmx_threadsafe
-from ni_pci6602 import NIPCI6602
