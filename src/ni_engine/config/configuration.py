@@ -1,7 +1,20 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+##
+# configuration.py: Abstraction for YAML config files.
+##
+# Part of the NI Engine project.
+##
+
+## IMPORTS ####################################################################
+
 import yaml 
 import os 
 import sys
 import config_variables as config
+
+## CLASSES ####################################################################
+
 class Configuration(object):
     """
     Class to read configuration file and handle 

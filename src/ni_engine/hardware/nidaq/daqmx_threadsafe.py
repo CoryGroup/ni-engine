@@ -31,8 +31,9 @@ try:
     import PyDAQmx as daq
 except ImportError:
     daq = None
+    # Log the error and propagate it upwards.
     import logging
-    logging.getLogger('ni_engine.hardware.nidaq').error('Could not import PyDAQmx; NI-DAQ functionality will not work.')
+    logging.getLogger(__name__).error('Could not import PyDAQmx; NI-DAQ functionality will not work.')
     raise
 
 ## Other Libraries ##
