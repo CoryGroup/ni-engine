@@ -8,12 +8,12 @@ setup(
     author_email='taalexander@mta.ca',
     package_dir={'': 'src'},
     packages=[
-        'config',
-        'controllers',
-        'hardware',
         'ni_engine',
-        'sensors',
-        'storage',
-        'tools',
+        'ni_engine.config',
+        'ni_engine.controllers',
+        'ni_engine.hardware',
+        'ni_engine.sensors',
+        'ni_engine.storage',
+        'ni_engine.tools',
     ]
 )
