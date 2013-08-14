@@ -1,4 +1,4 @@
-import config
+import ni_engine.config as config
 import PyDAQmx as daq
 import ctypes as C
 import time

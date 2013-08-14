@@ -25,7 +25,7 @@ class Data(object):
         time = datetime.now()
         self._id = ID
         self._code = code
-        self._name = name
+        self._name = name.replace(' ','_')
         self._value = value 
         self._time = time
         self._value_type = type(self._value)

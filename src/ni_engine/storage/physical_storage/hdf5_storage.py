@@ -26,13 +26,18 @@ class HDF5Storage(AbstractPhysicalStorage):
     """
     code = "HDF5"
     REMOVE = set("""/!@#$%^&*()+=`~,.\\|:"'; '""")
-    def __init__(self,file_path,title="Ni-Engine Data",buffer_size=100,new_file=False,past_data_file=None):
+    def __init__(self,file_path,title="Ni-Engine Data",buffer_size=100,new_file=False,generate_old_data=False,
+        number_entries=50,store=False):
         super(AbstractPhysicalStorage,self).__init__()
         self._measurements= []
         self.buffer_size = buffer_size
         write_code = 'w' if new_file else 'a' 
+        self._file_path = self.get_sequential_file_name(file_path,'h5')
 
-        self._file = tables.open_file(file_path,mode=write_code,title= title)
+        p = self.get_last_file_path(file_path,'h5')
+        self._past_data_file = p if p else None     
+
+        self._file = tables.open_file(self._file_path,mode=write_code,title= title)
         self._root = self._file.root
         self._hardware, h_created = self.get_or_create_group(self._root,"hardware","Hardware Data Acquired")
         self._sensors, s_created = self.get_or_create_group(self._root,"sensors","Sensor Data Acquired")        
@@ -40,12 +45,13 @@ class HDF5Storage(AbstractPhysicalStorage):
         self._compound , com_created = self.get_or_create_group(self._root,"compound", "Compound data")
         self._groups = {"hardware": self._hardware,"sensors" : self._sensors,
                         "controllers":self._controllers,"compound":self._compound}
-
-        self._past_data_file = past_data_file
+        self._number_entries = number_entries
+        self._store = store
+        
 
     def retrieve_data(self,number_elems):
         if self._past_data_file is None:
-            raise AttributeError("The olf file path was not set. It appears there is an issue with \
+            raise AttributeError("The old file path was not set. It appears there is an issue with \
                 the configuration file")
         return self.build_data_from_file(self._past_data_file,number_elems)
 
@@ -97,12 +103,14 @@ class HDF5Storage(AbstractPhysicalStorage):
                 for table in data_file.listNodes(devices):
                     
                     title = table.attrs.TITLE
+                    
                     ID = table.attrs.id
                     code = table.attrs.code
                     name = table.attrs.name
                     quant = table.attrs.quantities
-                    metadata = table.attrs.metadata
-                    temp_con = DataContainer(ID,number_elems)
+                    name_type = table.attrs.name_type
+                    
+                    temp_con = DataContainer(table.attrs.store_name,number_elems)
                     compound = table.attrs.compound
                     #cycle through last number_elems in data set
                     if number_elems is None or number_elems<0:
@@ -111,7 +119,7 @@ class HDF5Storage(AbstractPhysicalStorage):
                         to_cycle = table[-number_elems:]
                     for data_dict in to_cycle:
                         #cycle through meta data of table
-                        for data_name,type_data in metadata.iteritems():                            
+                        for data_name,type_data in name_type.iteritems():                            
                             if type_data is UnitType.quantity:
                                 arr = []
 
@@ -128,7 +136,7 @@ class HDF5Storage(AbstractPhysicalStorage):
                                 time_seconds = data_dict['time']
                             time = datetime.datetime.fromtimestamp(time_seconds)                  
 
-                            temp_con.add_measurement(title,data(ID,code,name,value,time))
+                            temp_con.add_measurement(title,data(ID[data_name],code[data_name],name,value,time))
 
                     container = temp_con + container
 
@@ -288,7 +296,7 @@ class HDF5Storage(AbstractPhysicalStorage):
         for x in compound:
             row["{0}_time".format(x.name)] = time.mktime(x.time.timetuple())+x.time.microsecond/1000000.
             if isinstance(x.value,pq.Quantity):
-                write_quantity(row,measurement.value,x.name+"_")
+                self.write_quantity(row,x.value,x.name+"_")
             else:
                 row["{0}".format(x.name)] = x.value
 
@@ -316,10 +324,13 @@ class HDF5Storage(AbstractPhysicalStorage):
         table_dict = {}   
         quant = {}  
         data = {}
+        ID = {}
+        CODE = {}
         if isinstance(measurement.value,pq.Quantity):
             self._quantity_dict(table_dict,measurement.value,measurement.name+"_")
             quant[measurement.name] = len(measurement.value.magnitude)
             data[measurement.name]= UnitType.quantity
+
         elif isinstance(measurement.value,bool):
             table_dict[measurement.name] = tables.BoolCol()
             data[measurement.name]= UnitType.base_unit
@@ -332,14 +343,18 @@ class HDF5Storage(AbstractPhysicalStorage):
         elif isinstance(measurement.value,int):
             table_dict[measurement.name] = tables.Int32Col()
             data[measurement.name]= UnitType.base_unit 
-        table_dict["time"] = tables.Float64Col()     
+        table_dict["time"] = tables.Float64Col() 
+        ID[measurement.name] = measurement.id    
+        CODE[measurement.name] = measurement.code  
         table, created = self.get_or_create_table(group,name,table_dict,name)
         table.attrs.name = measurement.name
-        table.attrs.id = measurement.id
-        table.attrs.code = measurement.code 
+        table.attrs.id = ID
+        table.attrs.code = CODE
         table.attrs.compound = False
         table.attrs.quantities = quant
-        table.attrs.metadata = data
+        table.attrs.name_type = data
+        #name for table
+        table.attrs.store_name = measurement.id
         if isinstance(measurement.value,pq.Quantity):
             table.attrs.units = measurement.value.units        
         return table , created
@@ -348,30 +363,37 @@ class HDF5Storage(AbstractPhysicalStorage):
         table_dict = {}
         quant = {}
         data = {}
+        ID = {}
+        CODE = {}
         for x in compound :            
             if isinstance(x.value,pq.Quantity):
-                 self._quantity_dict(table_dict,measurement.value,index=str(x.name)+"_")
+                 self._quantity_dict(table_dict,x.value,index=str(x.name)+"_")
                  quant[x.name] = len(x.value.magnitude)
-                 data[measurement.name]= UnitType.quantity
+                 data[x.name]= UnitType.quantity                 
             elif isinstance(x.value,bool):
                 table_dict["{0}".format(x.name)] = tables.BoolCol()
-                data[measurement.name]= UnitType.base_unit
+                data[x.name]= UnitType.base_unit
             elif isinstance(x.value,str):
                 table_dict["{0}".format(x.name)] = tables.StringCol(50)
-                data[measurement.name]= UnitType.base_unit
+                data[x.name]= UnitType.base_unit
             elif isinstance(x.value,float):
                 table_dict["{0}".format(x.name)] = tables.Float64Col()
-                data[measurement.name]= UnitType.base_unit
+                data[x.name]= UnitType.base_unit
             elif isinstance(x.value,int):
                 table_dict["{0}".format(x.name)] = tables.Int32Col()
-                data[measurement.name]= UnitType.base_unit  
-            table_dict["{0}_time".format(x.name)] = tables.Float64Col()     
-    
+                data[x.name]= UnitType.base_unit  
+            table_dict["{0}_time".format(x.name)] = tables.Float64Col()  
+            ID[x.name] = x.id    
+            CODE[x.name] = x.code   
+        
         table, created = self.get_or_create_table(group,name,table_dict,name)
+        table.attrs.store_name = name
         table.attrs.name = name
         table.attrs.compound = True
         table.attrs.quantities = quant
-        table.attrs.metadata = data
+        table.attrs.name_type = data
+        table.attrs.id = ID
+        table.attrs.code = CODE
         for x in compound:
             setattr(table.attrs,x.name,x.id)
 
@@ -406,7 +428,9 @@ class HDF5Storage(AbstractPhysicalStorage):
         old_file = None
         if 'load_previous_entries' in configuration:
             old_file = configuration['load_previous_entries'].get('file_path',None)
-        return HDF5Storage(file_path,name,buffer_size,new_file,old_file)
+            number_entries = configuration['load_previous_entries'].get('number_entries',50)
+            store = configuration['load_previous_entries'].get('store',False)
+        return HDF5Storage(file_path,name,buffer_size,new_file,old_file,store)
 
   
       

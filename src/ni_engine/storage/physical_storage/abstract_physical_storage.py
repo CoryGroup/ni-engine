@@ -3,7 +3,7 @@ from abc import ABCMeta, abstractmethod , abstractproperty
 import threading
 import copy
 import atexit
-
+import glob
 class AbstractPhysicalStorage(object):
     """
     Abstract physical storage class that must be implemented by all 
@@ -239,9 +239,81 @@ class AbstractPhysicalStorage(object):
         str
         """
         pass
-        
+    def _get_newest_file_index(self,file_path,file_extension):
+        path_no_ext = file_path.replace('.'+file_extension,'')
+        glob_string = path_no_ext+'_[0-9].'+file_extension
+        nums = []
+        try:
 
+            file_list = glob.glob(glob_string)               
+            if file_list:   
+                nums = map(lambda x: int(x.replace('.'+file_extension,'').replace(path_no_ext+'_','')),file_list)
+                self.has_old_data = True
+            else: 
+                #if there are currently no files, set to 0 as this will indicate no previous file
+                nums.append(-1)
+                self.has_old_data = False
+        except:
+            print "There are improperly named files in the storage directory."
+            raise 
 
+        nums.sort()        
+        return nums[-1]
+    def get_sequential_file_name(self,file_path,file_extension):
+        """
+        Find the actual path name that should be written too if we 
+        want to number our files path_to_file_1.ext,path_to_file_2.ext
+        ...
+
+        Parameters
+        ----------
+        file_path : str
+            The path to the file_name template
+            ie. /home/experiment/data/test_data.h5
+        file_extension: str
+            The extension of the file type to be 
+            stored. ie. 'h5','txt'... 
+
+        Returns 
+        -------
+        str
+        """
+        path_no_ext = file_path.replace('.'+file_extension,'')
+        index = self._get_newest_file_index(file_path,file_extension)
+        return '{0}_{1}.{2}'.format(path_no_ext,index+1,file_extension)
+    
+    def get_last_file_path(self,file_path,file_extension):
+        """
+        Get path to last experiment data 
+
+        Parameters
+        ----------
+        file_path : str
+            The path to the file_name template
+            ie. /home/experiment/data/test_data.h5
+        file_extension: str
+            The extension of the file type to be 
+            stored. ie. 'h5','txt'... 
+
+        Returns
+        -------
+        str or False
+            returns `False` if there is no previous file
+        """
+        path_no_ext = file_path.replace('.'+file_extension,'')
+        index = self._get_newest_file_index(file_path,file_extension)
+        if index>=0:
+            return '{0}_{1}.{2}'.format(path_no_ext,index,file_extension)
+        else:
+            return False
+
+    @property
+    def has_old_data(self):
+        return self._has_old_data
+    @has_old_data.setter
+    def has_old_data(self, value):
+        self._has_old_data = value
+    
 class ItemStore(object):
     """
     Threadsafe itemstore

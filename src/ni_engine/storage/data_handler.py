@@ -27,7 +27,7 @@ class DataHandler(object):
         self._mixed_data = DataDict("mixed")
         self._data = {"hardware":self._hardware_data, "sensors" : self._sensor_data, "controllers" : self._controller_data,"mixed": self._mixed_data}
         
-        if 'load_previous_entries' in self._configuration.storage_config:
+        if 'load_previous_entries' in self._configuration.storage_config and self._storage.has_old_data:
             self._old_data = self._storage.retrieve_data(self._configuration.
                 storage_config['load_previous_entries'].get('number_entries',-1))
         else:

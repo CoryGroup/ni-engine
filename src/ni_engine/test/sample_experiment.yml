@@ -80,8 +80,7 @@ configuration:
   new_file : True
 
   # If you want to load old values for intialization etc.
-  load_previous_entries:
-   file_path: "sample_experiment1.h5"
+  load_previous_entries:  
    # -1 or non-existent for max
    number_entries: 50
    #keep old entries around after called
