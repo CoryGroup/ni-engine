@@ -132,9 +132,9 @@ class DataHandler(object):
         else:
             if not compound:
                 self._storage.store_data(storage_type,measurement_container)
-                print measurement_container
+
             else:
-                print measurement_container
+                
                 self._storage.store_compound(storage_type,measurement_container)
             data_dict = self._data[storage_type]
             data_dict.add_data(ID,measurement_container)

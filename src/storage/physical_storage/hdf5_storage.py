@@ -4,11 +4,19 @@ import quantities as pq
 import time
 import datetime
 import config
+from flufl.enum import IntEnum
 from abstract_physical_storage import AbstractPhysicalStorage
 from ..data_dict import DataDict
 from ..data_container import DataContainer
 from ..data_value import Data,data
 
+
+class UnitType(IntEnum):
+    """
+    Types of units supported
+    """
+    base_unit = 5
+    quantity = 10
 
 
 class HDF5Storage(AbstractPhysicalStorage):
@@ -92,21 +100,35 @@ class HDF5Storage(AbstractPhysicalStorage):
                     ID = table.attrs.id
                     code = table.attrs.code
                     name = table.attrs.name
+                    quant = table.attrs.quantities
+                    metadata = table.attrs.metadata
                     temp_con = DataContainer(ID,number_elems)
+                    compound = table.attrs.compound
                     #cycle through last number_elems in data set
                     if number_elems is None or number_elems<0:
                         to_cycle = table
                     else :
                         to_cycle = table[-number_elems:]
-                    for data in to_cycle:
-                        value = data['value']
-                        time_seconds = data['time']
-                        time = datetime.datetime.fromtimestamp(time_seconds)
-                        if 'units' in data:
-                            units = data['units']
-                            value = pq.Quantity(value,units)
+                    for data_dict in to_cycle:
+                        #cycle through meta data of table
+                        for data_name,type_data in metadata.iteritems():                            
+                            if type_data is UnitType.quantity:
+                                arr = []
 
-                        temp_con.add_measurement(title,Data(ID,code,name,value,time))
+                                for x in range(quant[data_name]):
+                                    arr.append(data_dict[data_name+"_"+str(x)])
+                                value = pq.Quantity(arr,data_dict[data_name+'_units'])
+                            elif type_data is UnitType.base_unit:
+                                value = data_dict[data_name]
+                            else:
+                                raise ValueError("Not valid UnitType")
+                            if compound:
+                                time_seconds = data_dict[data_name+"_time"]
+                            else:
+                                time_seconds = data_dict['time']
+                            time = datetime.datetime.fromtimestamp(time_seconds)                  
+
+                            temp_con.add_measurement(title,data(ID,code,name,value,time))
 
                     container = temp_con + container
 
@@ -186,14 +208,14 @@ class HDF5Storage(AbstractPhysicalStorage):
         queue : ItemStore
         """
 
-        data_to_write = queue.get_all()          
+        data_to_write = queue.get_all()  
+
         for data in data_to_write:            
             data_class = self._groups[data[0]]   
             data_container = data[1]
             group , was_created = self.get_or_create_group(data_class,data_container.id) 
-             
-            for k,v in data_container.iteritems():
-                
+            
+            for k,v in data_container.iteritems():                
                 table, table_created = self.generate_table_from_measurement(group,k,v[0])    
                 row = table.row            
                 for x in v.flat:                    
@@ -204,8 +226,7 @@ class HDF5Storage(AbstractPhysicalStorage):
     def write_compound(self,queue):
         data_to_write = queue.get_all()
         
-        compound = map(lambda x: x[1].compound(),data_to_write)
-        print compound
+        compound = map(lambda x: x[1].compound(),data_to_write)        
         for x in zip(data_to_write,compound):
             data_class = self._groups[x[0][0]]
             data_container = x[0][1] 
@@ -221,6 +242,17 @@ class HDF5Storage(AbstractPhysicalStorage):
             self.create_compound(row,compound_data)
             table.flush()
 
+    def write_quantity(self,row,quantity,index=""):
+        for idx,x in enumerate(quantity.magnitude):
+            row[index+str(idx)] = float(x)
+        row[index+"units"] = quantity.dimensionality.string
+        return row
+
+    def _quantity_dict(self,table_dict,quantity,index=""):
+        for idx,x in enumerate(quantity.magnitude):
+            table_dict[index+str(idx)] = tables.Float64Col()
+        table_dict[index+"units"] = tables.StringCol(20)
+        return table_dict
     
         
     def create_measurement(self,row,measurement):
@@ -236,10 +268,9 @@ class HDF5Storage(AbstractPhysicalStorage):
         # gets the time since Jan 1, 1970 in floating point seconds
         row["time"] = time.mktime(measurement.time.timetuple())+measurement.time.microsecond/1000000.
         if isinstance(measurement.value,pq.Quantity):
-            row["value"] = float(measurement.value)
-            row["units"] = measurement.value.dimensionality.string
+            self.write_quantity(row,measurement.value,measurement.name+"_")
         else:
-            row["value"] = measurement.value
+            row[measurement.name] = measurement.value
 
         row.append()
 
@@ -255,12 +286,11 @@ class HDF5Storage(AbstractPhysicalStorage):
         """
 
         for x in compound:
-            row["{0} time".format(x.name)] = time.mktime(x.time.timetuple())+x.time.microsecond/1000000.
+            row["{0}_time".format(x.name)] = time.mktime(x.time.timetuple())+x.time.microsecond/1000000.
             if isinstance(x.value,pq.Quantity):
-                row["{0} value".format(x.name)] = float(x.value)
-                row["{0} units".format(x.name)] = x.value.dimensionality.string
+                write_quantity(row,measurement.value,x.name+"_")
             else:
-                row["{0} value".format(x.name)] = x.value
+                row["{0}".format(x.name)] = x.value
 
         row.append()
 
@@ -281,53 +311,75 @@ class HDF5Storage(AbstractPhysicalStorage):
             already exist or created.
         """
         # is shallow copy, this way we don't mess up for other objects
-        assert isinstance(measurement,Data)
-        table_dict = {}        
+        
+        assert isinstance(measurement,Data)        
+        table_dict = {}   
+        quant = {}  
+        data = {}
         if isinstance(measurement.value,pq.Quantity):
-            table_dict["value"] = tables.Float64Col(pos=1)
-            table_dict["units"] = tables.StringCol(20,pos=2)
+            self._quantity_dict(table_dict,measurement.value,measurement.name+"_")
+            quant[measurement.name] = len(measurement.value.magnitude)
+            data[measurement.name]= UnitType.quantity
         elif isinstance(measurement.value,bool):
-            table_dict["value"] = tables.BoolCol(pos=1)
+            table_dict[measurement.name] = tables.BoolCol()
+            data[measurement.name]= UnitType.base_unit
         elif isinstance(measurement.value,str):
-            table_dict["value"] = tables.StringCol(50)
+            table_dict[measurement.name] = tables.StringCol(50)
+            data[measurement.name]= UnitType.base_unit
         elif isinstance(measurement.value,float):
-            table_dict["value"] = tables.Float64Col(pos=1)
+            table_dict[measurement.name] = tables.Float64Col()
+            data[measurement.name]= UnitType.base_unit
         elif isinstance(measurement.value,int):
-            table_dict["value"] = tables.Int32Col(pos=1)   
-        table_dict["time"] = tables.Float64Col(pos=0)     
+            table_dict[measurement.name] = tables.Int32Col()
+            data[measurement.name]= UnitType.base_unit 
+        table_dict["time"] = tables.Float64Col()     
         table, created = self.get_or_create_table(group,name,table_dict,name)
         table.attrs.name = measurement.name
         table.attrs.id = measurement.id
         table.attrs.code = measurement.code 
+        table.attrs.compound = False
+        table.attrs.quantities = quant
+        table.attrs.metadata = data
         if isinstance(measurement.value,pq.Quantity):
             table.attrs.units = measurement.value.units        
         return table , created
 
     def generate_table_from_compound(self,group,name,compound):
         table_dict = {}
-        print compound
-        for x in compound :
-            print x
+        quant = {}
+        data = {}
+        for x in compound :            
             if isinstance(x.value,pq.Quantity):
-                table_dict["{0} value".format(x.name)] = tables.Float64Col(pos=1)
-                table_dict["{0} units".format(x.name)] = tables.StringCol(20,pos=2)
+                 self._quantity_dict(table_dict,measurement.value,index=str(x.name)+"_")
+                 quant[x.name] = len(x.value.magnitude)
+                 data[measurement.name]= UnitType.quantity
             elif isinstance(x.value,bool):
-                table_dict["{0} value".format(x.name)] = tables.BoolCol(pos=1)
+                table_dict["{0}".format(x.name)] = tables.BoolCol()
+                data[measurement.name]= UnitType.base_unit
             elif isinstance(x.value,str):
-                table_dict["{0} value".format(x.name)] = tables.StringCol(50)
+                table_dict["{0}".format(x.name)] = tables.StringCol(50)
+                data[measurement.name]= UnitType.base_unit
             elif isinstance(x.value,float):
-                table_dict["{0} value".format(x.name)] = tables.Float64Col(pos=1)
+                table_dict["{0}".format(x.name)] = tables.Float64Col()
+                data[measurement.name]= UnitType.base_unit
             elif isinstance(x.value,int):
-                table_dict["{0} value".format(x.name)] = tables.Int32Col(pos=1)   
-            table_dict["{0} time".format(x.name)] = tables.Float64Col(pos=0)     
+                table_dict["{0}".format(x.name)] = tables.Int32Col()
+                data[measurement.name]= UnitType.base_unit  
+            table_dict["{0}_time".format(x.name)] = tables.Float64Col()     
     
         table, created = self.get_or_create_table(group,name,table_dict,name)
         table.attrs.name = name
+        table.attrs.compound = True
+        table.attrs.quantities = quant
+        table.attrs.metadata = data
         for x in compound:
             setattr(table.attrs,x.name,x.id)
 
         return table,created
     
+    
+
+
     def close(self):
         print "closing"
         self._file.close()

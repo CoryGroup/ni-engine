@@ -58,6 +58,9 @@ class NIPCI6602(AbstractHardware):
 
     @classmethod
     def create(cls,configuration,data_handler):
+        """
+        Create hardware element, called by HardwareManager
+        """
         ID = configuration[config.ID]        
         d = configuration.get(config.DESCRIPTION,cls.description)
         n = configuration.get(config.NAME,cls.name)

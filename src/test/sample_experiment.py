@@ -31,4 +31,4 @@ for x in xrange(100):
         print "moving to: {}".format(theta)
         time.sleep(1)
         print "measuring"
-        sen.measure_all(compound=True)
+        sen.measure_all()

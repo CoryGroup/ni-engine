@@ -30,7 +30,8 @@ class AbstractPhysicalStorage(object):
 
         """
         
-        self.write_queue.add((type_measurement,copy.deepcopy(measurement)))        
+        c = copy.deepcopy(measurement)        
+        self.write_queue.add((type_measurement,c))        
         if len(self.write_queue)>=self.buffer_size:
             self.write_data(self.write_queue)
         

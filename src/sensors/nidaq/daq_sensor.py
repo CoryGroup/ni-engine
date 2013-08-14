@@ -259,10 +259,14 @@ class DAQCounterSensor(AbstractCounterSensor):
             self._gate_task.stop()
         #store same time for all measurements
         now = datetime.datetime.now()
+        quantities = []
         for task in self._input_tasks:
-            val = task.counter_value            
-            con[task.channels[0]] = data(self.id,self.code,task.channels[0],val,now)
+            #generate list of counts
+            quantities.append(task.counter_value)       
             task.stop()
+        #store counts in DataQuantity
+        q = pq.Quantity(quantities,'counts')            
+        con[self.id+" channel counts"] = data(self.id,self.code,self.id+" channel counts",q,now)        
         return con  
     
     @property

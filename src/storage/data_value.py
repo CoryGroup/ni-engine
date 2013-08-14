@@ -87,12 +87,12 @@ class Data(object):
     def __str__(self):
         return "( {0}, {1}, {2} )".format(self.name,self.time,self.value)
 
-    def __copy__(self,memo):
+    def __copy__(self,memo):        
         t = type(self)
         return t(self.id,self.code,self.name,self.value,self.time)
 
     def __deepcopy__(self,memo):
-        t = type(self)
+        t = type(self)        
         return t(self.id,self.code,self.name,copy.deepcopy(self.value),copy.deepcopy(self.time))
 
 class FloatData(Data,float):
@@ -132,10 +132,12 @@ class QuantityData(Data,pq.Quantity):
         Data.__init__(self,ID,code,name,value,time)  
     
     def __deepcopy__(self,memo):
-        t = type(self)
+
+        t = type(self)        
         return t(self.id,self.code,self.name,pq.Quantity(self.value.magnitude,self.value.units),
             copy.deepcopy(self.time))
-
+        
+        
 def data(ID,code,name,value,time=None):
     "Factory method to create correct data object"
     if isinstance(value,int):
@@ -148,7 +150,7 @@ def data(ID,code,name,value,time=None):
         return FloatData(ID,code,name,value,time)
     elif isinstance(value,str):
         return StringData(ID,code,name,value,time)
-    if isinstance(value,pq.Quantity):
+    if isinstance(value,pq.Quantity):   
         return QuantityData(ID,code,name,value,time)
     else:
         raise TypeError("Value is of type {0} and is not a supported data object".format(type(value)))

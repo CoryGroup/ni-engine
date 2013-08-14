@@ -36,9 +36,14 @@ class DataContainer(dict):
             
             value = np.array([value])
 
+        #handle case where it is Quantity
+        #this is messed up due to quantities 
+        #bad subclassing of numppy
         if isinstance(value,QuantityData):
-            value = np.array([value],dtype=QuantityData)
-            
+            v = np.empty(1,dtype=object)
+            v[0] = value
+            value = v
+        
         super(DataContainer, self).__setitem__(key, value)
 
     def update(self, *args, **kwargs):
@@ -110,8 +115,7 @@ class DataContainer(dict):
         """
         assert isinstance(container,type(self))
         for k,v in container.iteritems():
-            if k in self:
-                           
+            if k in self:                
                 a= np.append(self[k],v,axis=0)
                 self[k] = a
                 
@@ -208,9 +212,7 @@ class DataContainer(dict):
         return self.join(b)
 
 
-    def compound (self):
-        
-        a =  zip(*self.values())[0]
-        print a 
-        return a
+    def compound (self):  
+        #create list of compound measurements
+        return zip(*self.values())[0]
 
