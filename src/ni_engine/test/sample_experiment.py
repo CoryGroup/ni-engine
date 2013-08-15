@@ -57,4 +57,5 @@ for idx_average in xrange(100):
         # file included above, recording to an HDF5-formatted data file.
         print "Measuring..."
         sensors.measure_all(compound=True)
-        
+        print "Getting motor position..."
+        controllers.get_all_status(compound=True)

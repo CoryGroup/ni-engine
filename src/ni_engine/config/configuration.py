@@ -263,7 +263,7 @@ class Configuration(object):
 
 
     @property
-    def store_measurements(self):
+    def store_data(self):
         """
         Check to see if measurements should be stored in a storage engine
 
@@ -271,8 +271,8 @@ class Configuration(object):
         -------
         bool
         """
-        if config.STORE_MEASUREMENTS in self._configuration:
-            return self._configuration[config.STORE_MEASUREMENTS]
+        if config.STORE_DATA in self._configuration:
+            return self._configuration[config.STORE_DATA]
         else: 
             return False
 

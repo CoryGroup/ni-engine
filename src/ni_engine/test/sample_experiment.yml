@@ -71,7 +71,7 @@ sensors:
  
 
 configuration:
- store_measurements: True
+ store_data: True
  storage:
   code: "HDF5"
   name: "Test Data Storage"

@@ -87,6 +87,18 @@ class HardwareManager(object):
             return self._hardware[hardwareId]
         else: raise ValueError("{0} is not a valid hardware id".format(hardwareId))
 
+    @property
+    def threadsafe(self):
+        """
+        Must be overwritten to be made true. 
+        If is threadsafe return True and can 
+        be used with futures.
+        Returns
+        -------
+        bool
+        """
+        return False
+
     @classmethod
     def register_hardware(cls,hardware):
         """

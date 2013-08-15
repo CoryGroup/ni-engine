@@ -25,7 +25,7 @@ class SensorManager(object):
         self._data_handler = data_handler
         self.sensor_factory = SensorFactory(hardware_manager,self._data_handler)
         self.measurements = dict()
-        self._store_measurements = self.configuration.store_measurements
+        self._store_measurements = self.configuration.store_data
         self._max_workers = self.configuration.max_workers
 
     def add_sensor(self,sensor_config):

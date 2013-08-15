@@ -251,12 +251,16 @@ class HDF5Storage(AbstractPhysicalStorage):
             table.flush()
 
     def write_quantity(self,row,quantity,index=""):
-        for idx,x in enumerate(quantity.magnitude):
-            row[index+str(idx)] = float(x)
+        if not quantity.shape:
+            row[index+'0'] = float(quantity)
+        else:
+            for idx,x in enumerate(quantity.magnitude):
+                row[index+str(idx)] = float(x)
         row[index+"units"] = quantity.dimensionality.string
         return row
 
     def _quantity_dict(self,table_dict,quantity,index=""):
+        
         for idx,x in enumerate(quantity.magnitude):
             table_dict[index+str(idx)] = tables.Float64Col()
         table_dict[index+"units"] = tables.StringCol(20)
@@ -323,26 +327,32 @@ class HDF5Storage(AbstractPhysicalStorage):
         assert isinstance(measurement,Data)        
         table_dict = {}   
         quant = {}  
-        data = {}
+        name_type = {}
         ID = {}
         CODE = {}
         if isinstance(measurement.value,pq.Quantity):
+            #make sure is at least a 1-d array
+            if not measurement.value.shape:
+                    measurement = data(measurement.id,measurement.code,
+                        measurement.name,
+                        [measurement.value.magnitude]*measurement.value.units,
+                        measurement.time)
             self._quantity_dict(table_dict,measurement.value,measurement.name+"_")
             quant[measurement.name] = len(measurement.value.magnitude)
-            data[measurement.name]= UnitType.quantity
+            name_type[measurement.name]= UnitType.quantity
 
         elif isinstance(measurement.value,bool):
             table_dict[measurement.name] = tables.BoolCol()
-            data[measurement.name]= UnitType.base_unit
+            name_type[measurement.name]= UnitType.base_unit
         elif isinstance(measurement.value,str):
             table_dict[measurement.name] = tables.StringCol(50)
-            data[measurement.name]= UnitType.base_unit
+            name_type[measurement.name]= UnitType.base_unit
         elif isinstance(measurement.value,float):
             table_dict[measurement.name] = tables.Float64Col()
-            data[measurement.name]= UnitType.base_unit
+            name_type[measurement.name]= UnitType.base_unit
         elif isinstance(measurement.value,int):
             table_dict[measurement.name] = tables.Int32Col()
-            data[measurement.name]= UnitType.base_unit 
+            name_type[measurement.name]= UnitType.base_unit 
         table_dict["time"] = tables.Float64Col() 
         ID[measurement.name] = measurement.id    
         CODE[measurement.name] = measurement.code  
@@ -352,7 +362,7 @@ class HDF5Storage(AbstractPhysicalStorage):
         table.attrs.code = CODE
         table.attrs.compound = False
         table.attrs.quantities = quant
-        table.attrs.name_type = data
+        table.attrs.name_type = name_type
         #name for table
         table.attrs.store_name = measurement.id
         if isinstance(measurement.value,pq.Quantity):
@@ -362,26 +372,31 @@ class HDF5Storage(AbstractPhysicalStorage):
     def generate_table_from_compound(self,group,name,compound):
         table_dict = {}
         quant = {}
-        data = {}
+        name_type = {}
         ID = {}
         CODE = {}
         for x in compound :            
             if isinstance(x.value,pq.Quantity):
-                 self._quantity_dict(table_dict,x.value,index=str(x.name)+"_")
-                 quant[x.name] = len(x.value.magnitude)
-                 data[x.name]= UnitType.quantity                 
+                #make sure is at least a 1-d array
+                #Data is not mutable so create a new
+                if not x.value.shape:
+                    x = data(x.id,x.code,x.name,[x.value.magnitude]*x.value.units
+                        ,x.time)
+                self._quantity_dict(table_dict,x.value,index=str(x.name)+"_")
+                quant[x.name] = len(x.value.magnitude)
+                name_type[x.name]= UnitType.quantity                 
             elif isinstance(x.value,bool):
                 table_dict["{0}".format(x.name)] = tables.BoolCol()
-                data[x.name]= UnitType.base_unit
+                name_type[x.name]= UnitType.base_unit
             elif isinstance(x.value,str):
                 table_dict["{0}".format(x.name)] = tables.StringCol(50)
-                data[x.name]= UnitType.base_unit
+                name_type[x.name]= UnitType.base_unit
             elif isinstance(x.value,float):
                 table_dict["{0}".format(x.name)] = tables.Float64Col()
-                data[x.name]= UnitType.base_unit
+                name_type[x.name]= UnitType.base_unit
             elif isinstance(x.value,int):
                 table_dict["{0}".format(x.name)] = tables.Int32Col()
-                data[x.name]= UnitType.base_unit  
+                name_type[x.name]= UnitType.base_unit  
             table_dict["{0}_time".format(x.name)] = tables.Float64Col()  
             ID[x.name] = x.id    
             CODE[x.name] = x.code   
@@ -391,7 +406,7 @@ class HDF5Storage(AbstractPhysicalStorage):
         table.attrs.name = name
         table.attrs.compound = True
         table.attrs.quantities = quant
-        table.attrs.name_type = data
+        table.attrs.name_type = name_type
         table.attrs.id = ID
         table.attrs.code = CODE
         for x in compound:

@@ -21,14 +21,16 @@ class Data(object):
 
         #make sure value is acceptable
         assert isinstance(value,(pq.Quantity,str,int,float,long,bool))   
-        
+        #If modifying make sure you don't need to change BoolData 
+        #It has to have a seperate init due to the inability to 
+        #inherit boolean values
         time = datetime.now()
         self._id = ID
         self._code = code
         self._name = name.replace(' ','_')
         self._value = value 
         self._time = time
-        self._value_type = type(self._value)
+        self._value_type = type(self._value)        
         super(type(self.value),self).__init__(self.value)       
 
     @property
@@ -96,21 +98,33 @@ class Data(object):
         return t(self.id,self.code,self.name,copy.deepcopy(self.value),copy.deepcopy(self.time))
 
 class FloatData(Data,float):
+    def __new__(cls, ID,code,name,value,time=None):
+        return super(FloatData, cls).__new__(cls, value)
+
     def __init__(self,ID,code,name,value,time=None):
         assert(isinstance(value,float))                
         super(FloatData,self).__init__(ID,code,name,value,time)  
 
 class StringData(Data,str):
+    def __new__(cls, ID,code,name,value,time=None):
+        return super(StringData, cls).__new__(cls, value)
+
     def __init__(self,ID,code,name,value,time=None):
         assert(isinstance(value,str))                
         super(StringData,self).__init__(ID,code,name,value,time)  
 
 class IntData(Data,int):
+    def __new__(cls, ID,code,name,value,time=None):
+        return super(IntData, cls).__new__(cls, value)
+
     def __init__(self,ID,code,name,value,time=None):
         assert(isinstance(value,int))                
         super(IntData,self).__init__(ID,code,name,value,time) 
 
 class LongData(Data,long):
+    def __new__(cls, ID,code,name,value,time=None):
+        return super(LongData, cls).__new__(cls, value)
+
     def __init__(self,ID,code,name,value,time=None):
         assert(isinstance(value,long))                
         Data.__init__(ID,code,name,value,time) 
@@ -118,7 +132,15 @@ class LongData(Data,long):
 class BoolData(Data):
     def __init__(self,ID,code,name,value,time=None):
         assert(isinstance(value,bool))            
-        super(BoolData,self).__init__(ID,code,name,value,time)  
+        time = datetime.now()
+        self._id = ID
+        self._code = code
+        self._name = name.replace(' ','_')
+        self._value = value 
+        self._time = time
+        self._value_type = type(self._value)        
+        # we do our own init and don't call super
+        # as we can't subclass a bool value       
 
     def __nonzero__(self):
             return self.value
@@ -129,7 +151,8 @@ class QuantityData(Data,pq.Quantity):
 
     def __init__(self,ID,code,name,value,time=None):
         assert(isinstance(value,pq.Quantity))
-        Data.__init__(self,ID,code,name,value,time)  
+
+        Data.__init__(self,ID,code,name,1*value,time)  
     
     def __deepcopy__(self,memo):
 
@@ -140,12 +163,12 @@ class QuantityData(Data,pq.Quantity):
         
 def data(ID,code,name,value,time=None):
     "Factory method to create correct data object"
-    if isinstance(value,int):
+    if isinstance(value,bool):
+        return BoolData(ID,code,name,value,time)
+    elif isinstance(value,int):
         return IntData(ID,code,name,value,time)
     elif isinstance(value,long):
-        return LongData(ID,code,name,value,time)
-    elif isinstance(value,bool):
-        return Data(ID,code,name,value,time)
+        return LongData(ID,code,name,value,time)    
     elif isinstance(value,float):
         return FloatData(ID,code,name,value,time)
     elif isinstance(value,str):
