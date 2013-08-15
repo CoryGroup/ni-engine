@@ -141,7 +141,8 @@ class DAQCounterSensor(AbstractCounterSensor):
         self._max_stored_data = max_stored_data
         self._n_channels = len(self._channel_names)
         self._count_time = count_time
-        super(AbstractCounterSensor,self).__init__() 
+        super(AbstractCounterSensor,self).__init__(self._id,DAQCounterSensor.code,
+            self._name,self._description,self._max_stored_data) 
 
         
     ## TASK CREATION AND MANAGEMENT ##

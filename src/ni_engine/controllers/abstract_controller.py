@@ -12,7 +12,20 @@ class AbstractController(Item):
     
     __metaclass__ = ABCMeta 
 
+    def __init__(self,ID,code,name,description,max_stored_data = 100):
+        self._id = ID
+        self._name = name
+        self._description = description
+        self._max_stored_data = max_stored_data
+        self._code = code
     
+    @property
+    def max_stored_data(self):
+        try:
+            return self._max_stored_data
+        except AttributeError,e:
+            print e
+            return ""
 
     @abstractmethod
     def connect(self):

@@ -53,17 +53,22 @@ class LJTDAC(AbstractDAC):
 
     def _set_voltage(self,voltage):
         """
-        Implements `AbstractDAC`s method.
+        Implements `AbstractDAC`s method.    
         """
         
         
         #apply calibration function
         v= self.calibration_function(self.voltage)        
         voltage = v.magnitude
+
         if self._is_A:
-            self._device.i2c(LJTDAC.DAC_ADDRESS, [48, int(self.calibration_function(((voltage*self.aSlope)+self.aOffset))/256), int(self.calibration_function(((voltage*self.aSlope)+self.aOffset))%256)], SDAPinNum = self.sdaPin, SCLPinNum = self.sclPin)
+            self._device.i2c(LJTDAC.DAC_ADDRESS, [48, int(self.calibration_function(((voltage*self.aSlope)+self.aOffset))/256), 
+                int(self.calibration_function(((voltage*self.aSlope)+self.aOffset))%256)],
+             SDAPinNum = self.sdaPin, SCLPinNum = self.sclPin)
         else:
-            self._device.i2c(LJTDAC.DAC_ADDRESS, [49, int(((voltage*self.bSlope)+self.bOffset)/256), int(((voltage*self.bSlope)+self.bOffset)%256)], SDAPinNum = self.sdaPin, SCLPinNum = self.sclPin)
+            self._device.i2c(LJTDAC.DAC_ADDRESS, [49, int(self.calibration_function(((voltage*self.bSlope)+self.bOffset))/256), 
+                int(self.calibration_function(((voltage*self.bSlope)+self.bOffset))%256)],
+             SDAPinNum = self.sdaPin, SCLPinNum = self.sclPin)
         
         
     def get_cal_constants(self):

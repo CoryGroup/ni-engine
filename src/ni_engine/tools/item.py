@@ -2,6 +2,7 @@ class Item(object):
     """
     Some things common to AbstractSensor,AbstractController and AbstractHardware
     """
+    
     @property
     def name (self):
         try:
@@ -36,3 +37,5 @@ class Item(object):
         except AttributeError,e:
             print e
             return ""
+
+    

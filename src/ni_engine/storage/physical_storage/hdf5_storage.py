@@ -48,6 +48,8 @@ class HDF5Storage(AbstractPhysicalStorage):
         self._number_entries = number_entries
         self._store = store
         
+    def __del__(self):
+        self._file.close()
 
     def retrieve_data(self,number_elems):
         if self._past_data_file is None:
