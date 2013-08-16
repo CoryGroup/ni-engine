@@ -8,7 +8,7 @@ hardware:
    description: Only axis 1 works
    code: NEW301
    id: newport
-   uri: "serial://COM9?baud=19200"
+   uri: "serial://COM10?baud=19200"
 
 controllers:
  - name: Newport Stepper axis

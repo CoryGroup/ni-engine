@@ -241,7 +241,7 @@ class AbstractPhysicalStorage(object):
         pass
     def _get_newest_file_index(self,file_path,file_extension):
         path_no_ext = file_path.replace('.'+file_extension,'')
-        glob_string = path_no_ext+'_[0-9].'+file_extension
+        glob_string = path_no_ext+'_[0-9]*.'+file_extension
         nums = []
         try:
 
@@ -256,7 +256,7 @@ class AbstractPhysicalStorage(object):
         except:
             print "There are improperly named files in the storage directory."
             raise 
-
+        
         nums.sort()        
         return nums[-1]
     def get_sequential_file_name(self,file_path,file_extension):
@@ -280,6 +280,7 @@ class AbstractPhysicalStorage(object):
         """
         path_no_ext = file_path.replace('.'+file_extension,'')
         index = self._get_newest_file_index(file_path,file_extension)
+        
         return '{0}_{1}.{2}'.format(path_no_ext,index+1,file_extension)
     
     def get_last_file_path(self,file_path,file_extension):
