@@ -46,9 +46,11 @@ class AbstractSensor(Item):
     def measure(self):
         """
         Called to measure sensor
+
         Returns
         -------
         DataContainer
+        
         """
         pass
 

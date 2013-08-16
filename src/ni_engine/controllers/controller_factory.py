@@ -38,6 +38,7 @@ class ControllerFactory(object):
         ----------
         dictionary
             configuration dictionary
+        
         Returns
         -------
         str
@@ -51,6 +52,7 @@ class ControllerFactory(object):
         ----------
         dictionary
             configuration dictionary
+        
         Returns
         -------
         AbstractHardware
@@ -65,6 +67,7 @@ class ControllerFactory(object):
         ----------
         dictionary
             configuration dictionary
+        
         Returns
         -------
         AbstractSensor
@@ -81,7 +84,9 @@ class ControllerFactory(object):
         """
         Register the controller for controller factory
         Example use in __init__.py:
+        
         >>> ControllerFactory.register_controller(AbstractController)
+        
         Parameters
         ----------
         AbstractController
