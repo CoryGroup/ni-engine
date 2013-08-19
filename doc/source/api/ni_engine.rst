@@ -26,7 +26,6 @@ Subpackages
     ni_engine.controllers
     ni_engine.hardware
     ni_engine.sensors
-    ni_engine.storage
-    ni_engine.test
+    ni_engine.storage    
     ni_engine.tools
 

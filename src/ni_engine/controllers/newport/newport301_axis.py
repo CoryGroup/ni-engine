@@ -3,6 +3,7 @@ from instruments.other import NewportESP301,NewportESP301Axis
 from ..abstract_controller import AbstractController
 from ni_engine.hardware.newport import Newport301
 from ni_engine.storage import DataContainer,data
+
 class Newport301Axis(AbstractController):
     code = 'NEWPORTAXIS'
     name = 'NewportESP 301 Axis'

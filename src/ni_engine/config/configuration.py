@@ -23,13 +23,13 @@ class Configuration(object):
 
     *Sample available interfaces file:*
 
-    .. literalinclude:: ../examples/conf/available_interfaces.yml
-        :language: YAML
+    .. literalinclude:: |example_configuration|/available_interfaces.yml
+        :language: yaml
 
     *Sample interfaces file:*
 
-    .. literalinclude:: ../examples/conf/test.yml
-        :language: YAML
+    .. literalinclude:: examples/test.yml
+        :language: yaml
 
     """
 
