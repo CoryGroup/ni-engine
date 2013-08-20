@@ -1,3 +1,5 @@
 from abstract_humidity_sensor import AbstractHumiditySensor 
 from abstract_temperature_sensor import AbstractTemperatureSensor 
 from abstract_counter_sensor import AbstractCounterSensor
+from abstract_analog_in import AnalogIn 
+from abstract_digital_in import DigitalIn

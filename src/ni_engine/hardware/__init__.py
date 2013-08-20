@@ -1,6 +1,6 @@
 from hardware_factory import HardwareFactory
 from hardware_manager import HardwareManager
-from labjack import U3LV
+from labjack import U3LV,U3HV
 from test import TestHardware
 from abstract_hardware import AbstractHardware
 from newport import Newport301
@@ -9,6 +9,7 @@ from nidaq import NIPCI6602
 #Register all predefined hardware here
 
 HardwareManager.register_hardware(U3LV)
+HardwareManager.register_hardware(U3HV)
 HardwareManager.register_hardware(TestHardware)
 HardwareManager.register_hardware(Newport301)
 HardwareManager.register_hardware(CTC100)

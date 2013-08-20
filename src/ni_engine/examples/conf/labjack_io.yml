@@ -1,0 +1,191 @@
+
+hardware:
+ - name: labjack U3-LV
+   description: Labjack for temperature sensor
+   code: U3LV 
+   id: lab1
+
+
+sensors:
+ - name: Analog In 1
+   description: Labjack Analog In
+   code: LJANALOGIN
+   hardware_id: lab1
+   id: analogin1
+   pin: 0
+   max_data: 100
+ - name: Analog In 2 
+   description: Labjack Analog In
+   code: LJANALOGIN
+   hardware_id: lab1
+   id: analogin2
+   pin: 1
+   max_data: 100
+ - name: Analog In 3
+   description: Labjack Analog In
+   code: LJANALOGIN
+   hardware_id: lab1
+   id: analogin3
+   pin: 2
+   max_data: 100
+ - name: Analog In 4
+   description: Labjack Analog In
+   code: LJANALOGIN
+   hardware_id: lab1
+   id: analogin4
+   pin: 3
+   max_data: 100
+ 
+ - name: Digital In 1
+   description: Labjack Digital In
+   code: LJDIGITALIN
+   hardware_id: lab1
+   id: digitalin1
+   pin: 4
+   max_data: 100
+ - name: Digital In 2
+   description: Labjack Digital In
+   code: LJDIGITALIN
+   hardware_id: lab1
+   id: digitalin2
+   pin: 5
+   max_data: 100
+ - name: Digital In 3
+   description: Labjack Digital In
+   code: LJDIGITALIN
+   hardware_id: lab1
+   id: digitalin3
+   pin: 6
+   max_data: 100
+ - name: Digital In 4
+   description: Labjack Digital In
+   code: LJDIGITALIN
+   hardware_id: lab1
+   id: digitalin4
+   pin: 7
+   max_data: 100
+
+controllers:
+ - name: LJTDAC Test
+   description: Testing the LJTDAC
+   code: LJTDAC
+   hardware_id: lab1
+   id: testDAC1
+   default_voltage: 0 
+   max_voltage: 3.6
+   max_data: 100
+  #Fio/Eio dac pin
+   pins:
+    dac: 8
+ - name: LJTDAC Test
+   description: Testing the LJTDAC
+   code: LJTDAC
+   hardware_id: lab1
+   id: testDAC2
+   default_voltage: 0 
+   max_voltage: 3.6
+   max_data: 100
+  #Fio/Eio dac pin
+   pins:
+    dac: 9
+ - name: LJTDAC Test
+   description: Testing the LJTDAC
+   code: LJTDAC
+   hardware_id: lab1
+   id: testDAC3
+   default_voltage: 0 
+   max_voltage: 3.6
+   max_data: 100
+  #Fio/Eio dac pin
+   pins:
+    dac: 10
+ - name: LJTDAC Test
+   description: Testing the LJTDAC
+   code: LJTDAC
+   hardware_id: lab1
+   id: testDAC4
+   default_voltage: 0 
+   max_voltage: 3.6
+   max_data: 100
+  #Fio/Eio dac pin
+   pins:
+    dac: 11
+ - name: LJTDAC Test
+   description: Testing the LJTDAC
+   code: LJTDAC
+   hardware_id: lab1
+   id: testDAC5
+   default_voltage: 0 
+   max_voltage: 3.6
+   max_data: 100
+  #Fio/Eio dac pin
+   pins:
+    dac: 12
+ - name: LJTDAC Test
+   description: Testing the LJTDAC
+   code: LJTDAC
+   hardware_id: lab1
+   id: testDAC6
+   default_voltage: 0 
+   max_voltage: 3.6
+   max_data: 100
+  #Fio/Eio dac pin
+   pins:
+    dac: 13
+ - name: LJTDAC Test
+   description: Testing the LJTDAC
+   code: LJTDAC
+   hardware_id: lab1
+   id: testDAC7
+   default_voltage: 0 
+   max_voltage: 3.6
+   max_data: 100
+  #Fio/Eio dac pin
+   pins:
+    dac: 14
+ - name: LJTDAC Test
+   description: Testing the LJTDAC
+   code: LJTDAC
+   hardware_id: lab1
+   id: testDAC8
+   default_voltage: 0 
+   max_voltage: 3.6
+   max_data: 100
+
+  #Fio/Eio dac pin
+   pins:
+    dac: 15
+
+
+ 
+ #- name: LJTDAC Test
+ #  description: Testing the LJTDAC
+ #  code: LJTDAC
+ #  hardwareID: lab1
+ #  id: testDAC
+ #  defaultVoltage: 0 
+ #  maxVoltage: 10
+ # #Fio/Eio dac pin
+ #  pins:
+ #   dac: 8
+
+
+configuration:
+ store_data: True
+ storage:
+  code: "HDF5"
+  name: "Test Data Storage"
+  file_path: "labjack_io_example.h5"
+  buffer_size : 10
+  new_file : True
+
+  # If you want to load old values for intialization etc.
+  load_previous_entries:  
+   # -1 or non-existent for max
+   number_entries: 50
+   #keep old entries around after called
+   #false by default
+   store: True
+  
+
+

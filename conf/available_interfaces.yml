@@ -6,6 +6,26 @@ hardware:
     enabled: True
    LABINT:
     enabled: True
+   LJDIGITALIN:
+    enabled: True
+   LJANALOGIN:
+    enabled: True
+  controllers:
+   KEPCO:
+    enabled: True
+   LJTDAC:
+    enabled: True
+ U3HV:
+  enabled: True
+  sensors:
+   EI1050:
+    enabled: True
+   LABINT:
+    enabled: True
+   LJDIGITALIN:
+    enabled: True
+   LJANALOGIN:
+    enabled: True
   controllers:
    KEPCO:
     enabled: True
@@ -43,6 +63,10 @@ sensors:
  CTCTHERMISTOR:
   enabled: True
  DAQCOUNTER: 
+  enabled: True
+ LJDIGITALIN:
+  enabled: True
+ LJANALOGIN:
   enabled: True
 
 controllers: 

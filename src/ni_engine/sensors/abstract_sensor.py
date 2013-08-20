@@ -17,9 +17,8 @@ class AbstractSensor(Item):
         try:
             return self._max_stored_data
         except AttributeError,e:
-            print e
-            return ""
-    
+            raise 
+        
 
     @abstractmethod
     def connect(self):

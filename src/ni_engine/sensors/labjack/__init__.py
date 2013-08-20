@@ -1,2 +1,4 @@
 from ei1050_sensor import Ei1050Sensor
 from lab_jack_internal_sensor import LabJackInternalSensor
+from labjack_analog_in import LJAnalogIn 
+from labjack_digital_in import LJDigitalIn 

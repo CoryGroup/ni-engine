@@ -44,7 +44,7 @@ class LabJackInternalSensor(AbstractSensor):
         Parameters
         ----------
         ID : str 
-        device : AbstraceHardware
+        device : AbstractHardware
         name : str
         description : str
         """

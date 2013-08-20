@@ -10,6 +10,12 @@ class AbstractTemperatureSensor(AbstractSensor):
 
 
     def __init__(self,running_average_length=100):
+        """
+        Parameters
+        ----------
+        running_average_length: int 
+            number of data_points to take average over
+        """
         self.running_average_length = 100
         self._running_temperature = []
         

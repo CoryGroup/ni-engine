@@ -163,6 +163,7 @@ class QuantityData(Data,pq.Quantity):
         
 def data(ID,code,name,value,time=None):
     "Factory method to create correct data object"
+    
     if isinstance(value,bool):
         return BoolData(ID,code,name,value,time)
     elif isinstance(value,int):
