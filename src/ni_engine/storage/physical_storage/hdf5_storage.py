@@ -49,6 +49,7 @@ class HDF5Storage(AbstractPhysicalStorage):
         self._store = store
         
     def __del__(self):
+
         self._file.close()
 
     def retrieve_data(self,number_elems):
@@ -136,10 +137,11 @@ class HDF5Storage(AbstractPhysicalStorage):
                                 time_seconds = data_dict[data_name+"_time"]
                             else:
                                 time_seconds = data_dict['time']
-                            time = datetime.datetime.fromtimestamp(time_seconds)                  
-
-                            temp_con.add_measurement(title,data(ID[data_name],code[data_name],name,value,time))
-
+                            time = datetime.datetime.fromtimestamp(time_seconds)              
+                            try:
+                                temp_con.add_measurement(title,data(ID[data_name],code[data_name],name,value,time))
+                            except Exception,e:
+                                import pdb;pdb.set_trace()
                     container = temp_con + container
 
                 old_data[k][container.id] = container
@@ -283,6 +285,10 @@ class HDF5Storage(AbstractPhysicalStorage):
         row["time"] = time.mktime(measurement.time.timetuple())+measurement.time.microsecond/1000000.
         if isinstance(measurement.value,pq.Quantity):
             self.write_quantity(row,measurement.value,measurement.name+"_")
+        elif isinstance(measurement.value,bool):
+            print measurement.value
+            print type(measurement.value)
+
         else:
             row[measurement.name] = measurement.value
 

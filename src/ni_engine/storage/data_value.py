@@ -2,7 +2,7 @@ from datetime import datetime
 import quantities as pq
 import time 
 import copy
-
+import numpy as np
 class Data(object):
 
 
@@ -164,8 +164,8 @@ class QuantityData(Data,pq.Quantity):
 def data(ID,code,name,value,time=None):
     "Factory method to create correct data object"
     
-    if isinstance(value,bool):
-        return BoolData(ID,code,name,value,time)
+    if isinstance(value,(bool,np.bool_)):
+        return BoolData(ID,code,name,bool(value),time)
     elif isinstance(value,int):
         return IntData(ID,code,name,value,time)
     elif isinstance(value,long):

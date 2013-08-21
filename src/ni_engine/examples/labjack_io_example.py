@@ -31,7 +31,7 @@ n = NiEngine(
 # These are configured by "sample_experiment.yml", as pointed to above.
 sensors = n.sensor_manager
 controllers = n.controller_manager 
-data = n.data_handler
+
 
 # Next, we extract the motor controller for the phase flag and give it a name.
 print "Getting Analog In"

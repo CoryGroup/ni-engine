@@ -44,10 +44,12 @@ for idx_average in xrange(100):
 
     # Each average within the experiment consists of a loop over theta,
     # letting theta be between 0 and 10 degrees.
-    for theta in np.linspace(0, 10, 21) * pq.degree:
+    for theta in np.linspace(0, 100, 50) * pq.degree:
         # Move the motor to theta, as given by the loop above.
+        # Block until we get there. So we don't get counts 
+        # at the wrong position.
         print "Moving phase flag to {}...".format(theta)
-        motor.move_absolute(theta)
+        motor.move_absolute(theta,wait=True,block=True)
         
         # Sleep for an interval to allow the experiment to rethermalize,
         # and for the motor to move.
