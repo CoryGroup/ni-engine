@@ -33,8 +33,14 @@ from .sensors import SensorManager
 from .hardware import HardwareManager
 from .controllers import ControllerManager
 from .storage import DataHandler
-
+import os
 ## CLASSES ####################################################################
+
+#get available_config file
+available_config = os.path.abspath(__file__).replace('__init__.pyc','config/available_config.yml').\
+    replace('__init__.py','config/available_config.yml')
+
+
 
 class NiEngine(object):
     """
@@ -51,7 +57,7 @@ class NiEngine(object):
         Path to a YAML-formatted configuration file listing which equipment is
         available for use in this experiment.
     """
-    def __init__(self, sensor_config, available_config):
+    def __init__(self, sensor_config, available_config=available_config):
         self.configuration = Configuration(available_config)
         self.configuration.read_config(sensor_config)
         

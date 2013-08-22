@@ -7,14 +7,20 @@ import axis_positions
 import os.path
 import numpy as np
 import quantities as pq
+from os import listdir
+from os.path import isfile, join,abspath
+
+
+
 class Newport301Axis(AbstractController):
     code = 'NEWPORTAXIS'
     name = 'NewportESP 301 Axis'
     description = 'Axis of NewportESP 301 Axis Controller '    
     _default_position = 0
     TOLERANCE = 0.1
-
-    def __init__(self,ID,hardware,axis, past_position_file,default_position = None,configuration_parameters=None,max_stored_data=100,name=name,description=description):
+    absolute_path = os.path.abspath(axis_positions.__file__)
+    def __init__(self,ID,hardware,axis, past_position_file,default_position = None,configuration_parameters=None,
+        max_stored_data=100,name=name,description=description):
         """
         Initialize the newport axis 
 
@@ -54,7 +60,7 @@ class Newport301Axis(AbstractController):
         # saves last position
         # deletes mem-mapping which 
         # will store it to disk
-        
+
         self._axis.abort_motion()
         self.append_last_position()      
         del self._past_position
@@ -65,12 +71,15 @@ class Newport301Axis(AbstractController):
         """
         self._axis.disable()
         self.initialize_defaults()
-        self._past_position = self._get_last_position_file(axis_positions.__file__.
-            replace('__init__.pyc',"{}.npy".format(self._past_position_file)))
+
+       
+
+        self._past_position = self._get_last_position_file(Newport301Axis.absolute_path.
+            replace('__init__.pyc',"{}.npy".format(self._past_position_file)).\
+            replace('__init__.py',"{}.npy".format(self._past_position_file)))
         
         self.setup_last_position()
-        self._axis.enable()
-        import pdb;pdb.set_trace()
+        self._axis.enable()        
         if self._default_position is not None:
             self.move_absolute(self._default_position,wait=True,block=True)
 
@@ -95,8 +104,7 @@ class Newport301Axis(AbstractController):
     def setup_last_position(self):
         
         last_position = self._past_position[0]*self.units
-        curr_position = self.position        
-        import pdb;pdb.set_trace()
+        curr_position = self.position           
 
         if last_position - curr_position > self.TOLERANCE:
             self._axis.home = last_position           
@@ -272,3 +280,16 @@ class Newport301Axis(AbstractController):
                 
         return Newport301Axis(ID,hardware,axis,past_position_file,default_position,configuration_parameters,name=n,description=d)
 
+# build dictionary of all path files, at initialization and store for interpreter
+
+def get_past_position_paths():
+    path = os.path.abspath(axis_positions.__file__).replace('__init__.pyc','').\
+        replace('__init__.py','')
+
+    files = [ f for f in listdir(path) if isfile(join(path,f)) ]
+    d = {}    
+    map(lambda x: d.__setitem__(x,abspath(path+x)),files )
+    Newport301Axis._past_position_absolute_paths = d
+    
+
+get_past_position_paths()
