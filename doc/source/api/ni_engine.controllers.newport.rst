@@ -17,3 +17,10 @@ newport Package
     :undoc-members:
     :show-inheritance:
 
+Subpackages
+-----------
+
+.. toctree::
+
+    ni_engine.controllers.newport.axis_positions
+

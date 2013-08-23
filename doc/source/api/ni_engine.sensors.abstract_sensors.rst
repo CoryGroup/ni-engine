@@ -9,10 +9,26 @@ abstract_sensors Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`abstract_analog_in` Module
+--------------------------------
+
+.. automodule:: ni_engine.sensors.abstract_sensors.abstract_analog_in
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`abstract_counter_sensor` Module
 -------------------------------------
 
 .. automodule:: ni_engine.sensors.abstract_sensors.abstract_counter_sensor
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`abstract_digital_in` Module
+---------------------------------
+
+.. automodule:: ni_engine.sensors.abstract_sensors.abstract_digital_in
     :members:
     :undoc-members:
     :show-inheritance:

@@ -33,3 +33,19 @@ labjack Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`labjack_analog_in` Module
+-------------------------------
+
+.. automodule:: ni_engine.sensors.labjack.labjack_analog_in
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`labjack_digital_in` Module
+--------------------------------
+
+.. automodule:: ni_engine.sensors.labjack.labjack_digital_in
+    :members:
+    :undoc-members:
+    :show-inheritance:
+

@@ -9,6 +9,14 @@ labjack Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`u3hv` Module
+------------------
+
+.. automodule:: ni_engine.hardware.labjack.u3hv
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`u3lv` Module
 ------------------
 

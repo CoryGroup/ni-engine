@@ -24,6 +24,7 @@ Subpackages
 
     ni_engine.config
     ni_engine.controllers
+    ni_engine.examples
     ni_engine.hardware
     ni_engine.sensors
     ni_engine.storage    

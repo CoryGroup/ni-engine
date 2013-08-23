@@ -1,5 +1,5 @@
-ni_engine API
-=============
+ni_engine
+=========
 
 .. toctree::
    :maxdepth: 4
