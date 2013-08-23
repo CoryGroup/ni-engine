@@ -23,9 +23,8 @@ print "Loading NI Engine..."
 n = NiEngine(
     # We need to pass two configuration files: one for this experiment in
     # particular, and one for the hardware setup common to all experiments.
-    "ni_engine/examples/conf/labjack_io.yml",
-    "../conf/available_interfaces.yml"
-)
+    "ni_engine/examples/example_configurations/labjack_io.yml"
+  
 
 # Next, we give names to the sensors, the controllers, and the data.
 # These are configured by "sample_experiment.yml", as pointed to above.

@@ -23,8 +23,7 @@ print "Loading NI Engine..."
 n = NiEngine(
     # We need to pass two configuration files: one for this experiment in
     # particular, and one for the hardware setup common to all experiments.
-    "ni_engine/test/sample_experiment.yml",
-    "../conf/available_interfaces.yml"
+    "ni_engine/examples/example_configurations/sample_experiment.yml"    
 )
 
 # Next, we give names to the sensors, the controllers, and the data.

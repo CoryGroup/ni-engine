@@ -11,7 +11,7 @@ from memory_profiler import profile
 
 @profile
 def test():
-    n = NiEngine("../../conf/labjack_test.yml","../../conf/available_interfaces.yml")
+    n = NiEngine("ni_engine/examples/example_configurations/labjack_test.yml")
     sen = n.sensor_manager
     con = n.controller_manager 
     data = n.data_handler
