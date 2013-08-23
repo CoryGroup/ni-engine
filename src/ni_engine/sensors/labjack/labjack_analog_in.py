@@ -73,8 +73,7 @@ class LJAnalogIn(AnalogIn):
         Normally called by `SensorManager`
         """
         # set pin to analog
-        self._device.configAnalog(self._pin)
-        
+        self._device.configAnalog(self._pin)        
         
         
     

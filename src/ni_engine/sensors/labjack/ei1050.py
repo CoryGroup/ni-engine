@@ -68,9 +68,7 @@ class EI1050(object):
             else:
                 raise TypeError('Invalid device passed. Can not get default values.')
 
-        # Set U3 pins
-        if self.deviceType == EI1050.U3:
-            self.device.configIO(FIOAnalog = EI1050.FIO_PIN_STATE)
+        
         
         # Set to write out
         if self.deviceType == EI1050.U3: self.device.getFeedback(u3.BitDirWrite(self.enable_pinNum,1))

@@ -101,6 +101,8 @@ class Ei1050Sensor(AbstractSensor):
         Connects created device
         Normally called by `SensorManager`
         """
+        self._device.configDigital(self._data_pin)
+        self._device.configDigital(self._clock_pin)
         if self._threaded:
             self._queue = Queue.LifoQueue()
             self._probe = ei1050.EI1050Reader(self._device,self._queue,enable_pinNum=self._enable_pin,data_pinNum=self._data_pin,clock_pinNum=self._clock_pin)
