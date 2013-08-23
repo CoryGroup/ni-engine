@@ -28,16 +28,27 @@ class DigitalIn(AbstractSensor):
 
         super(DigitalIn,self).__init__(ID,code,name,description,max_stored_data)
 
-    @abstractproperty
+    @property
     def is_high(self):
         """
-        Is implemented by classes that inherit this class. Method 
-        should talk to sensor and report back whether the pin is 
-        high or not. 
+        check if pin is high or not
 
         Returns
         -------
         bool
+        """
+        
+        is_high = bool(self.val)        
+        return is_high
+
+    @abstractproperty
+    def val(self):
+        """
+        Return whether the pin is 0(low) or 1(high)
+
+        Returns
+        -------
+        int
         """
         pass
 

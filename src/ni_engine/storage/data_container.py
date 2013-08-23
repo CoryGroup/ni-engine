@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod , abstractproperty
 import numpy as np
 import quantities as pq
-from . import QuantityData
+from . import QuantityData,Data
 class DataContainer(dict):
     """
     Abstract class to hold all measurements. 
@@ -32,14 +32,12 @@ class DataContainer(dict):
         list so they can be joined
         """
         
-        if not isinstance(value,np.ndarray) : 
-            
-            value = np.array([value])
+        
 
         #handle case where it is Quantity
         #this is messed up due to quantities 
         #bad subclassing of numppy
-        if isinstance(value,QuantityData):
+        if isinstance(value,Data):
             v = np.empty(1,dtype=object)
             v[0] = value
             value = v

@@ -61,18 +61,21 @@ class LJDigitalIn(DigitalIn):
         #set pin to input
         self._device.getFeedback(u3.BitDirWrite(self._pin, 0))
         
+    
+    
     @property
-    def is_high(self):
+    def val(self):
         """
-        check if pin is high or not
+        check if pin is 0 or 1
 
         Returns
         -------
-        bool
+        int
         """
-        is_high = bool(self._device.getFeedback(u3.BitStateRead(self._pin)))        
-        return is_high
-    
+        
+        val = self._device.getFeedback(u3.BitStateRead(self._pin))[0]      
+        return val
+
     def measure(self):
         """
         Measures whether pin is high or not
@@ -85,7 +88,7 @@ class LJDigitalIn(DigitalIn):
         con = DataContainer(self.id,self.max_stored_data)
         con['is_high'] = data(self.id,self.code,'is_high',self.is_high)
         con['voltage'] = data(self.id,self.code,'voltage',self.voltage)
-
+        con['val'] = data(self.id,self.code,'val',self.val)        
         return con
 
     def disconnect(self):

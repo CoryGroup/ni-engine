@@ -166,14 +166,14 @@ def data(ID,code,name,value,time=None):
     
     if isinstance(value,(bool,np.bool_)):
         return BoolData(ID,code,name,bool(value),time)
-    elif isinstance(value,int):
-        return IntData(ID,code,name,value,time)
+    elif isinstance(value,(int,np.int16,np.int32,np.int64)):
+        return IntData(ID,code,name,int(value),time)
     elif isinstance(value,long):
-        return LongData(ID,code,name,value,time)    
-    elif isinstance(value,float):
-        return FloatData(ID,code,name,value,time)
+        return LongData(ID,code,name,long(value),time)    
+    elif isinstance(value,(float,np.float16,np.float32,np.float64)):
+        return FloatData(ID,code,name,float(value),time)
     elif isinstance(value,str):
-        return StringData(ID,code,name,value,time)
+        return StringData(ID,code,name,str(value),time)
     if isinstance(value,pq.Quantity):   
         return QuantityData(ID,code,name,value,time)
     else:

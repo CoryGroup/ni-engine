@@ -332,7 +332,9 @@ class HDF5Storage(AbstractPhysicalStorage):
         """
         # is shallow copy, this way we don't mess up for other objects
         
-        assert isinstance(measurement,Data)        
+        
+        assert isinstance(measurement,Data)  
+
         table_dict = {}   
         quant = {}  
         name_type = {}
@@ -448,6 +450,9 @@ class HDF5Storage(AbstractPhysicalStorage):
         file_path = configuration.get('file_path')
         name = configuration.get('name',"Ni-Engine Data")
         new_file = configuration.get('new_file',False)
+        old_file = None
+        number_entries = 50
+        store = False
         old_file = None
         if 'load_previous_entries' in configuration:
             old_file = configuration['load_previous_entries'].get('file_path',None)
