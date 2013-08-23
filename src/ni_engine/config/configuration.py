@@ -23,13 +23,170 @@ class Configuration(object):
 
     *Sample available interfaces file:*
 
-    .. literalinclude:: |example_configuration|/available_interfaces.yml
-        :language: yaml
+    .. code-block:: yaml
+       
+       hardware:
+        U3LV:
+         enabled: True
+         sensors:
+          EI1050:
+           enabled: True
+          LABINT:
+           enabled: True
+          LJDIGITALIN:
+           enabled: True
+          LJANALOGIN:
+           enabled: True
+         controllers:
+          KEPCO:
+           enabled: True
+          LJTDAC:
+           enabled: True
+        U3HV:
+         enabled: True
+         sensors:
+          EI1050:
+           enabled: True
+          LABINT:
+           enabled: True
+          LJDIGITALIN:
+           enabled: True
+          LJANALOGIN:
+           enabled: True
+         controllers:
+          KEPCO:
+           enabled: True
+          LJTDAC:
+           enabled: True
+        NEW301:
+         enabled: True
+         controllers:
+          NEWPORTAXIS:
+           enabled: True
+        CTC100:
+         enabled: True
+         sensors:
+          CTCTHERMISTOR:
+           enabled: True
+        NIPCI6602:
+         enabled: True
+         sensors:
+          DAQCOUNTER:
+           enabled: True
+        TEST: 
+         enabled: True
+         sensors:
+          GAUSSSENSOR:
+           enabled: True
+      sensors: 
+       EI1050:
+        enabled: True
+       LABINT:
+        enabled: True
+       GAUSSSENSOR:
+        enabled: True
+       CTCTHERMISTOR:
+        enabled: True
+       DAQCOUNTER: 
+        enabled: True
+       LJDIGITALIN:
+        enabled: True
+       LJANALOGIN:
+        enabled: True
+      controllers: 
+       KEPCO:
+        enabled: True
+       LJTDAC: 
+        enabled: True
+       NEWPORTAXIS:
+        enabled: True
+
+
 
     *Sample interfaces file:*
 
-    .. literalinclude:: examples/test.yml
-        :language: yaml
+    .. code-block:: yaml
+       hardware:
+        - name: NI-DAQ PCI-6602
+           description: ni-daq pci hardware
+           code: NIPCI6602
+           id: daq
+           path: "/Dev1/"
+         
+         - name: Newport Esp 301
+           description: Only axis 1 works
+           code: NEW301
+           id: newport
+           uri: "serial://COM10?baud=19200"     
+
+       controllers:
+        - name: Newport Stepper axis
+          description: Commutated stepper in degrees
+          code: NEWPORTAXIS
+          hardware_id: newport  
+          id: phase_flag
+          default_position: 0
+          axis_id: 0
+          past_position_file: "axis_1"
+          configuration_parameters:
+           motor_type: 2
+           current: 0.9
+           voltage: 10
+           units: 7
+           feedback_configuration: 0
+           position_display_resolution: 4
+           full_step_resolution: 0.9
+           microstep_factor: 5    
+           max_velocity: 2
+           acceleration_feed_forward: 1
+           max_acceleration: 2
+           hardware_limit_configuration: 24
+           reduce_motor_torque_time: 1000
+           reduce_motor_torque_percentage: 20
+           max_base_velocity: 2.0
+           acceleration: 1.0
+           deceleration: 1.0
+           estop_deceleration: 1.0
+           jog_high_velocity: 1.0
+           jog_low_velocity: 1.0
+           jerk: 1.0
+           homing_velocity: 1.0
+           velocity: 1.0       
+
+       sensors:
+        - name: DAQ Counter
+          description: daq counter test
+          code: DAQCOUNTER
+          hardware_id: daq
+          id: counter   
+          channels:
+           - ctr1
+           - ctr2
+           
+          max_data: 200
+          
+          gate:
+           channel_name : 'ctr0'
+           hightime: 1.0
+           lowtime: 0.1
+           repeat: 1
+           delay: 0
+
+       configuration:
+        store_data: True
+        storage:
+         code: "HDF5"
+         name: "Test Data Storage"
+         file_path: "sample_experiment2.h5"
+         buffer_size : 10
+         new_file : True       
+         # If you want to load old values for intialization etc.
+         load_previous_entries:  
+          # -1 or non-existent for max
+          number_entries: 50
+          #keep old entries around after called
+          #false by default
+          store: True
 
     """
 

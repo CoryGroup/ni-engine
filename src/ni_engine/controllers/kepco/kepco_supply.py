@@ -6,6 +6,21 @@ import quantities as pq
 from ni_engine.storage import DataContainer,data
 
 class KepcoSupply(AbstractController):
+    """
+    Controller class for the Kepco Power Supply. 
+
+    **Required Parameters:**
+    
+    * 'pins'
+        * 'voltage'(int)
+        * 'crowbar'(int)
+
+    **Optional Parameters:**
+    
+    * 'default_voltage'(float)
+    * 'max_voltage'(float)
+
+    """
     code = 'KEPCO'
     name = 'Kepco Power Supply'
     description = 'Voltage controlled Kepco Power Supply 0-10V'
@@ -141,11 +156,8 @@ class KepcoSupply(AbstractController):
         
         voltage_pin = configuration['pins']['voltage']
         crowbar_pin = configuration['pins']['crowbar']
-        max_voltage = pq.Quantity(configuration['max_voltage'],pq.V)
-        crowbar_voltage = max_voltage
-        max_stored_data = configuration.get(config.MAX_DATA,100)      
-        
-
+        crowbar_voltage = max_voltage = pq.Quantity(configuration['max_voltage'],pq.V)        
+        max_stored_data = configuration.get(config.MAX_DATA,100)
         default_voltage = pq.Quantity(configuration.get('default_voltage',0),pq.V)
                 
         return KepcoSupply(ID,hardware,voltage_pin,crowbar_pin,max_voltage,crowbar_voltage,default_voltage,name=n,description=d,max_stored_data=max_stored_data)

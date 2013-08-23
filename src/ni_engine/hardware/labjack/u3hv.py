@@ -28,6 +28,19 @@ class U3HVBitSetter(AbstractBitSetter):
 
 
 class U3HV(U3,AbstractHardware,U3HVBitSetter):
+    """
+    Labjack U3-HV hardware object.
+
+    **Required Parameters:**
+
+    **None**
+
+    **Optional Parameters::**
+
+    **None**
+    
+
+    """
     code = "U3HV"
     name = "Labjack U3-HV high volatage"
     description = ""

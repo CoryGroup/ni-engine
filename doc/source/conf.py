@@ -294,3 +294,5 @@ html_theme_options = {
     'bootswatch_theme': "cyborg",
 }
 
+#sphinx auto-doc
+autoclass_content = 'both'

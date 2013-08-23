@@ -87,6 +87,24 @@ class DAQCounterSensor(AbstractCounterSensor):
     """
     Sensor implementing communication with a NI-DAQ counter card or device.
     
+    **Required Parameters: **
+
+    * 'count_time' (float) Time to count for
+    * 'channels'
+        list of channel names example('ctr1')
+
+    **Optional Parameters: **
+    
+    * 'gate'
+        * 'channel_name' (str) normally 'ctr0'
+        * 'hightime'(float) in seconds 
+        * 'lowtime'(float) in seconds
+        * 'repeat'(int) number of times to repeat pulse. 
+            Currently only works with 1 for some reason
+
+        * 'delay' (float) in seconds. Delay before starting pulse
+
+
     Parameters
     ----------
     ID : str
@@ -111,6 +129,7 @@ class DAQCounterSensor(AbstractCounterSensor):
         indefinitely.
     """
     
+    
     ## NI ENGINE SPECIAL PROPERTIES ##
     code = 'DAQCOUNTER'
     name = 'NI-DAQ Counter'
@@ -126,6 +145,7 @@ class DAQCounterSensor(AbstractCounterSensor):
             gate_repeat=1,count_time=pq.Quantity(1,'s'),
             name=name, description=description,max_stored_data=100
         ):
+
         self._id = ID 
         self._name = name
         self._description = description

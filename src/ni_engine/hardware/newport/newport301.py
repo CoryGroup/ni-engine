@@ -2,6 +2,26 @@ import ni_engine.config as config
 from instruments.other import NewportESP301
 from ..abstract_hardware import AbstractHardware
 class Newport301(AbstractHardware,NewportESP301):
+    """
+    NewportESP301 class. Sets up communication with 
+    NewportESP301 device via Instrument kit. 
+
+    **Required Parameters:**
+
+    * 'uri' (str)
+       * Is a uri string formatted for instrument kit. For example
+         "serial://COM10?baud=19200" is a valid uri if the Newport 
+         is on serial port 'COM10'. The baud parameter specifies 
+         the serial baud rate which is 19200 for the Newport. 
+         Other uri, can be for gpib or usb, see InstrumentKit
+         documentation for details.
+
+
+    **Optional Parameters::**
+
+    **None**
+    """
+
     code = "NEW301"
     name = "Newport ESP301 motor controller"
     description = ""

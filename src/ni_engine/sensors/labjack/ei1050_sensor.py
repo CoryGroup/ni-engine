@@ -45,19 +45,17 @@ class Ei1050Sensor(AbstractSensor):
     Sensor implementation of Ei1050 temperature and humidity sensor. Operates on Labjack U3-LV hardware currently
     but could be extend to function on other Labjack devices. 
 
-    An example available_interfaces file would require something like this to function::
+    ** Required Parameters:**
 
-    .. code-block :: yaml
-        hardware:
-         U3LV:
-          enabled: True
-          sensors:
-           EI1050:
-            enabled: True
+    * 'thread'(bool) Whether to thread measurements or not (may or may not be working)
+    * 'pins' (pins on Labjack)
+        * 'clock_pin'(int)
+        * 'enable_pin'(int)
+        * 'data_pin'(int)
 
-        sensors: 
-         EI1050:
-          enabled: True
+    ** Optional Parameters:**
+
+    * 'polling_time' (float) If threaded time between measurements
     """
     code = "EI1050"
     name = "EI1050Sensor"
@@ -176,8 +174,7 @@ class Ei1050Sensor(AbstractSensor):
         threaded = configuration["threaded"]
         data_pin = configuration["pins"]["data"]
         clock_pin = configuration["pins"]["clock"]
-        enable_pin = configuration["pins"]["enable"]
-        data_pin = configuration["pins"]["data"]
+        enable_pin = configuration["pins"]["enable"]      
 
         if "polling_time" in configuration:
             polling_time = configuration["polling_time"]

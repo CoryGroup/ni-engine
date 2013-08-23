@@ -13,6 +13,15 @@ import u3
 class LJDigitalIn(DigitalIn):
     """
     Implementation of DigitalPin for Labjack. 
+
+    **Required Parameters:**
+
+    * 'pin'(int) Pin on Labjack
+
+    *Optional Parameters:**
+
+    **None**
+
     """
     code = "LJDIGITALIN"
     name = "Labjack Digital Pin"

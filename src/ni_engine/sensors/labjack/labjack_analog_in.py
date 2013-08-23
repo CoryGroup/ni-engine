@@ -14,6 +14,17 @@ from ni_engine.util_fns import assume_units
 class LJAnalogIn(AnalogIn):
     """
     Implementation of DigitalPin for Labjack. 
+
+    **Required Parameters:**
+
+    *'pin'(int) Pin on labjack to read in
+
+    *Optional Parameters:**
+    
+    * 'scaling_factor' (float) Amount to multipy results by.
+        Useful if for example the actual voltage is being scaled
+        up or down by a factor before going into Labjack
+    
     """
     code = "LJANALOGIN"
     name = "Labjack Analog Pin"

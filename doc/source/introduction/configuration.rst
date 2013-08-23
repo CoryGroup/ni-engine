@@ -60,7 +60,7 @@ They each share several default paramaters:
 Additionally **sensors**, and **controllers**
 have another required parameter which is:
 
-.. code-block:: yml
+.. code-block:: yaml
 
    #the hardware_id parameter specifies which
    #piece of hardware in the configuration the 

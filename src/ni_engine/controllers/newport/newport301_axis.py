@@ -13,6 +13,47 @@ from os.path import isfile, join,abspath
 
 
 class Newport301Axis(AbstractController):
+    """
+    NewportESP301Axis controller. This is the main way to interact 
+    with the NewportESP301. 
+
+    **Required Parameters:**
+    
+    * 'axis_id'(int)
+    * 'past_position_file'(str) Is a name of file where past_positions 
+        are stored so that the Newport does not go out of sync
+
+    **Optional Parameters:**
+        
+        * 'default_position' if not set is current position (U) 
+        * 'configuration_parameters' (all are optional)
+            * 'motor_type' type of motor see 'QM' in Newport documentation
+            * 'current' motor maximum current (A)
+            * 'voltage' motor voltage (V)
+            * 'units' set units (see NewportESP301Units)(U)
+            * 'resolution' value of encoder step in terms of (U)
+            * 'max_velocity' maximum velocity (U/s)
+            * 'max_working_velocity'  maximum working velocity (U/s)
+            * 'homing_velocity' homing speed (U/s)
+            * 'jog_high_velocity' jog high speed (U/s)
+            * 'jog_low_velocity' jog low speed (U/s)
+            * 'max_acceleration' maximum acceleration (U/s^2)
+            * 'acceleration' acceleration (U/s^2)
+            * 'deceleration' set deceleration (U/s^2)
+            * 'error_threshold' set error threshold (U)
+            * 'proportional_gain' PID proportional gain (optional)
+            * 'derivative_gain' PID derivative gain (optional)
+            * 'interal_gain' PID internal gain (optional)
+            * 'integral_saturation_gain' PID integral saturation (optional)
+            * 'trajectory' trajectory mode (optional)
+            * 'position_display_resolution' (U per step)
+            * 'feedback_configuration'
+            * 'full_step_resolution'  (U per step)
+            * 'home' (U)
+            * 'acceleration_feed_forward' bewtween 0 to 2e9
+            * 'reduce_motor_torque'  (time(ms),percentage)
+
+    """
     code = 'NEWPORTAXIS'
     name = 'NewportESP 301 Axis'
     description = 'Axis of NewportESP 301 Axis Controller '    
@@ -280,16 +321,4 @@ class Newport301Axis(AbstractController):
                 
         return Newport301Axis(ID,hardware,axis,past_position_file,default_position,configuration_parameters,name=n,description=d)
 
-# build dictionary of all path files, at initialization and store for interpreter
 
-def get_past_position_paths():
-    path = os.path.abspath(axis_positions.__file__).replace('__init__.pyc','').\
-        replace('__init__.py','')
-
-    files = [ f for f in listdir(path) if isfile(join(path,f)) ]
-    d = {}    
-    map(lambda x: d.__setitem__(x,abspath(path+x)),files )
-    Newport301Axis._past_position_absolute_paths = d
-    
-
-get_past_position_paths()

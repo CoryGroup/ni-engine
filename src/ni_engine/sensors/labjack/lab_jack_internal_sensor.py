@@ -29,11 +29,13 @@ class LabJackInternalSensor(AbstractSensor):
     Labjack internal temperature temperature sensor. Is built into the labjack.
     Configuration has options(required if not otherwise noted):
     
-    .. code-block :: yaml
-        code: LABINT
-        id: string for other systems to refer to device by
-        name: human readable name #optional
-        description: human readable description #optional
+    **Required Parameters:**
+
+    **None**
+
+    *Optional Parameters:**
+
+    **None**
     """
     code = "LABINT"
     name = "Labjack internal temperature sensor"

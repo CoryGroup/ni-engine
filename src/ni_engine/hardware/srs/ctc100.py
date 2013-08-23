@@ -3,6 +3,22 @@ from instruments.srs import SRSCTC100
 from ..abstract_hardware import AbstractHardware
 
 class CTC100(AbstractHardware,SRSCTC100):
+    """
+    Hardware object for Stanford Research Systems CTC 100 
+    Cryogenic temperature controller. handles hardware initialization.
+
+    **Required Parameters:**
+
+    * 'uri' (str)
+       * Is a uri string formatted for instrument kit. For example
+         "tcpip://192.168.0.100:23 is a valid uri if the Newport 
+         is on a local lan at ip address 192.168.0.100 and listening
+         on port 23. Other uri, can be for gpib, serial or usb. See InstrumentKit
+         documentation for details.
+
+    **Optional Parameters:**
+    **None**
+    """
     code = "CTC100"
     name = "Stanford Research Systems CTC100"
     description = "Cryogenic Temperature Controller"

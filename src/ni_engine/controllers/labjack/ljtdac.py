@@ -4,6 +4,18 @@ import struct
 from ni_engine.storage import DataContainer,data
 
 class LJTDAC(AbstractDAC):
+    """
+    LJTDAC controller class. Interacts and sets LJTDACS
+    
+    **Required Parameters:**
+    
+    * 'pin'     
+
+    **Optional Parameters:**
+    
+    * 'default_voltage'(float)
+    * 'max_voltage'(float)
+    """
     code = 'LJTDAC'
     name = 'LJTDAC Extension'
     description = 'A dac extension that can output from -10V to +10V'
@@ -45,6 +57,9 @@ class LJTDAC(AbstractDAC):
         self.initialize_default()
 
     def initialize_default(self):
+        """
+        setup and initialize to default values
+        """
         self.get_cal_constants()
         self.voltage = self._default_voltage
 
@@ -53,7 +68,9 @@ class LJTDAC(AbstractDAC):
 
     def _set_voltage(self,voltage):
         """
-        Implements `AbstractDAC`s method.    
+        Implements :class:`.AbstractDAC`s method.   
+        Sets the voltage for the corresponding output of 
+        the LJTDAC 
         """
         
         
@@ -91,7 +108,17 @@ class LJTDAC(AbstractDAC):
     #just return the required voltage than until a better calibration function is found
     def calibration_function(self,voltage):
         """
-        Not needed right now
+        Not needed right now. If we need to adjust
+        the set voltage based on additional calibration data 
+        do it here. 
+
+        Parameters
+        ----------
+        voltage : quantities.Quantity
+
+        Returns 
+        -------
+        quantities.Quantity
         """
         return voltage
         
@@ -109,6 +136,13 @@ class LJTDAC(AbstractDAC):
         return float(wh) + float(dec)/2**32
 
     def get_status(self):
+        """
+        Get's current voltage and max_voltage of LJTDAC 
+
+        Returns
+        -------
+        DataContainer : Contains 'voltage' and 'max_voltage'
+        """ 
         con = DataContainer(self.id,self._max_stored_data)
         con['voltage'] = data(self.id,self.code,self.name,self.voltage)
         con['max_voltage'] = data(self.id,self.code,self.name,self.max_voltage)
@@ -116,6 +150,9 @@ class LJTDAC(AbstractDAC):
 
     @classmethod 
     def create(cls,configuration,data_handler,hardware,sensors):
+        """
+        Creation function for class
+        """
         ID = configuration[config.ID]        
         n = configuration.get(config.NAME,cls.name)
         d = configuration.get(config.DESCRIPTION,cls.description)
