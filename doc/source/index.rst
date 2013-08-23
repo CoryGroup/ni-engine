@@ -71,6 +71,7 @@ Contents
    introduction/installation
    introduction/ni_engine_architecture
    introduction/configuration
+   introduction/available_devices
    api/modules
 
 
