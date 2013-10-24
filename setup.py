@@ -15,6 +15,7 @@ setup(
         'ni_engine.controllers.kepco',
         'ni_engine.controllers.labjack',
         'ni_engine.controllers.newport',
+        'ni_engine.controllers.newport.axis_positions',
         'ni_engine.controllers.test',
         'ni_engine.hardware',
         'ni_engine.hardware.newport',

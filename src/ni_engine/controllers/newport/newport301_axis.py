@@ -3,7 +3,7 @@ from instruments.other import NewportESP301,NewportESP301Axis, NewportError
 from ..abstract_controller import AbstractController
 from ni_engine.hardware.newport import Newport301
 from ni_engine.storage import DataContainer,data
-import axis_positions 
+from . import axis_positions
 import os.path
 import numpy as np
 import quantities as pq

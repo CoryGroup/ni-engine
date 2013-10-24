@@ -1,1 +1,2 @@
+import ni_engine.controllers.newport.axis_positions
 from newport301_axis import Newport301Axis
