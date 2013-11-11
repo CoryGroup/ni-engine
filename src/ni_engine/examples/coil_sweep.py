@@ -1,9 +1,3 @@
-"""
-For 100 averages: 
-    Sweep phase flag over settings of theta
-    measure counts
-"""
-
 ## IMPORTS ####################################################################
 
 # We need to import a few things from Python's standard library, NumPy and a
@@ -23,7 +17,8 @@ print "Loading NI Engine..."
 n = NiEngine(
     # We need to pass two configuration files: one for this experiment in
     # particular, and one for the hardware setup common to all experiments.
-    "ni_engine/examples/example_configurations/labjack_io.yml"
+    r"C:\Users\corylab\Documents\GitHub\ni-engine\src\ni_engine\examples\example_configurations\coil_sweep.yml",
+    r"C:\Users\corylab\Documents\GitHub\ni-engine\src\ni_engine\config\available_config.yml",
 )
   
 
@@ -33,21 +28,11 @@ sensors = n.sensor_manager
 controllers = n.controller_manager 
 
 
-# Next, we extract the motor controller for the phase flag and give it a name.
-print "Getting Analog In"
-analog_ins = map(lambda x: sensors.get_sensor('analogin{}'.format(x)),range(1,5))
-print "Getting Digital In"
-digital_ints = map(lambda x: sensors.get_sensor('digitalin{}'.format(x)),range(1,5))
-print "Getting Dacs"
-dacs = map(lambda x: controllers.get_controller('testDAC{}'.format(x)),range(1,9))
+# Next, we extract the controllers for the two DAC channels.
+dac0 = n.controller_manager.get_controller('testDAC0')
+dac1 = n.controller_manager.get_controller('testDAC1')
 
-
-# Finally, we begin the experiment.
-for idx in xrange(1000000):
-
-    print "Starting cycle #{0}...".format(idx)
-
-    #each cycle shifts the dac voltage according to a sin
-    for idx_controller,controller in enumerate(dacs):
-        controller.voltage = abs(3.5*math.sin(float(idx)*float(idx_controller)/500.))*pq.V
+for V in np.linspace(pq.Quantity(0, 'V'), pq.Quantity(3, 'V'), 10):
+    dac0.voltage = V
+    dac1.voltage = V
     sensors.measure_all()
