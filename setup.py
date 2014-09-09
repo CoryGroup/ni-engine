@@ -32,5 +32,6 @@ setup(
         'ni_engine.storage',
         'ni_engine.storage.physical_storage',
         'ni_engine.tools',
-    ]
+    ],
+    package_data={'ni_engine.config': ['available_config.yml']}
 )
