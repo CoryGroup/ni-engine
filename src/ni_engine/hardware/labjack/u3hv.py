@@ -44,6 +44,11 @@ class U3HV(U3,AbstractHardware,U3HVBitSetter):
     code = "U3HV"
     name = "Labjack U3-HV high volatage"
     description = ""
+    max_voltage = pq.Quantity(20.0,pq.V)
+    min_voltage = pq.Quantity(-10.0,pq.V)
+    max_voltage = pq.Quantity(3.3,pq.V)
+    min_voltage = pq.Quantity(-0.3,pq.V)
+    hv_pins = range(0,4)
     def __init__(self,ID,name=name,description=description):
         super(U3HV,self).__init__()
         self.configU3()

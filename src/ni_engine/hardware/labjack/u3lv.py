@@ -42,6 +42,8 @@ class U3LV(U3,AbstractHardware,U3LVBitSetter):
     code = "U3LV"
     name = "Labjack U3-LV low volatage"
     description = ""
+    max_voltage = pq.Quantity(3.3,pq.V)
+    min_voltage = pq.Quantity(-0.3,pq.V)
     def __init__(self,ID,name=name,description=description):
         super(U3LV,self).__init__()
         self.configU3()

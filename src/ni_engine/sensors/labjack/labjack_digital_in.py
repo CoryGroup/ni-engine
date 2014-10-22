@@ -35,7 +35,7 @@ class LJDigitalIn(DigitalIn):
         ID : str 
             The device id
         device : AbstractHardware
-            A pieve of U3LV hardware. Currently only works on U3LV
+            A pieve of U3 hardware. Currently only works on U3LV
 
         pin : int
             Digital In Pin

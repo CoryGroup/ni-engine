@@ -1,4 +1,4 @@
-from ..abstract_sensors import AnalogIn
+from ..abstract_sensors import CurrentIn
 import ni_engine.config as config
 from ni_engine.storage import DataContainer,data
 import quantities as pq
@@ -11,38 +11,29 @@ from ni_engine.util_fns import assume_units
     
     
 
-class LJAnalogIn(AnalogIn):
+class LJCurrentIn(CurrentIn):
     """
-    Implementation of DigitalPin for Labjack. 
-
-    **Required Parameters:**
-
-    *'pin'(int) Pin on labjack to read in
-
-    *Optional Parameters:**
-    
-    * 'scaling_factor' (float) Amount to multipy results by.
-        Useful if for example the actual voltage is being scaled
-        up or down by a factor before going into Labjack
-    
+    Current sensor for Labjack device. Converts an analog voltage, to a current. Requires external 
+    current sensing hardware
     """
-    code = "LJANALOGIN"
-    name = "Labjack Analog Pin"
-    description = " "
-    U3_UNITS = pq.V
-    def __init__(self,ID,device,pin,scaling_factor=1,name=name,description=description,max_stored_data=100):
+    code = "LJCURRENTIN"
+    name = "Labjack Current Pin"
+    description = "Measures a current by converting an input current to a voltage based off some scaling factor"
+    def __init__(self,ID,device,pin,scaling_factor=1,current_offset=0*pq.A,name=name,description=description,max_stored_data=100):
         """
         Parameters
         ----------
         ID : str 
             The device id
         device : AbstractHardware
-            A pieve of U3LV hardware. Currently only works on U3LV
+            A pieve of U3 hardware.
 
         pin : int
-            Analog In Pin. Must support reading of analog data 
-        scaling_factor : int 
-            Amount to scale voltage by 
+            Current In Pin. Must support analog voltage measurements
+        scaling_factor : int
+            Dictates how input voltages are converted to a current 
+        current_offset : quantities.Quantity or float
+            How much to offset outputted current by 
         name : str
         description : str
         max_stored_data : int
@@ -51,17 +42,17 @@ class LJAnalogIn(AnalogIn):
         self._device = device
         self._pin = pin
         if isinstance(self._device,U3LV):
-            super(LJAnalogIn,self).__init__(ID,LJAnalogIn.code,U3LV.max_voltage,U3LV.min_voltage,scaling_factor,
-                units=LJAnalogIn.U3_UNITS,name=name,description=description,max_stored_data=max_stored_data)
+            super(LJCurrentIn,self).__init__(ID,LJCurrentIn.code,LJCurrentIn.U3LV_MAX_VOLTAGE,LJCurrentIn.U3LV_MIN_VOLTAGE,scaling_factor,
+                units=LJCurrentIn.U3_UNITS,name=name,description=description,max_stored_data=max_stored_data)
         elif isinstance(self._device,U3HV):
             # Check if it is high-voltage input
-            if self._pin in U3HV.hv_pins:
-               super(LJAnalogIn,self).__init__(ID,LJAnalogIn.code,U3HV.max_voltage,U3HV.min_voltage,scaling_factor,
-                units=LJAnalogIn.U3_UNITS,name=name,description=description,max_stored_data=max_stored_data)  
+            if 0<= self._pin <=3:
+               super(LJCurrentIn,self).__init__(ID,LJCurrentIn.code,LJCurrentIn.U3HV_MAX_VOLTAGE,LJCurrentIn.U3HV_MIN_VOLTAGE,scaling_factor,
+                units=LJCurrentIn.U3_UNITS,name=name,description=description,max_stored_data=max_stored_data)  
             #otherwise it is same as U3-LV
             else:
-                super(LJAnalogIn,self).__init__(ID,LJAnalogIn.code,U3LV.max_voltage,U3LV.min_voltage,scaling_factor,
-                units=LJAnalogIn.U3_UNITS,name=name,description=description,max_stored_data=max_stored_data)  
+                super(LJCurrentIn,self).__init__(ID,LJCurrentIn.code,LJCurrentIn.U3LV_MAX_VOLTAGE,LJCurrentIn.U3LV_MIN_VOLTAGE,scaling_factor,
+                units=LJCurrentIn.U3_UNITS,name=name,description=description,max_stored_data=max_stored_data)  
 
         else:   
             raise TypeError("{0} is not supported for this sensor".format(type(self._device)))
@@ -132,5 +123,5 @@ class LJAnalogIn(AnalogIn):
         max_stored_data = configuration.get(config.MAX_DATA,100)
 
         
-        return LJAnalogIn(ID,device,pin,scaling_factor=scaling_factor,name=name,
+        return LJCurrentIn(ID,device,pin,scaling_factor=scaling_factor,name=name,
             description=description,max_stored_data=max_stored_data)
