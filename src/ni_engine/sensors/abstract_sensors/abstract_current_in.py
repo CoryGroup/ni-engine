@@ -1,5 +1,5 @@
 import ni_engine.config as config
-from .abstract_sensor import AbstractSensor
+from ..abstract_sensor import AbstractSensor
 from abc import abstractmethod,abstractproperty
 from ni_engine.util_fns import assume_units
 import quantities as pq
@@ -24,10 +24,10 @@ class CurrentIn(AbstractSensor):
 
         """
         self.units = units
-        self.max_current = max_current
-        self.min_current = min_current
-        self.scaling_factor = scaling_factor
-        self.current_offset = current_offset
+        self._max_current = max_current
+        self._min_current = min_current
+        self._scaling_factor = scaling_factor
+        self._current_offset = current_offset
 
         super(CurrentIn,self).__init__(ID,code,name,description,max_stored_data)
 
@@ -62,7 +62,7 @@ class CurrentIn(AbstractSensor):
         Returns
         -------        
         quantities.Quantity
-            The current current of pin
+            The current of pin
         """
 
         return self._get_current()*self.scaling_factor
@@ -95,10 +95,6 @@ class CurrentIn(AbstractSensor):
         """
         The minimum current that the pin can read. 
 
-        Parameters
-        ----------
-        min_current: quantities.Quantity or float
-
         Returns
         -------
         quantities.Quantity
@@ -106,26 +102,26 @@ class CurrentIn(AbstractSensor):
         """
         return self._min_current
     
-    @min_voltage.setter
-    def min_voltage(self,min_voltage):
-        self._min_current = assume_units(float(min_voltage),self.units).rescale(self.units)
-
     @property
     def scaling_factor(self):
         """
         A factor to multiply all reported voltages by. Useful if for example, you are 
         downstepping voltages to be with max values of pin etc. 
 
-        Parameters
-        ----------
-        scaling_factor: quantities.Quantity (dimensionless) or float
-
         Returns
         -------
         quantities.Quantity
         """
         return self._scaling_factor
-    @scaling_factor.setter
-    def scaling_factor(self, scaling_factor):
-        self._scaling_factor = assume_units(float(scaling_factor),pq.dimensionless).rescale(pq.dimensionless)
     
+    @property
+    def current_offset(self):
+        """
+        How much the current is offset from 0A 
+
+        Returns
+        -------
+        quantities.Quantity
+            the current offset
+        """
+        return self._current_offset

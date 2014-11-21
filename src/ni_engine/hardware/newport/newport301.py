@@ -1,5 +1,5 @@
 import ni_engine.config as config
-from instruments.other import NewportESP301
+from instruments.newport import NewportESP301
 from ..abstract_hardware import AbstractHardware
 class Newport301(AbstractHardware,NewportESP301):
     """

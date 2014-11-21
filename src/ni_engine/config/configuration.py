@@ -235,11 +235,11 @@ class Configuration(object):
         self.yamlConfig = yaml.load(file)
 
         self._sensors = self.yamlConfig.get(config.SENSORS,{})
-
+        self._sensors = self._sensors if self._sensors is not None else {}
         self._hardware = self.yamlConfig.get(config.HARDWARE,{})
-
+        self._hardware = self._hardware if self._hardware is not None else {}
         self._controllers = self.yamlConfig.get(config.CONTROLLERS,{})
-
+        self._controllers = self._controllers if self._controllers is not None else {}
         self._configuration = self.yamlConfig[config.CONFIGURATION]
 
         if self.validate_config():

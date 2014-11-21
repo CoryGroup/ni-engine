@@ -122,7 +122,11 @@ class LJCurrentIn(CurrentIn):
         scaling_factor = assume_units(float(configuration.get('scaling_factor',1)),
             pq.A/pq.V).rescale(pq.A/pq.V)
         max_stored_data = configuration.get(config.MAX_DATA,100)
-
-        
-        return LJCurrentIn(ID,device,pin,scaling_factor=scaling_factor,name=name,
+        max_current = configuration.get('max_current')
+        min_current = configuration.get('min_current',0*pq.A)
+        voltage_to_current_factor = configuration.get('voltage_to_current_factor',1*pq.A/pq.V)
+        current_offset = configuration.get('current_offset',0*pq.A)
+        return LJCurrentIn(ID,device,pin,max_current,min_current=min_current,
+            voltage_to_current_factor=voltage_to_current_factor,
+            scaling_factor=scaling_factor,current_offset=current_offset,name=name,
             description=description,max_stored_data=max_stored_data)

@@ -1,5 +1,6 @@
 from u3 import U3
 import ni_engine.config as config
+import quantities as pq
 from ..abstract_bit_setter import AbstractBitSetter
 from ..abstract_hardware import AbstractHardware
 

@@ -1,0 +1,51 @@
+hardware:
+  - name: labjack U3-HV
+    description: Labjack for current sensor
+    code: U3HV
+    id: lab1
+
+
+sensors:
+ - name: Current In 1
+   description: Labjack Current In
+   code: LJCURRENTIN
+   hardware_id: lab1
+   id: currentin0
+   pin: 0
+   max_current: 1
+   voltage_to_current_factor: 1 
+   scaling_factor: 1 
+   current_offset: 1
+   max_data: 100
+ - name: Current In 2 
+   description: Labjack Current In
+   code: LJCURRENTIN
+   hardware_id: lab1
+   id: currentin1
+   pin: 1
+   max_current: 1
+   voltage_to_current_factor: 1 
+   scaling_factor: 1 
+   current_offset: 1
+   max_data: 100
+
+controllers:
+
+
+
+configuration:
+ store_data: True
+ storage:
+  code: "HDF5"
+  name: "Test Data Storage"
+  file_path: "current_test.h5"
+  buffer_size : 10
+  new_file : True
+
+  # If you want to load old values for intialization etc.
+  load_previous_entries:  
+   # -1 or non-existent for max
+   number_entries: 50
+   #keep old entries around after called
+   #false by default
+   store: True
