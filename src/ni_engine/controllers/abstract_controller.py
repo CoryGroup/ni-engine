@@ -32,14 +32,14 @@ class AbstractController(Item):
         """
         Abstract connect method
         """
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
 
     @abstractmethod
     def disconnect(self):
         """
         Abstract disconnect method
         """
-        pass  
+        raise NotImplementedError('Abstract method has not been implemented')  
 
     @abstractmethod 
     def get_status(self):
@@ -61,7 +61,7 @@ class AbstractController(Item):
         Abstract method that when implemented is the intializer method for the controller.
         Take a configuration
         """
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
 
     @property
     def threadsafe(self):

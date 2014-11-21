@@ -21,14 +21,14 @@ class GaussianSensor(AbstractSensor):
         """
         Connects sensor
         """
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
 
     
     def disconnect(self):
         """
         Disconnects sensor
         """
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
 
 
     def delete(self):

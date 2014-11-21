@@ -98,7 +98,7 @@ class AbstractDAC(AbstractController):
         ----------
         voltage : `quantities.Quantity`
         """
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
 
 
     

@@ -301,7 +301,7 @@ class Newport301Axis(AbstractController):
         return self._axis
     
     def disconnect(self):
-        pass  
+        raise NotImplementedError('Abstract method has not been implemented')  
     
     
         

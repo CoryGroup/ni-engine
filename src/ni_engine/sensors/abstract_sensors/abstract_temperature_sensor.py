@@ -42,7 +42,7 @@ class AbstractTemperatureSensor(AbstractSensor):
         quantities.Quantity
             The temperature of sensor
         """
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
     @abstractproperty
     def units(self):
         """
@@ -51,7 +51,7 @@ class AbstractTemperatureSensor(AbstractSensor):
         quantities.Quantity
             The units of temperature
         """
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
 
     @property 
     def average_temperature(self):

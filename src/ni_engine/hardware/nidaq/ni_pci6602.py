@@ -54,7 +54,7 @@ class NIPCI6602(AbstractHardware):
         return Task()
 
     def disconnect(self):
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
 
     @classmethod
     def create(cls,configuration,data_handler):

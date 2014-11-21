@@ -11,7 +11,7 @@ class TestHardware(AbstractHardware):
 
     
     def disconnect(self):
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
 
     # abstract method to handle sensor creation based on configuration
     @classmethod    

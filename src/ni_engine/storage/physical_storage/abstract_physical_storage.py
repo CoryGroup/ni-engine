@@ -46,7 +46,7 @@ class AbstractPhysicalStorage(object):
         ----------
         queue : ItemStore
         """
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
 
 
     def store_compound(self,type_measurement,measurement):
@@ -75,7 +75,7 @@ class AbstractPhysicalStorage(object):
         ----------
         queue : ItemStore
         """
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
 
     
     def store_controller(self,controller_measurements,compound=False):
@@ -152,7 +152,7 @@ class AbstractPhysicalStorage(object):
         AbstractPhysicalStorage
             Object of class with correct configuration information
         """
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
 
     def _close(self):
         """
@@ -167,7 +167,7 @@ class AbstractPhysicalStorage(object):
         Method registered with atexit to be called to close connection. On 
         exit of ni-engine
         """
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
 
     @classmethod
     @abstractmethod
@@ -175,7 +175,7 @@ class AbstractPhysicalStorage(object):
         """
         Abstract method to build stored data into Dictionary of Data containers
         """
-        pass    
+        raise NotImplementedError('Abstract method has not been implemented')    
 
     @property
     def buffer_size(self):
@@ -238,7 +238,7 @@ class AbstractPhysicalStorage(object):
         -------
         str
         """
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
     def _get_newest_file_index(self,file_path,file_extension):
         path_no_ext = file_path.replace('.'+file_extension,'')
         glob_string = path_no_ext+'_[0-9]*.'+file_extension

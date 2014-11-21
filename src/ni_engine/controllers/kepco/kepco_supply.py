@@ -50,7 +50,7 @@ class KepcoSupply(AbstractController):
         self.initialize_defaults()
 
     def disconnect(self):
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
 
     def initialize_defaults(self):
         self._voltage_dac = LJTDAC('kepco voltage dac',self._hardware,self._voltage_pin,self.dac_voltage(self._voltage),

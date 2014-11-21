@@ -108,7 +108,7 @@ class LJAnalogIn(AnalogIn):
         """
         disconnects device
         """
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
             
 
     def delete(self):

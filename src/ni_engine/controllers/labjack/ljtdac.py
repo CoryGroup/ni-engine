@@ -64,7 +64,7 @@ class LJTDAC(AbstractDAC):
         self.voltage = self._default_voltage
 
     def disconnect(self):
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
 
     def _set_voltage(self,voltage):
         """

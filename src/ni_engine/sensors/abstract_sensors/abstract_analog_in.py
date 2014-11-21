@@ -41,7 +41,7 @@ class AnalogIn(AbstractSensor):
         -------
         quantities.Quantity
         """
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
 
     @property
     def units(self):

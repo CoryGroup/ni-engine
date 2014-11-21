@@ -60,7 +60,7 @@ class LabJackInternalSensor(AbstractSensor):
         """
         Intialize device and connect it to hardware if required
         """
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
 
     def measure(self):
         """
@@ -79,7 +79,7 @@ class LabJackInternalSensor(AbstractSensor):
         """
         Disconnects device from hardware 
         """
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
 
     def delete(self):
         """

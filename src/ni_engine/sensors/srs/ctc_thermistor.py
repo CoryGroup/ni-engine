@@ -49,7 +49,7 @@ class CTCThermistor(AbstractTemperatureSensor):
         self._channel = self._ctc100.channel[self._channel_name]
 
     def disconnect(self):
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
 
     @property
     def channel(self):
@@ -115,7 +115,7 @@ class CTCThermistor(AbstractTemperatureSensor):
         return con
 
     def _get_temperature(self):
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
     def delete(self):
         del self
 

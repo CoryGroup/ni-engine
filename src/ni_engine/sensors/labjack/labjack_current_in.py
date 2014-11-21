@@ -1,3 +1,4 @@
+from .labjack_analog_in import LJAnalogIn
 from ..abstract_sensors import CurrentIn
 import ni_engine.config as config
 from ni_engine.storage import DataContainer,data
@@ -19,7 +20,8 @@ class LJCurrentIn(CurrentIn):
     code = "LJCURRENTIN"
     name = "Labjack Current Pin"
     description = "Measures a current by converting an input current to a voltage based off some scaling factor"
-    def __init__(self,ID,device,pin,scaling_factor=1,current_offset=0*pq.A,name=name,description=description,max_stored_data=100):
+    def __init__(self,ID,device,pin,max_current,min_current=0*pq.A,voltage_to_current_factor=1*pq.A/pq.V,
+        scaling_factor=1,current_offset=0*pq.A,name=name,description=description,max_stored_data=100):
         """
         Parameters
         ----------
@@ -30,8 +32,10 @@ class LJCurrentIn(CurrentIn):
 
         pin : int
             Current In Pin. Must support analog voltage measurements
-        scaling_factor : int
+        voltage_to_current_factor : int or quantities.Quantity
             Dictates how input voltages are converted to a current 
+        scaling_factor: int
+            How much to scale the measured current by
         current_offset : quantities.Quantity or float
             How much to offset outputted current by 
         name : str
@@ -41,43 +45,37 @@ class LJCurrentIn(CurrentIn):
         """
         self._device = device
         self._pin = pin
-        if isinstance(self._device,U3LV):
-            super(LJCurrentIn,self).__init__(ID,LJCurrentIn.code,LJCurrentIn.U3LV_MAX_VOLTAGE,LJCurrentIn.U3LV_MIN_VOLTAGE,scaling_factor,
-                units=LJCurrentIn.U3_UNITS,name=name,description=description,max_stored_data=max_stored_data)
-        elif isinstance(self._device,U3HV):
-            # Check if it is high-voltage input
-            if 0<= self._pin <=3:
-               super(LJCurrentIn,self).__init__(ID,LJCurrentIn.code,LJCurrentIn.U3HV_MAX_VOLTAGE,LJCurrentIn.U3HV_MIN_VOLTAGE,scaling_factor,
-                units=LJCurrentIn.U3_UNITS,name=name,description=description,max_stored_data=max_stored_data)  
-            #otherwise it is same as U3-LV
-            else:
-                super(LJCurrentIn,self).__init__(ID,LJCurrentIn.code,LJCurrentIn.U3LV_MAX_VOLTAGE,LJCurrentIn.U3LV_MIN_VOLTAGE,scaling_factor,
-                units=LJCurrentIn.U3_UNITS,name=name,description=description,max_stored_data=max_stored_data)  
+        self._voltage_to_current_factor = voltage_to_current_factor
+        self.analog_in = LJAnalogIn("{}_vin".format(ID),device,pin,1,name="{} analog in".format(name),
+            description="analog in for current sensor: {}".format(ID),max_stored_data=max_stored_data)
+        
+        super(LJCurrentIn,self).__init__(ID,LJCurrentIn.code,max_current,min_current,scaling_factor,current_offset,name=name,
+            description=description,max_stored_data=max_stored_data)
 
-        else:   
-            raise TypeError("{0} is not supported for this sensor".format(type(self._device)))
     def connect(self):
         """
         Connects created device
         Normally called by `SensorManager`
         """
-        # set pin to analog
-        self._device.configAnalog(self._pin)        
+        # connect to analog in pin
+        self.analog_in.connect()    
         
+    @property
+    def voltage_to_current_factor(self):
+        return self._voltage_to_current_factor
+    
         
     
-    def _get_voltage(self):
+    def _get_current(self):
         """
-        Get the voltage on the pin
+        Get the current on the pin by converting the voltage
 
         Returns
         -------
         quantities.Quantity
-            of voltage
+            of Amps
         """
-        voltage = assume_units(float(self._device.getAIN(self._pin)),self.units).rescale(self.units)
-        return voltage
-    
+        return self.analog_in.voltage*self.voltage_to_current_factor
     def measure(self):
         """
         Measures whether pin is high or not
@@ -88,10 +86,11 @@ class LJCurrentIn(CurrentIn):
             A container for the measurements obtained
         """
         con = DataContainer(self.id,self.max_stored_data)
-        con['max_voltage'] = data(self.id,self.code,'max_voltage',self.max_voltage)
-        con['min_voltage'] = data(self.id,self.code,'min_voltage',self.min_voltage)
+        con['max_current'] = data(self.id,self.code,'max_current',self.max_current)
+        con['min_current'] = data(self.id,self.code,'min_current',self.min_current)
         con['scaling_factor'] = data(self.id,self.code,'scaling_factor',self.scaling_factor)
-        con['voltage'] = data(self.id,self.code,'voltage',self.voltage)
+        con['voltage_to_current_factor'] = data(self.id,self.code,'voltage_to_current_factor',self.voltage_to_current_factor)
+        con['current'] = data(self.id,self.code,'current',self.current)
 
         return con
 
@@ -99,13 +98,15 @@ class LJCurrentIn(CurrentIn):
         """
         disconnects device
         """
-        pass
+        self.analog_in.disconnect()
+        raise NotImplementedError('Abstract method has not been implemented')
             
 
     def delete(self):
         """
         Deletes device
         """
+        del self.analog_in
         del self
 
     @classmethod
@@ -119,7 +120,7 @@ class LJCurrentIn(CurrentIn):
         description = configuration.get(config.DESCRIPTION,cls.description)
         pin = configuration['pin']
         scaling_factor = assume_units(float(configuration.get('scaling_factor',1)),
-            pq.dimensionless).rescale(pq.dimensionless)
+            pq.A/pq.V).rescale(pq.A/pq.V)
         max_stored_data = configuration.get(config.MAX_DATA,100)
 
         

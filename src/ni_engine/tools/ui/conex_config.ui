@@ -225,6 +225,11 @@
              <string>Low-pass filter for Kd</string>
             </property>
            </widget>
+
+45 matches across 28 files
+
+
+Searching 102 files for "/^pass$/" (regex, whole word)
           </item>
           <item row="8" column="2">
            <widget class="QLabel" name="label_10">

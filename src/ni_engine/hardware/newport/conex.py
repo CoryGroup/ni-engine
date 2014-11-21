@@ -28,7 +28,7 @@ class StateError(EnvironmentError):
     """
     Raised when the controller state disallows a particular command.
     """
-    pass
+    raise NotImplementedError('Abstract method has not been implemented')
     
 class PositionerError(IOError):
     """

@@ -50,7 +50,7 @@ class DigitalIn(AbstractSensor):
         -------
         int
         """
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
 
     @property
     def units(self):

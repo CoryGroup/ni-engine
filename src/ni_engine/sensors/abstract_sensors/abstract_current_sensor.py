@@ -18,7 +18,7 @@ class CurrentIn(AbstractSensor):
         max_current: quantities.Quantity or float
         min_current: quantities.Quantity or float
         scaling_factor: quantities.Quantity or float
-            Factor to scale all voltages reported by
+            Factor to scale all currents measured
         current_offset: quantities.Quantity
         units: quantities.Quantity
 
@@ -33,7 +33,7 @@ class CurrentIn(AbstractSensor):
 
 
     @abstractmethod
-    def get_current(self):
+    def _get_current(self):
         """
         Is implemented by classes that inherit this class. Method 
         should talk to sensor and report back current as Quantity.
@@ -42,7 +42,7 @@ class CurrentIn(AbstractSensor):
         -------
         quantities.Quantity
         """
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
 
     @property
     def units(self):
@@ -65,7 +65,7 @@ class CurrentIn(AbstractSensor):
             The current current of pin
         """
 
-        return self.get_current()*self.scaling_factor
+        return self._get_current()*self.scaling_factor
         
 
     

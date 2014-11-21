@@ -25,21 +25,21 @@ class AbstractSensor(Item):
         """
         Connects sensor
         """
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
 
     @abstractmethod
     def disconnect(self):
         """
         Disconnects sensor
         """
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
 
     @abstractmethod
     def delete(self):
         """
         Deletes sensor
         """
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
 
     @abstractmethod
     def measure(self):
@@ -51,7 +51,7 @@ class AbstractSensor(Item):
         DataContainer
         
         """
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
 
     @property
     def threadsafe(self):
@@ -84,7 +84,7 @@ class AbstractSensor(Item):
         -------
         AbstractSensor
         """
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
 
 
     

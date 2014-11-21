@@ -36,7 +36,7 @@ class AbstractHumiditySensor(AbstractSensor):
         quantities.Quantity
             The humidity of sensor
         """
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
     @abstractproperty
     def units(self):
         """
@@ -45,7 +45,7 @@ class AbstractHumiditySensor(AbstractSensor):
         quantities.Quantity
             The units of humidity
         """
-        pass
+        raise NotImplementedError('Abstract method has not been implemented')
 
     @property 
     def average_humidity(self):
