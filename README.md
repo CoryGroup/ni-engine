@@ -57,7 +57,48 @@ At each step the position and data from all sensors is recorded
 to a file for later analysis as specified in the documentation. 
 
 
+## Installing on Ubuntu 
 
+It is recommended that one uses Python virtualenvs (but not necessary) in order to seperate dependencies from other
+python enviroments. 
+
+Update the Ubuntu package repository 
+    sudo apt-get update
+
+Install required libraries 
+    sudo apt-get install git python-pip python-dev hdf5-tools libhdf5-dev
+
+Install required python packages via pip 
+    sudo pip install sphinx numpydoc numpy numexpr cython tables futures pyyaml flufl.enum quantities
+
+Install Labjack driver 
+    cd ~
+    git clone https://github.com/labjack/LabJackPython.git
+    cd LabJackPython
+    sudo python setup.py install
+
+Install driver for Labjack usb on Unix 
+    cd ~
+    git clone git://github.com/labjack/exodriver.git
+    cd exodriver
+    sudo ./install.sh
+
+Install Instrument kit 
+    cd ~
+    git clone https://github.com/Galvant/InstrumentKit.git
+    cd InstrumentKit/instruments
+    sudo python setup.py install
+
+Install Ni-Engine 
+    git clone https://github.com/CoryGroup/ni-engine.git
+    cd ni-engine/
+    sudo python setup.py install
+
+
+Test Ni-Engine if you have a labjack installed. 
+    cd ~/ni-engine/src/
+    python ni_engine/examples/current_test.py  
+    
 ##Building Documentation
 
 
