@@ -68,7 +68,7 @@ Update the Ubuntu package repository
 
 Install required libraries 
     
-    sudo apt-get install git python-pip python-dev hdf5-tools libhdf5-dev
+    sudo apt-get install git python-pip python-dev hdf5-tools libhdf5-dev libusb-1.0-0 libusb-1.0-0-dev
 
 Install required python packages via pip 
     
