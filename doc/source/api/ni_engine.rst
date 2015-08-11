@@ -1,21 +1,5 @@
-ni_engine Package
+ni_engine package
 =================
-
-:mod:`ni_engine` Package
-------------------------
-
-.. automodule:: ni_engine.__init__
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`util_fns` Module
-----------------------
-
-.. automodule:: ni_engine.util_fns
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 Subpackages
 -----------
@@ -27,6 +11,26 @@ Subpackages
     ni_engine.examples
     ni_engine.hardware
     ni_engine.sensors
-    ni_engine.storage    
+    ni_engine.storage
+    ni_engine.test
     ni_engine.tools
 
+Submodules
+----------
+
+ni_engine.util_fns module
+-------------------------
+
+.. automodule:: ni_engine.util_fns
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: ni_engine
+    :members:
+    :undoc-members:
+    :show-inheritance:

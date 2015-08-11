@@ -16,7 +16,11 @@ hardware:
   controllers:
    NEWPORTAXIS:
     enabled: True
-
+ MCLM3002:
+  enabled: True
+  controllers:
+    LM1207:
+     enabled: True
 
 sensors: 
  EI1050:
@@ -30,5 +34,7 @@ controllers:
  LJTDAC: 
   enabled: True
  NEWPORTAXIS:
+  enabled: True
+ LM1207:
   enabled: True
 

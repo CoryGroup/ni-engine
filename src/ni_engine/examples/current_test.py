@@ -11,6 +11,7 @@ import sys
 import numpy as np
 import quantities as pq
 import math
+import matplotlib.pyplot as plt
 # We also need to import the NI engine itself.
 from ni_engine import NiEngine
 
@@ -33,7 +34,12 @@ controllers = n.controller_manager
 
 # Next, we extract the motor controller for the phase flag and give it a name.
 print "Getting Current Sensors"
-analog_ins = map(lambda x: sensors.get_sensor('currentin{}'.format(x)),range(0,2))
+analog_ins = map(lambda x: sensors.get_sensor('currentin{}'.format(x)),range(0,1))
+
+
+plt.axis([0, 1000, -0.5, 0.5])
+plt.ion()
+plt.show()
 
 # Finally, we begin the experiment.
 for idx in xrange(1000000):
@@ -41,6 +47,13 @@ for idx in xrange(1000000):
     print "Starting cycle #{0}...".format(idx)
 
     for x in analog_ins:
-        print x.current
-
+        y = x.current
+    
+    print y 
+    print x.analog_in.voltage
+    plt.scatter(idx,y)
+    if idx>1000:
+        plt.axis([idx-1000,idx,-0.5,0.5])
+    plt.draw()
+    time.sleep(0.1)
     sensors.measure_all()

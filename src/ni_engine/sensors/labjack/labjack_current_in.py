@@ -21,7 +21,7 @@ class LJCurrentIn(CurrentIn):
     name = "Labjack Current Pin"
     description = "Measures a current by converting an input current to a voltage based off some scaling factor"
     def __init__(self,ID,device,pin,max_current,min_current=0*pq.A,voltage_to_current_factor=1*pq.A/pq.V,
-        scaling_factor=1,current_offset=0*pq.A,name=name,description=description,max_stored_data=100):
+        scaling_factor=1,voltage_offset=0*pq.V,current_offset=0*pq.A,name=name,description=description,max_stored_data=100):
         """
         Parameters
         ----------
@@ -45,7 +45,8 @@ class LJCurrentIn(CurrentIn):
         """
         self._device = device
         self._pin = pin
-        self._voltage_to_current_factor = voltage_to_current_factor
+        self._voltage_offset = assume_units(float(voltage_offset),pq.V).rescale(pq.V)
+        self._voltage_to_current_factor = assume_units(float(voltage_to_current_factor),pq.A/pq.V).rescale(pq.A/pq.V)
         self.analog_in = LJAnalogIn("{}_vin".format(ID),device,pin,1,name="{} analog in".format(name),
             description="analog in for current sensor: {}".format(ID),max_stored_data=max_stored_data)
         
@@ -64,7 +65,11 @@ class LJCurrentIn(CurrentIn):
     def voltage_to_current_factor(self):
         return self._voltage_to_current_factor
     
-        
+    @property
+    def voltage_offset(self):
+        return self._voltage_offset
+    
+    
     
     def _get_current(self):
         """
@@ -75,7 +80,7 @@ class LJCurrentIn(CurrentIn):
         quantities.Quantity
             of Amps
         """
-        return self.analog_in.voltage*self.voltage_to_current_factor
+        return (self.analog_in.voltage+self.voltage_offset)*self.voltage_to_current_factor
     def measure(self):
         """
         Measures whether pin is high or not
@@ -119,14 +124,15 @@ class LJCurrentIn(CurrentIn):
         name = configuration.get(config.NAME,cls.name)
         description = configuration.get(config.DESCRIPTION,cls.description)
         pin = configuration['pin']
-        scaling_factor = assume_units(float(configuration.get('scaling_factor',1)),
-            pq.A/pq.V).rescale(pq.A/pq.V)
+        scaling_factor = configuration.get('scaling_factor',1)
+            
         max_stored_data = configuration.get(config.MAX_DATA,100)
         max_current = configuration.get('max_current')
         min_current = configuration.get('min_current',0*pq.A)
         voltage_to_current_factor = configuration.get('voltage_to_current_factor',1*pq.A/pq.V)
         current_offset = configuration.get('current_offset',0*pq.A)
+        voltage_offset = configuration.get('voltage_offset',0*pq.V)
         return LJCurrentIn(ID,device,pin,max_current,min_current=min_current,
             voltage_to_current_factor=voltage_to_current_factor,
-            scaling_factor=scaling_factor,current_offset=current_offset,name=name,
-            description=description,max_stored_data=max_stored_data)
+            scaling_factor=scaling_factor,current_offset=current_offset,voltage_offset=voltage_offset,
+            name=name,description=description,max_stored_data=max_stored_data)

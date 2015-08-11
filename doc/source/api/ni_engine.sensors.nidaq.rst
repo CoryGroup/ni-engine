@@ -1,19 +1,22 @@
-nidaq Package
-=============
+ni_engine.sensors.nidaq package
+===============================
 
-:mod:`nidaq` Package
---------------------
+Submodules
+----------
 
-.. automodule:: ni_engine.sensors.nidaq
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`daq_sensor` Module
-------------------------
+ni_engine.sensors.nidaq.daq_sensor module
+-----------------------------------------
 
 .. automodule:: ni_engine.sensors.nidaq.daq_sensor
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: ni_engine.sensors.nidaq
+    :members:
+    :undoc-members:
+    :show-inheritance:

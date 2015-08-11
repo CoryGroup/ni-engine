@@ -37,7 +37,7 @@ controllers = n.controller_manager
 print "Getting Analog In"
 analog_ins = map(lambda x: sensors.get_sensor('analogin{}'.format(x)),range(1,5))
 print "Getting Digital In"
-digital_ints = map(lambda x: sensors.get_sensor('digitalin{}'.format(x)),range(1,5))
+digital_ins = map(lambda x: sensors.get_sensor('digitalin{}'.format(x)),range(1,5))
 print "Getting Dacs"
 dacs = map(lambda x: controllers.get_controller('testDAC{}'.format(x)),range(1,9))
 
@@ -50,4 +50,9 @@ for idx in xrange(1000000):
     #each cycle shifts the dac voltage according to a sin
     for idx_controller,controller in enumerate(dacs):
         controller.voltage = abs(3.5*math.sin(float(idx)*float(idx_controller)/500.))*pq.V
+    print('analogs')
+    print map(lambda x: x.voltage,analog_ins)
+    print('digitals')
+    print map(lambda x: x.voltage,digital_ins)
+    time.sleep(1.0)
     sensors.measure_all()

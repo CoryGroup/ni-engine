@@ -1,7 +1,7 @@
 hardware:
   - name: labjack U3-HV
     description: Labjack for current sensor
-    code: U3HV
+    code: U3LV
     id: lab1
 
 
@@ -13,21 +13,12 @@ sensors:
    id: currentin0
    pin: 0
    max_current: 1
-   voltage_to_current_factor: 1 
+   voltage_to_current_factor: 10 
    scaling_factor: 1 
-   current_offset: 1
+   voltage_offset: -2.481056
+   current_offset: 0
    max_data: 100
- - name: Current In 2 
-   description: Labjack Current In
-   code: LJCURRENTIN
-   hardware_id: lab1
-   id: currentin1
-   pin: 1
-   max_current: 1
-   voltage_to_current_factor: 1 
-   scaling_factor: 1 
-   current_offset: 1
-   max_data: 100
+
 
 controllers:
 

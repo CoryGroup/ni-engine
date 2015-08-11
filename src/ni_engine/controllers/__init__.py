@@ -4,8 +4,10 @@ from controller_manager import ControllerManager
 from kepco import KepcoSupply
 from labjack import LJTDAC
 from newport import Newport301Axis
+from faulhaber import LM1247
 from abstract_controllers import AbstractDAC
 # Register all predefined Sensors here
 ControllerManager.register_controller(KepcoSupply)
 ControllerManager.register_controller(LJTDAC)
 ControllerManager.register_controller(Newport301Axis)
+ControllerManager.register_controller(LM1247)

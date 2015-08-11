@@ -3,7 +3,7 @@ from instruments.newport import NewportESP301
 from ..abstract_hardware import AbstractHardware
 class Newport301(AbstractHardware,NewportESP301):
     """
-    NewportESP301 class. Sets up communication with 
+    Newport301 class. Sets up communication with 
     NewportESP301 device via Instrument kit. 
 
     **Required Parameters:**

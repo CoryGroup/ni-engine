@@ -1,19 +1,22 @@
-srs Package
-===========
+ni_engine.hardware.srs package
+==============================
 
-:mod:`srs` Package
-------------------
+Submodules
+----------
 
-.. automodule:: ni_engine.hardware.srs
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`ctc100` Module
---------------------
+ni_engine.hardware.srs.ctc100 module
+------------------------------------
 
 .. automodule:: ni_engine.hardware.srs.ctc100
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: ni_engine.hardware.srs
+    :members:
+    :undoc-members:
+    :show-inheritance:

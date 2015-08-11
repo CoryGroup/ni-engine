@@ -1,27 +1,30 @@
-config Package
-==============
+ni_engine.config package
+========================
 
-:mod:`config` Package
----------------------
+Submodules
+----------
 
-.. automodule:: ni_engine.config
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`config_variables` Module
-------------------------------
+ni_engine.config.config_variables module
+----------------------------------------
 
 .. automodule:: ni_engine.config.config_variables
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`configuration` Module
----------------------------
+ni_engine.config.configuration module
+-------------------------------------
 
 .. automodule:: ni_engine.config.configuration
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: ni_engine.config
+    :members:
+    :undoc-members:
+    :show-inheritance:

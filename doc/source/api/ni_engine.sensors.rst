@@ -1,37 +1,5 @@
-sensors Package
-===============
-
-:mod:`sensors` Package
-----------------------
-
-.. automodule:: ni_engine.sensors
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`abstract_sensor` Module
------------------------------
-
-.. automodule:: ni_engine.sensors.abstract_sensor
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`sensor_factory` Module
-----------------------------
-
-.. automodule:: ni_engine.sensors.sensor_factory
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`sensor_manager` Module
-----------------------------
-
-.. automodule:: ni_engine.sensors.sensor_manager
-    :members:
-    :undoc-members:
-    :show-inheritance:
+ni_engine.sensors package
+=========================
 
 Subpackages
 -----------
@@ -44,3 +12,38 @@ Subpackages
     ni_engine.sensors.srs
     ni_engine.sensors.test
 
+Submodules
+----------
+
+ni_engine.sensors.abstract_sensor module
+----------------------------------------
+
+.. automodule:: ni_engine.sensors.abstract_sensor
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+ni_engine.sensors.sensor_factory module
+---------------------------------------
+
+.. automodule:: ni_engine.sensors.sensor_factory
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+ni_engine.sensors.sensor_manager module
+---------------------------------------
+
+.. automodule:: ni_engine.sensors.sensor_manager
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: ni_engine.sensors
+    :members:
+    :undoc-members:
+    :show-inheritance:

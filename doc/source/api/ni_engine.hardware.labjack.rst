@@ -1,27 +1,30 @@
-labjack Package
-===============
+ni_engine.hardware.labjack package
+==================================
 
-:mod:`labjack` Package
-----------------------
+Submodules
+----------
 
-.. automodule:: ni_engine.hardware.labjack
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`u3hv` Module
-------------------
+ni_engine.hardware.labjack.u3hv module
+--------------------------------------
 
 .. automodule:: ni_engine.hardware.labjack.u3hv
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`u3lv` Module
-------------------
+ni_engine.hardware.labjack.u3lv module
+--------------------------------------
 
 .. automodule:: ni_engine.hardware.labjack.u3lv
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: ni_engine.hardware.labjack
+    :members:
+    :undoc-members:
+    :show-inheritance:

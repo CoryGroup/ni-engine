@@ -1,0 +1,40 @@
+hardware:
+ - name: Faulhaber MCLM3002 
+   description: motor controller 
+   code: MCLM3002
+   id: mclm3002
+   uri: 'serial:///dev/ttyUSB1?baud=9600'
+   velocity_source: 'SerialInterface'
+   answer_mode: 'NoAsync'
+
+controllers:
+ - name: Faulhaber LM1247
+   description: Linear Motor
+   code: LM1247
+   hardware_id: mclm3002  
+   id: lm1247
+   default_position: 0
+   activated: True 
+   motor_mode: 'CONTMOD'
+   position_limits_enabled: False 
+   home_position: 0 
+   
+   
+ 
+ 
+
+
+
+   
+ 
+ 
+
+configuration:
+ store_measurements: True
+ storage:
+  code: "HDF5"
+  name: "Test LM1207 Linear motor"
+  file_path: "faulhaber_test.h5"
+  buffer_size : 10
+  new_file : True
+  # If you want to load old values for intialization etc.

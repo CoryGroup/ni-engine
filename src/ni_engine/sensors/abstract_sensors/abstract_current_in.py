@@ -24,10 +24,10 @@ class CurrentIn(AbstractSensor):
 
         """
         self.units = units
-        self._max_current = max_current
-        self._min_current = min_current
+        self._max_current = assume_units(float(min_current),self.units).rescale(self.units)
+        self._min_current = assume_units(float(max_current),self.units).rescale(self.units)
         self._scaling_factor = scaling_factor
-        self._current_offset = current_offset
+        self._current_offset = assume_units(float(current_offset),self.units).rescale(self.units)
 
         super(CurrentIn,self).__init__(ID,code,name,description,max_stored_data)
 
@@ -64,8 +64,8 @@ class CurrentIn(AbstractSensor):
         quantities.Quantity
             The current of pin
         """
-
-        return self._get_current()*self.scaling_factor
+      
+        return self._get_current()*self.scaling_factor + self.current_offset
         
 
     

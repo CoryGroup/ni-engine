@@ -1,19 +1,22 @@
-test Package
-============
+ni_engine.sensors.test package
+==============================
 
-:mod:`test` Package
--------------------
+Submodules
+----------
 
-.. automodule:: ni_engine.sensors.test
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`gaussian_sensor` Module
------------------------------
+ni_engine.sensors.test.gaussian_sensor module
+---------------------------------------------
 
 .. automodule:: ni_engine.sensors.test.gaussian_sensor
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: ni_engine.sensors.test
+    :members:
+    :undoc-members:
+    :show-inheritance:

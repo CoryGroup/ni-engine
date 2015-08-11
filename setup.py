@@ -2,10 +2,10 @@ from distutils.core import setup
 
 setup(
     name='NI Engine',
-    version='1.0beta1',
+    version='1.0beta2',
     url='https://github.com/CoryGroup/ni-engine/',
     author='Thomas Alexander and Chris Granade',
-    author_email='taalexander@mta.ca',
+    author_email='t4alexan@uwaterloo.ca',
     package_dir={'': 'src'},
     packages=[
         'ni_engine',
@@ -13,11 +13,13 @@ setup(
         'ni_engine.controllers',
         'ni_engine.controllers.abstract_controllers',
         'ni_engine.controllers.kepco',
+        'ni_engine.controllers.faulhaber'
         'ni_engine.controllers.labjack',
         'ni_engine.controllers.newport',
         'ni_engine.controllers.newport.axis_positions',
         'ni_engine.controllers.test',
         'ni_engine.hardware',
+        'ni_engine.faulhaber',
         'ni_engine.hardware.newport',
         'ni_engine.hardware.nidaq',
         'ni_engine.hardware.srs',

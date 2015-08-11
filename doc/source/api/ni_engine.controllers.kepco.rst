@@ -1,19 +1,22 @@
-kepco Package
-=============
+ni_engine.controllers.kepco package
+===================================
 
-:mod:`kepco` Package
---------------------
+Submodules
+----------
 
-.. automodule:: ni_engine.controllers.kepco
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`kepco_supply` Module
---------------------------
+ni_engine.controllers.kepco.kepco_supply module
+-----------------------------------------------
 
 .. automodule:: ni_engine.controllers.kepco.kepco_supply
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: ni_engine.controllers.kepco
+    :members:
+    :undoc-members:
+    :show-inheritance:

@@ -1,19 +1,22 @@
-abstract_controllers Package
-============================
+ni_engine.controllers.abstract_controllers package
+==================================================
 
-:mod:`abstract_controllers` Package
------------------------------------
+Submodules
+----------
 
-.. automodule:: ni_engine.controllers.abstract_controllers
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`abstract_dac` Module
---------------------------
+ni_engine.controllers.abstract_controllers.abstract_dac module
+--------------------------------------------------------------
 
 .. automodule:: ni_engine.controllers.abstract_controllers.abstract_dac
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: ni_engine.controllers.abstract_controllers
+    :members:
+    :undoc-members:
+    :show-inheritance:
