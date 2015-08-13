@@ -19,7 +19,7 @@ hardware:
  MCLM3002:
   enabled: True
   controllers:
-    LM1207:
+    LM1247:
      enabled: True
 
 sensors: 
@@ -35,6 +35,6 @@ controllers:
   enabled: True
  NEWPORTAXIS:
   enabled: True
- LM1207:
+ LM1247:
   enabled: True
 

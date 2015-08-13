@@ -3,13 +3,12 @@ from instruments.faulhaber import FaulhaberMCLM3002
 from ..abstract_controller import AbstractController
 from ni_engine.hardware.faulhaber import FaulhaberMCLM3002Hardware
 from ni_engine.storage import DataContainer,data
-from . import axis_positions
 import os.path
 import numpy as np
 import quantities as pq
 from os import listdir
 from os.path import isfile, join,abspath
-
+from time import sleep 
 
 
 class LM1247(AbstractController):
@@ -57,7 +56,7 @@ class LM1247(AbstractController):
     code = 'LM1247'
     name = 'Faulhaber LM1247 Linear Motor'
     description = 'LM1247 linear motor for Faulhaber MCLM3002'    
-    def __init__(self,ID,hardware,default_position=0,motor_mode=FaulhaberMCLM3002.Mode.CONTMOD,
+    def __init__(self,ID,hardware,start_activated=True,default_position=0,motor_mode=FaulhaberMCLM3002.Mode.CONTMOD,
                         home_position=0,position_limits_enabled=False,position_limits=None,                       
                         max_stored_data=100,name=name,description=description):
         """
@@ -84,6 +83,7 @@ class LM1247(AbstractController):
 
                   
         self._MCLM3002 = self._hardware = hardware
+        self._start_activated = start_activated
         self._default_position = default_position                   
         self._motor_mode = motor_mode
         self._home_position = 0 
@@ -97,22 +97,24 @@ class LM1247(AbstractController):
         # saves last position
         # deletes mem-mapping which 
         # will store it to disk
-
-        self._axis.abort_motion()
-        self.append_last_position()      
-        del self._past_position
+        self._hardware.stop_movement()
+       
+        
 
     def connect(self):
         """
         Connect to axis
         """
-        self._axis.disable()
-        self.initialize_defaults()
 
-        self.activated = True
+        
+
+        
         if self._default_position is not None:
+            self._hardware.activated = True
             self.move_absolute(self._default_position)
 
+        
+        self.activated = True if self._start_activated else False
     
     
 
@@ -136,14 +138,14 @@ class LM1247(AbstractController):
         time = 0*pq.s
         
         try:            
-            self.absolute_position = position 
-            self.activate_motion()
+            self._hardware.absolute_position = position 
+            self._hardware.activate_motion()
             if block:
                 motion_done = False
                 while not motion_done:
                     time += t_int 
                     sleep(t_int)
-                    if abs(position-self.absolute_position)<=tolerance:
+                    if abs(position-self._hardware.absolute_position)<=tolerance:
                         motion_done = True 
 
                     elif time > timeout:
@@ -156,7 +158,7 @@ class LM1247(AbstractController):
             pass
         
 
-    def move_relative(self,position,block=True,timeout=0.5*pq.s,t_int=0.03*pq.s,tolerance=1):
+    def move_relative(self,distance,block=True,timeout=0.5*pq.s,t_int=0.03*pq.s,tolerance=1):
         """
         Move relative to current
 
@@ -174,16 +176,16 @@ class LM1247(AbstractController):
         
         """
         time = 0*pq.s
-        t_pos = self.absolute_position + distance
-        self.activate_motion()
+        t_pos = self._hardware.absolute_position + distance
+        self._hardware.activate_motion()
         try:            
-            self.relative_position = distance  
+            self._hardware.relative_position = distance  
             if block:
                 motion_done = False
                 while not motion_done:
                     time += t_int 
                     sleep(t_int)
-                    if abs(t_pos-self.absolute_position)<=tolerance:
+                    if abs(t_pos-self._hardware.absolute_position)<=tolerance:
                         motion_done = True 
                     elif time > timeout:
                         raise Exception('Movement has timed out')
@@ -197,7 +199,7 @@ class LM1247(AbstractController):
         """
         Stop the motor motion 
         """
-        self.stop_movement()
+        self._hardware.stop_movement()
 
     @property
     def activated(self):
@@ -215,7 +217,7 @@ class LM1247(AbstractController):
         return data(self.id,self.code,'activated',self._activated)
     @activated.setter
     def activated(self, activated):        
-        super(FaulhaberMCLM3002Hardware,self).activated = activated
+        self._hardware.activated = activated
         self._activated = activated
 
     
@@ -229,7 +231,7 @@ class LM1247(AbstractController):
         -------
         position : QuantityData
         """
-        return data(self.id,self.code,'position',self.absolute_position)
+        return data(self.id,self.code,'position',self._hardware.absolute_position)
     
     @property
     def temperature(self):
@@ -240,7 +242,7 @@ class LM1247(AbstractController):
         -------
         position : QuantityData
         """
-        return data(self.id,self.code,'temperature',super(FaulhaberMCLM3002Hardware,self).temperature)
+        return data(self.id,self.code,'temperature',self._hardware.temperature)
 
     @property
     def current(self):
@@ -251,7 +253,7 @@ class LM1247(AbstractController):
         -------
         position : QuantityData
         """
-        return data(self.id,self.code,'current',super(FaulhaberMCLM3002Hardware,self).current)
+        return data(self.id,self.code,'current',self._hardware.current)
     
 
     @property
@@ -263,7 +265,7 @@ class LM1247(AbstractController):
         -------
         position : QuantityData
         """
-        return data(self.id,self.code,'pwm_voltage',super(FaulhaberMCLM3002Hardware,self).pwm_voltage)
+        return data(self.id,self.code,'pwm_voltage',self._hardware.pwm_voltage)
 
     @property
     def target_position(self):
@@ -274,7 +276,7 @@ class LM1247(AbstractController):
         -------
         position : QuantityData
         """
-        return data(self.id,self.code,'target_position',super(FaulhaberMCLM3002Hardware,self).target_position)
+        return data(self.id,self.code,'target_position',self._hardware.target_position)
     
     @property
     def target_velocity(self):
@@ -285,7 +287,7 @@ class LM1247(AbstractController):
         -------
         position : QuantityData
         """
-        return data(self.id,self.code,'target_velocity',super(FaulhaberMCLM3002Hardware,self).target_velocity)
+        return data(self.id,self.code,'target_velocity',self._hardware.target_velocity)
     
     
     
@@ -348,7 +350,7 @@ class LM1247(AbstractController):
 
         
                 
-        return Newport301Axis(ID,hardware,default_position=default_position,motor_mode=motor_mode,home_position=home_position,
+        return LM1247(ID,hardware,start_activated=activated,default_position=default_position,motor_mode=motor_mode,home_position=home_position,
                         position_limits_enabled=position_limits_enabled,position_limits=position_limits,
                         name=n,description=d)
 

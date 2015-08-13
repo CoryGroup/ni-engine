@@ -336,7 +336,6 @@ class Configuration(object):
         return True
 
     def is_valid_hardware_referenced(self,required_hardware):        
-
         for x in required_hardware:
             if  x not in self.availableHardware:
                 raise ValueError("Not all hardware references are valid")

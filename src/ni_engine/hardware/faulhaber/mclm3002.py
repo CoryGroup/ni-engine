@@ -2,7 +2,7 @@ import ni_engine.config as config
 from instruments.faulhaber import FaulhaberMCLM3002
 from ..abstract_hardware import AbstractHardware
 
-class FaulhaberMCLM3002Hardware(AbstractHardware,NewportESP301):
+class FaulhaberMCLM3002Hardware(AbstractHardware,FaulhaberMCLM3002):
     """
     FaulhaberMCLM3002Hardware class. Sets up communication with 
     FaulhaberMCLM3002 device via Instrument kit. 
@@ -59,7 +59,7 @@ class FaulhaberMCLM3002Hardware(AbstractHardware,NewportESP301):
     ## use this setter method to set all required 
     ## variables after intialization
     def initialize(self,ID,name="name",description="description",answer_mode=FaulhaberMCLM3002.AnswerMode.NoAsync,
-                    velocity_source=FaulhaberMCLM3002.VelocitySource.CONTMOD):
+                    velocity_source=FaulhaberMCLM3002.VelocitySource.SerialInterface):
         self.id = ID
         self.name = name
         self.description = description

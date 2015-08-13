@@ -9,6 +9,7 @@ from ni_engine import NiEngine
 from memory_profiler import profile
 from time import sleep 
 
+
 @profile
 def test():
     n = NiEngine("ni_engine/examples/example_configurations/test_lm1247.yml")

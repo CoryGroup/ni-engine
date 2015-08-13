@@ -56,6 +56,11 @@ hardware:
   sensors:
    GAUSSSENSOR:
     enabled: True
+ MCLM3002:
+  enabled: True
+  controllers:
+    LM1247:
+     enabled: True
 
 sensors: 
  EI1050:
@@ -82,4 +87,5 @@ controllers:
   enabled: True
  NEWPORTAXIS:
   enabled: True
-
+ LM1247:
+  enabled: True
