@@ -57,7 +57,8 @@ class LM1247(AbstractController):
     name = 'Faulhaber LM1247 Linear Motor'
     description = 'LM1247 linear motor for Faulhaber MCLM3002'    
     def __init__(self,ID,hardware,start_activated=True,default_position=0,motor_mode=FaulhaberMCLM3002.Mode.CONTMOD,
-                        home_position=0,position_limits_enabled=False,position_limits=None,                       
+                        home_position=0,position_limits_enabled=False,position_limits=None, 
+                        movement_timeout=0.5*pq.s,movement_t_int=0.03*pq.s,movement_tolerance=10,                      
                         max_stored_data=100,name=name,description=description):
         """
         Initialize the lm1247 motor 
@@ -89,7 +90,11 @@ class LM1247(AbstractController):
         self._home_position = 0 
         self._position_limits_enabled = position_limits_enabled
         self._position_limits = position_limits  
-        
+        self._movement_timeout= movement_timeout
+        self._movement_t_int = movement_t_int
+        self._movement_tolerance = movement_tolerance
+
+
         super(LM1247,self).__init__(ID,LM1247.code,name,description,max_stored_data)
 
     def __del__(self): 
@@ -110,7 +115,7 @@ class LM1247(AbstractController):
 
         
         if self._default_position is not None:
-            self._hardware.activated = True
+            self.activated = True
             self.move_absolute(self._default_position)
 
         
@@ -118,7 +123,7 @@ class LM1247(AbstractController):
     
     
 
-    def move_absolute(self,position,block=True,timeout=0.5*pq.s,t_int=0.03*pq.s,tolerance=1):
+    def move_absolute(self,position,block=True,timeout=None,t_int=None,tolerance=None):
         """
         Move relative to zero position.
 
@@ -135,6 +140,17 @@ class LM1247(AbstractController):
             relative error to target position at which blocking will terminate 
         
         """
+
+        if not self.activated:
+            raise ValueError('Device must be activated to execute command')
+
+        if timeout is None: 
+            timeout = self._movement_timeout
+        if t_int is None: 
+            t_int = self._movement_t_int 
+        if tolerance is None:
+            tolerance = self._movement_tolerance
+
         time = 0*pq.s
         
         try:            
@@ -175,11 +191,22 @@ class LM1247(AbstractController):
             relative error to target position at which blocking will terminate 
         
         """
+        if not self.activated:
+            raise ValueError('Device must be activated to execute command')
+
+        if timeout is None: 
+            timeout = self._movement_timeout
+        if t_int is None: 
+            t_int = self._movement_t_int 
+        if tolerance is None:
+            tolerance = self._movement_tolerance
+
         time = 0*pq.s
         t_pos = self._hardware.absolute_position + distance
         self._hardware.activate_motion()
         try:            
             self._hardware.relative_position = distance  
+            self._hardware.activate_motion()
             if block:
                 motion_done = False
                 while not motion_done:
@@ -289,9 +316,54 @@ class LM1247(AbstractController):
         """
         return data(self.id,self.code,'target_velocity',self._hardware.target_velocity)
     
-    
-    
-    
+    def load_program_sequence(self,sequence):
+        """
+        Loads a program sequence to the motor controller. 
+        Must be a list of valid commands as laid out in the 
+        manual. Device must be deactivated in order to load sequence. 
+
+        Parameters
+        ----------
+        sequence: list(str)
+        """
+        if self.activated:
+            raise ValueError('Device must be deactivated in order to load sequence')
+
+        self._hardware.load_program_sequence(sequence)
+
+    def enable_program(self):
+        """
+        Start the running of the programmed program. Device must be activated
+
+
+        """
+        if not self.activated:
+            raise ValueError('Device must be activated to execute command')
+        self._hardware.enable_program()
+
+    def disable_program(self):
+        """
+        Disable the running of the programmed program. 
+
+
+        """
+        self._hardware.disable_program()
+
+    def resume_program(self):
+        """
+        Resume the executing program. Device must be activated
+        """
+        if not self.activated:
+            raise ValueError('Device must be activated to execute command')
+        self._hardware.resume_program()
+
+    def go_home(self):
+        """
+        Return device to set home position. Device must be activated
+        """
+        if not self.activated:
+            raise ValueError('Device must be activated to execute command')
+        self._hardware.go_home()
 
     def get_status(self):
         """
@@ -340,18 +412,22 @@ class LM1247(AbstractController):
         ID = configuration[config.ID]
         n = configuration.get(config.NAME,cls.name)
         d = configuration.get(config.DESCRIPTION,cls.description)
+        max_stored_data = configuration.get('max_')
         activated = configuration.get('start_activated',True)
         default_position = configuration.get("default_position",None)               
         motor_mode = FaulhaberMCLM3002.Mode[configuration.get('motor_mode','CONTMOD')]        
         position_limits_enabled = configuration.get('position_limits_enabled',False)
         position_limits = configuration.get('position_limits',None)
         home_position = configuration.get('home_position',0)
-
+        movement_timeout= configuration.get('movement_timeout',0.5)*pq.s
+        movement_t_int= configuration.get('movement_t_int',0.03)*pq.s
+        movement_tolerance= configuration.get('movement_tolerance',10)     
 
         
                 
         return LM1247(ID,hardware,start_activated=activated,default_position=default_position,motor_mode=motor_mode,home_position=home_position,
-                        position_limits_enabled=position_limits_enabled,position_limits=position_limits,
+                        position_limits_enabled=position_limits_enabled,position_limits=position_limits,movement_timeout=movement_timeout,
+                        movement_t_int=movement_t_int,movement_tolerance=movement_tolerance,
                         name=n,description=d)
 
 

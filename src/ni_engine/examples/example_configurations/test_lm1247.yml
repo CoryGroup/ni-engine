@@ -19,7 +19,7 @@ controllers:
    home_position: 0 
    position_limits_enabled: True
    position_limits: 5000
-   
+   movement_tolerance: 15
    
  
  

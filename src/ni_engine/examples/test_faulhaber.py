@@ -19,15 +19,15 @@ def test():
     
     linear_motor = con.get_controller('lm1247')
     linear_motor.move_absolute(-3000)
-    for x in range(100):
+    for x in range(10):
         sleep(0.1)
-        linear_motor.move_absolute(60*x)
+        linear_motor.move_absolute(150*x)
         status = linear_motor.get_status()
         data.add_controller_data(linear_motor.id,status)
 
-    for x in range(100):
+    for x in range(10):
         sleep(0.1)
-        linear_motor.move_relative(-60)
+        linear_motor.move_relative(-150)
         status = linear_motor.get_status()
         data.add_controller_data(linear_motor.id,status)
     
